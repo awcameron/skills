@@ -1,0 +1,23 @@
+{
+  "skill_name": "review-code",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm on the feature/payment-service branch in this repo (fixture billing service). Please review my changes against main.",
+      "expected_output": "A structured review of the diff between main and feature/payment-service, catching: a hardcoded Stripe secret key (Blocker), logging of the Authorization header and full request object via console.log instead of the structured logger (Blocker/Error, both a security issue and a logging-convention deviation), constructing the Stripe client with `new` inside the function instead of via constructor injection (Warning, citing userService.ts as the repo's DI pattern), throwing a raw Error for an expected validation failure instead of returning Result<T,E> (Error, citing userService.ts), the new `stripe` npm dependency added without visible discussion (Needs Confirmation), and the test file's `async describe` block plus its use of @jest/globals when the repo's own tests use vitest/vi.fn() (Warning/Error). Should call out calculateFees as a well-composed, testable helper in 'What Looks Good'. Should NOT flag the pre-existing legacyReportService.ts (untouched by this diff) and should not itemize import ordering by hand since ESLint enforces it.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Does src/services/paymentService.ts look right? (this repo is the fixture billing service, feature/payment-service branch, diffed against main)",
+      "expected_output": "A tighter, single-file-scoped version of the same review: hardcoded secret, Authorization header logging, DI violation, and throw-vs-Result deviation, each citing the relevant AGENTS.md rule and a real example file (userService.ts) -- concise fix descriptions, not full rewrites.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I'm on the fix/legacy-typo branch in this repo (fixture billing service) -- just fixed a stale comment in the legacy report service. Does this look right?",
+      "expected_output": "A very short review recognizing this is a trivial, in-scope maintenance edit to a frozen legacy file. Should NOT flag the file's pre-existing long/multi-responsibility function, since the diff doesn't touch that logic and AGENTS.md explicitly allows minimal maintenance edits to legacy files. Should not invent issues to justify a longer review.",
+      "files": []
+    }
+  ]
+}

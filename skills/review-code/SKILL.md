@@ -110,7 +110,33 @@ reordering by hand), unused-variable handling.
 **Style** — only flag deviations from what's actually enforced or actually consistent across the
 existing codebase; don't import a preference from elsewhere.
 
-## Step 3: Check observability, where applicable
+## Step 3: Check for correctness bugs, independent of any documented convention
+
+Everything in Step 2 is anchored to what the repo's own docs and patterns say. But a repo's
+conventions doc was written to cover the things that recur often enough to be worth writing down
+-- it was never meant to be a checklist of every way code can be wrong. A competent reviewer
+still catches plain bugs that no doc mentions, and this skill should too: an `await`ed call whose
+rejection is never handled and nothing upstream catches it; an input that's obviously required for
+the operation to be safe or correct but is never validated; a calculation or piece of business
+logic that does something different from what it appears to intend (a fee added where the reader
+would expect it deducted, a boundary condition off by one, a comparison that can never be true);
+sensitive data flowing into a type or parameter that has no reason to carry it, making it easy to
+mishandle later even before anything actually logs it.
+
+One pattern worth deliberately looking for: *asymmetric* validation. When a function guards some
+of the inputs it's about to use for a given operation but not others feeding that same operation,
+the unguarded ones are usually an oversight rather than a deliberate choice, not a hypothetical
+one -- if one parameter got a null/range/presence check before being used, ask why a sibling
+parameter headed for the same call or the same write didn't get the same treatment.
+
+This is different from house-ruling a style preference the repo hasn't adopted (still don't do
+that) -- a genuine correctness bug is a bug regardless of what any doc says, the same way a
+security issue is flagged in Step 4 below whether or not the repo has a security doc. If Step 2's
+convention-by-convention pass left the diff feeling clean but something about the actual behavior
+still seems off, take a second pass asking "what would go wrong at runtime here, or what would a
+careful reader assume this code does that it doesn't" before moving on.
+
+## Step 4: Check observability, where applicable
 
 **Logging** — does the repo have a documented logging standard (structured logging via a specific
 library, required context fields)? Flag `console.*`/raw prints only if the repo has moved past
@@ -124,7 +150,7 @@ already treats as PII/sensitive elsewhere.
 failures, WARN for degraded-but-functional, INFO for business events used sparingly, DEBUG for
 diagnostics) -- check consistency with whatever the repo already does, not an external standard.
 
-## Step 4: Check test quality, if tests are in scope
+## Step 5: Check test quality, if tests are in scope
 
 If test files are part of the changes, check against the repo's actual test conventions (runner,
 mocking approach, assertion style) -- read an existing spec file first rather than assuming Jest,
