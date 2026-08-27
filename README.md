@@ -25,6 +25,7 @@ process and vocabulary; this one is meant to disappear into whatever repo it's d
 - [Where this came from](#where-this-came-from)
 - [Using this with your tool](#using-this-with-your-tool)
 - [Contributing / adapting a skill](#contributing--adapting-a-skill)
+- [Releasing](#releasing)
 - [License](#license)
 
 ## What's here
@@ -114,6 +115,11 @@ Hold new and existing skills to the "discover, don't dictate" principle above: a
 a repo's own conventions doc, check real git/GitHub history, and read a couple of existing files
 before writing more in the same style — never hardcode a stack, a file layout, or a naming
 convention. If you find one that's drifted from that, that's worth an issue or a PR.
+
+## Releasing
+
+See [`docs/releasing.md`](docs/releasing.md) for how to bump the version and cut a GitHub Release
+— it's a manual `workflow_dispatch` step, not something that happens automatically on merge.
 
 ## License
 
