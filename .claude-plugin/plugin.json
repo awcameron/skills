@@ -5,8 +5,8 @@
   "author": {
     "name": "Antonio Cameron"
   },
-  "homepage": "https://github.com/<your-github-username>/agent-skills",
-  "repository": "https://github.com/<your-github-username>/agent-skills",
+  "homepage": "https://github.com/awcameron/agent-skills",
+  "repository": "https://github.com/awcameron/agent-skills",
   "license": "MIT",
   "skills": "./skills",
   "commands": ["./.claude/commands"],
