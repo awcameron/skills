@@ -1,4 +1,4 @@
-# agent-skills
+# Agent Skills
 
 A portable library of **8 agent skills** — genericized from real workflows built and iterated on
 in a substantial, real-world production codebase, not written speculatively. Each skill is a
