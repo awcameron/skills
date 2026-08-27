@@ -1,6 +1,6 @@
 {
   "name": "agent-skills",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "A portable library of agent skills, extracted and genericized from a real production repo, for Claude Code, Cursor, OpenCode, Codex CLI, and Gemini CLI.",
   "author": {
     "name": "Antonio Cameron"
