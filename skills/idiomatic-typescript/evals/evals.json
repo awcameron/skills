@@ -1,0 +1,74 @@
+{
+  "skill_name": "idiomatic-typescript",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Can you review this function? Does it look right, or is there anything you'd clean up?",
+      "expected_output": "A function with two restating comments, an any-typed param with a hiding 'as unknown as' cast, and two boolean call-site parameters. Flags all four using the skill's specific WHAT-vs-WHY comment framing and casting/hiding-vs-resolving framing, not just generic praise.",
+      "files": [],
+      "expectations": [
+        "Flags the leading comment as restating what the function already says, not explaining why",
+        "Flags the second comment ('increment the counter by 1') the same way -- pure restatement",
+        "Flags the two boolean parameters as a call-site readability problem",
+        "Flags the 'as unknown as' cast as hiding a real type mismatch, not resolving one",
+        "Does not just say the code looks fine or give only generic/vague praise"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "is this idiomatic? getTotal creates a PriceCalculator instance just to call one method on it.",
+      "expected_output": "Identifies the class has no state/identity/polymorphism need and recommends a plain function instead. Non-discriminating in practice (a capable baseline reasons through this correctly too) -- useful as a sanity check, not a differentiator.",
+      "files": [],
+      "expectations": [
+        "Identifies that the class has no state, identity, or polymorphism need -- a class isn't justified",
+        "Recommends a plain function instead of a class with one method",
+        "Does not just approve the code as-is"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "clean this up",
+      "expected_output": "Identifies a needless sequential-await pattern (should be Promise.all) and an in-place mutation of a caller-owned array argument. Non-discriminating in practice.",
+      "files": [],
+      "expectations": [
+        "Identifies the two independent awaits should run concurrently via Promise.all",
+        "Flags the array-argument mutation via .push as mutating caller-owned state",
+        "Does not just reformat the code without addressing either substantive issue"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "review these two functions for naming",
+      "expected_output": "A function whose name hides a side effect, plus a boolean named like a noun and two type-only placeholder names. Non-discriminating in practice.",
+      "files": [],
+      "expectations": [
+        "Flags a function name that hides a side effect its name gives no hint of",
+        "Flags a boolean-typed variable named like a noun instead of a yes/no question",
+        "Flags placeholder single-letter/type-only names as carrying no meaning beyond their type",
+        "Does not just approve the names as fine"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "does this barrel file look right?",
+      "expected_output": "A barrel file using 'export *' across two source files. DISCRIMINATING: a baseline run reached the wrong top-line verdict ('basically correct as-is, no changes required') and buried the issue as a non-blocking note; the skill correctly led with 'not quite right' and named export * as the actual problem.",
+      "files": [],
+      "expectations": [
+        "Flags 'export *' as silently expanding the module's public API as the primary finding, not a footnote",
+        "Recommends explicit named re-exports instead",
+        "Does not conclude the barrel file is correct as-is / requires no changes"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "clean this up",
+      "expected_output": "Error handling that branches on e.message string-matching, plus a silent empty catch block. Non-discriminating in practice.",
+      "files": [],
+      "expectations": [
+        "Flags message-string matching as fragile instead of a real checkable error type",
+        "Flags the empty catch as silently swallowing without a stated decision",
+        "Does not just reformat the code without addressing either substantive issue"
+      ]
+    }
+  ]
+}
