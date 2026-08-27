@@ -2,19 +2,16 @@
 name: subagent-selection
 description: >-
   Decision checklist for which subagent type/model to use before spawning an Agent call, in any
-  repo. Consult this every time before calling the Agent tool -- the right choice depends on
-  whether the task writes anything, not on its topic. Also use this when the user directly asks
-  "which agent should I use for X" or "should this be a read-only agent or a full write agent".
-  Read-only tasks (review, audit, investigate, analyze -- e.g. a PR standards/spec review,
-  "investigate why we chose config X", running a read-only skill against a PR) belong on a
-  read-only/exploration agent, or a general-purpose agent with a cheaper model if broader tool
-  access is needed than the read-only agent allows. Write tasks (implement an issue, apply/build a
-  skill, migrate code, fix lint drift, anything that edits files or runs `git commit`/`gh pr
-  create`) belong on the default general-purpose agent. Watch for tasks that sound live/write-ish
-  by topic but are actually read-only, e.g. "review PR #12" or "test skill Y against PR #12" --
-  topic mentions a PR, but the task itself never touches a file. For a write task that's unusually
-  hard -- ambiguous architecture/design work, a gnarly bug with no obvious root cause, a
-  high-stakes or hard-to-reverse change -- escalate to a stronger model instead of the default.
+  repo -- the right choice depends on whether the task writes anything, not on its topic. Use
+  this before calling the Agent tool, or when the user directly asks "which agent should I use for
+  X". Read-only tasks (review, audit, investigate -- e.g. a PR review, running a read-only skill
+  against a PR) belong on a read-only/exploration agent, or a cheaper-model general-purpose agent
+  if broader tool access is needed. Write tasks (implement, migrate code, fix drift, anything that
+  edits files or runs `git commit`/`gh pr create`) belong on the default write-capable agent.
+  Watch for tasks that sound live/write-ish by topic but are actually read-only, e.g. "review PR
+  #12" -- topic mentions a PR, but the task itself never touches a file. For a write task that's
+  unusually hard -- ambiguous design work, a gnarly bug, a high-stakes or hard-to-reverse change
+  -- escalate to a stronger model instead of the default.
 ---
 
 # Subagent Selection

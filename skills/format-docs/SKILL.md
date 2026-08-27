@@ -4,15 +4,14 @@ description: >-
   Format and check consistency of a repo's Markdown docs (README, AGENTS.md/CONTRIBUTING.md-style
   files, docs/**). Use this skill when the user asks to "format the docs", "format markdown",
   "lint the docs", "check doc formatting", "clean up the docs", "fix markdown formatting", or
-  points at a `.md` file and asks for formatting/consistency fixes. Also use when the user says
-  "does this doc look right" or "check this markdown" for a doc-focused (not code-focused)
-  request. Discovers whatever Markdown formatter the repo already uses (Prettier is the common
-  default) and applies its mechanical formatting directly (whitespace, list-marker indentation,
-  table alignment, trailing newlines), showing the diff. Flags but does not silently apply
-  anything that changes wording, restructures headings, or resolves a cross-doc inconsistency
-  (e.g. prose-wrap style) -- those are proposed as an edit for the user to confirm. Does not
-  review code (see `review-code`) and is not the same as a repo's TS/JS formatting, which usually
-  already runs via its own pre-commit hook and CI.
+  points at a `.md` file and asks for formatting/consistency fixes -- also "does this doc look
+  right" or "check this markdown" for a doc-focused request. Discovers whatever Markdown formatter
+  the repo already uses (Prettier is the common default) and applies its mechanical formatting
+  directly (whitespace, list-marker indentation, table alignment, trailing newlines), showing the
+  diff. Flags but does not silently apply anything that changes wording, restructures headings, or
+  resolves a cross-doc inconsistency (e.g. prose-wrap style) -- those are proposed for the user to
+  confirm. Does not review code (see `review-code`) and is not the same as a repo's TS/JS
+  formatting, which usually already runs via its own pre-commit hook and CI.
 allowed-tools:
   [
     Read,

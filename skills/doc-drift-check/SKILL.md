@@ -2,26 +2,15 @@
 name: doc-drift-check
 description: >-
   Cross-check a doc's factual and architectural claims against current truth and flag anything
-  that's gone stale -- hosting/deploy targets, stack choices, layering rules, and documented
-  conventions against the repo's own canonical docs (README/CONTRIBUTING/AGENTS.md-equivalent,
-  ADRs, architecture specs), but also referenced file paths, branch/commit/PR/issue naming
-  conventions, object counts or CI job names a doc summarizes, and npm/CLI commands a doc tells
-  the reader to run -- checked directly against the codebase, scripts, and git/GitHub history, not
-  just the repo's curated docs, and not trusting those unquestioningly either (see Sources of
-  truth below: the canonical doc itself can be the stale one). Use this skill when the user asks
-  whether a doc "is still accurate", "matches how we actually do things now", to "check this doc
-  for staleness", to "review/update a spec or plan/README/onboarding doc against current project
-  facts", or points at any doc and asks you to verify or update it against reality. Also covers
-  agent-skill files themselves -- "check this skill for drift", "is this skill still accurate", or
-  before trusting/reusing a skill's factual claims for other work -- a skill file is documentation
-  an agent acts on directly, so drift there is executed, not just read. Also reach for this before
-  trusting a doc's claims about deployment, stack, file locations, or naming conventions when
-  using it as a source for other work (e.g. a plan's "Technical Context" section, or a tutorial
-  telling a reader which file to create) -- a stale claim there should be caught, not propagated.
-  Does NOT do mechanical Markdown formatting (whitespace, list indentation, table alignment --
-  that's `format-docs`) and does NOT review code quality or spec-compliance of a code change (a
-  separate code-review skill's job). Only checks factual claims already made in prose against
-  current truth -- not general copyediting.
+  that's gone stale -- hosting/deploy targets, stack choices, layering rules, documented
+  conventions, referenced file paths, naming conventions, and CLI commands a doc tells the reader
+  to run -- checked against the codebase and git/GitHub history directly, not just the repo's own
+  curated docs (the canonical doc can itself be the stale one). Use when the user asks whether a
+  doc "is still accurate", to "check this doc for staleness", to "review/update a spec, plan,
+  README, or onboarding doc against current facts", or points at any doc to verify it against
+  reality. Also covers agent-skill files -- a skill file is documentation an agent acts on
+  directly, so drift there is executed, not just read. Does NOT do mechanical Markdown formatting
+  (that's `format-docs`) and does NOT review code quality (a separate code-review skill's job).
 allowed-tools: [Read, Grep, Glob]
 ---
 

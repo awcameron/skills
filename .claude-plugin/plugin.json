@@ -1,9 +1,14 @@
 {
   "name": "agent-skills",
-  "version": "1.0.0",
-  "description": "A portable library of agent skills, extracted and genericized from real production repos, for Claude Code, Cursor, OpenCode, and Codex CLI.",
+  "version": "1.1.0",
+  "description": "A portable library of agent skills, extracted and genericized from a real production repo, for Claude Code, Cursor, OpenCode, Codex CLI, and Gemini CLI.",
   "author": {
     "name": "Antonio Cameron"
   },
+  "homepage": "https://github.com/<your-github-username>/agent-skills",
+  "repository": "https://github.com/<your-github-username>/agent-skills",
+  "license": "MIT",
+  "skills": "./skills",
+  "commands": ["./.claude/commands"],
   "keywords": ["skills", "agent-skills", "code-review", "testing", "documentation"]
 }
