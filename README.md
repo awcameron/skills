@@ -1,15 +1,31 @@
 # agent-skills
 
-A portable library of agent skills — genericized from real workflows built and iterated on in a
-production SaaS monorepo, not written speculatively. Each skill is a plain `SKILL.md`: a
-description that tells an agent when to reach for it, and a body that tells it what to actually
-do.
+A portable library of **8 agent skills** — genericized from real workflows built and iterated on
+in a substantial, real-world production codebase, not written speculatively. Each skill is a
+plain `SKILL.md`: a description that tells an agent when to reach for it, and a body that tells
+it what to actually do.
 
 As of 2026, Claude Code, Cursor, OpenCode, Codex CLI, and Gemini CLI have all converged on the
 same shape for this — a `SKILL.md` file with YAML frontmatter, discovered from a `skills/`-style
 directory. That means this repo needs **no per-tool format conversion**: one canonical `skills/`
 directory, exposed to each tool through the discovery path it already looks for, plus a thin
 slash-command wrapper per tool for explicit invocation.
+
+**Design principle: discover, don't dictate.** This isn't a prescriptive lifecycle framework —
+there's no imposed spec→plan→build→ship pipeline, no fixed set of gates every change must pass.
+Every skill here is written to *discover* a repo's own conventions (its stack, its file layout,
+its naming precedent, its actual test setup) rather than assume or impose them. That's a
+deliberate difference from larger, more opinionated skill packs, which tend to bring their own
+process and vocabulary; this one is meant to disappear into whatever repo it's dropped into. See
+[Where this came from](#where-this-came-from) for the concrete story behind that choice.
+
+## Table of contents
+
+- [What's here](#whats-here)
+- [Where this came from](#where-this-came-from)
+- [Using this with your tool](#using-this-with-your-tool)
+- [Contributing / adapting a skill](#contributing--adapting-a-skill)
+- [License](#license)
 
 ## What's here
 
@@ -29,11 +45,11 @@ Every skill also ships a matching slash command (`.claude/commands/<name>.md`,
 
 ## Where this came from
 
-Every skill here started as something built for a real, running product — a NestJS/React/Postgres
-SaaS app — and was rewritten to drop that product's specific facts (its stack, its file layout, its
-branch-naming precedent) in favor of a "discover this repo's own conventions first" step in the
-same place. See [`examples/summersync-case-study.md`](examples/summersync-case-study.md) for the
-concrete story behind a few of them, including a real skill-drift bug this repo's own
+Every skill here started as something built for a real, actively-developed production codebase —
+not a toy or a demo — and was rewritten to drop that project's specific facts (its stack, its file
+layout, its branch-naming precedent) in favor of a "discover this repo's own conventions first"
+step in the same place. See [`examples/summersync-case-study.md`](examples/summersync-case-study.md)
+for the concrete story behind a few of them, including a real skill-drift bug this repo's own
 `doc-drift-check` skill was built to catch.
 
 ## Using this with your tool
@@ -94,10 +110,10 @@ npm run eval       # your positive/negative evals/cases/<skill>.json prompts act
 new skill; it's what actually caught and fixed a real description collision during this repo's
 own build (see that README's own example).
 
-Every skill here is written to *discover* a repo's conventions rather than assume them — read a
-repo's own conventions doc, check real git/GitHub history, read a couple of existing files before
-writing more in the same style. None of them hardcode a stack, a file layout, or a naming
-convention. If you find one that's drifted from that principle, that's worth an issue or a PR.
+Hold new and existing skills to the "discover, don't dictate" principle above: a skill should read
+a repo's own conventions doc, check real git/GitHub history, and read a couple of existing files
+before writing more in the same style — never hardcode a stack, a file layout, or a naming
+convention. If you find one that's drifted from that, that's worth an issue or a PR.
 
 ## License
 
