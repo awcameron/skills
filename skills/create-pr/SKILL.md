@@ -25,10 +25,11 @@ from another repo's habits). It does not judge code quality or standards complia
 
 ## Guardrails (do not skip)
 
-- **Two confirmation checkpoints, not one pass-through.** Never chain straight from "make a PR" to
-  a pushed branch with an open PR. Show the plan, stop, wait for an explicit yes at each
-  checkpoint below. Silence or a vague "ok continue with the rest of the task" is not
-  confirmation of a specific commit/push/PR action.
+- **Confirmation checkpoints, not one pass-through.** Never chain straight from "make a PR" to a
+  pushed branch with an open PR, and never chain straight from "it's merged" to deleted branches.
+  Show the plan, stop, wait for an explicit yes at each checkpoint below. Silence or a vague "ok
+  continue with the rest of the task" is not confirmation of a specific commit/push/PR/delete
+  action.
 - Never invent a ticket number. If one can't be determined, ask — see Step 1.
 - Never push directly to the default branch, and never target anything but the repo's actual
   default branch as the PR base unless the user explicitly says otherwise.
@@ -237,7 +238,7 @@ call, not merge mechanics:
   confirmed earlier in this conversation.
 - A review (`review-code`, or similar) surfaced a finding that changes what the PR should contain.
 
-### Verify, then sync and clean up (every merge, whichever path got here)
+### Verify, then sync (every merge, whichever path got here)
 
 ```bash
 gh pr view <n> --json state,mergedAt
@@ -251,6 +252,23 @@ before touching any branches.
 ```bash
 git checkout <default-branch>
 git pull --ff-only
+```
+
+This part is safe to do without asking — it's read-only with respect to the branch itself, just
+catching the local default branch up to what's already public.
+
+### Checkpoint 4 — before deleting anything
+
+Deleting a branch is exactly the kind of visible, hard-to-undo-casually action the guardrail at
+the top of this skill has in mind — show the user exactly what's about to be deleted (branch name,
+local and/or remote) and get an explicit yes before running either command below. Don't chain
+straight from "it's merged" to deleted branches just because the merge itself is confirmed; those
+are two different questions. For a batch of several merged PRs, one combined confirmation listing
+every branch is fine — it doesn't need to be one prompt per branch.
+
+Once confirmed:
+
+```bash
 git branch -d <branch-name>
 ```
 
@@ -262,7 +280,7 @@ on the default branch has a different SHA than the branch tip, so git can't veri
 ancestry alone, but its remote-tracking check confirms it anyway). Treat that warning as expected,
 not a sign something went wrong; only investigate if the delete actually fails.
 
-Finally, delete the remote branch too — GitHub does not always do this automatically:
+Then the remote branch, if it still exists — GitHub does not always delete it automatically:
 
 ```bash
 gh repo view --json deleteBranchOnMerge -q .deleteBranchOnMerge
@@ -275,7 +293,9 @@ git push origin --delete <branch-name>
 ```
 
 If it's `true`, GitHub already deleted the remote branch on merge — skip this and don't try to
-delete something that's already gone.
+delete something that's already gone. Either way, this check (and reporting its result) is fine to
+do without asking again; the confirmation already covered deleting this branch, local and remote
+both — this is just figuring out whether the remote half is already done.
 
 ## Edge cases
 
