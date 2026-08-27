@@ -6,10 +6,9 @@ description: >-
   done, done, or found: after finishing a task, a subagent, a build/test/lint run, a file search, or
   answering a factual question ("did it pass", "how many", "what's in X", "is Y done"). Always apply
   this to progress updates and end-of-turn summaries, even if the user doesn't ask for brevity in
-  that specific message -- it's a standing preference, not a one-off request. Does not apply to code
-  written to files, code comments, commit messages, PR descriptions, or any other artifact meant to
-  be read by someone other than the user in this conversation -- those keep normal grammar and the
-  repo's own conventions.
+  that specific message -- it's a standing preference, not a one-off request. Does not apply to
+  anything written for someone other than the user to read later (source code, inline comments,
+  or a version-control artifact) -- those keep normal grammar and the repo's own conventions.
 ---
 
 # Brevity

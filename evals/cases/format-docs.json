@@ -1,0 +1,13 @@
+{
+  "skill_name": "format-docs",
+  "trigger": {
+    "positive": [
+      { "prompt": "format the markdown docs", "top_k": 2 },
+      { "prompt": "clean up the formatting in AGENTS.md", "top_k": 2 },
+      { "prompt": "lint the docs for whitespace and list indentation issues", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "check whether this doc's claims are still accurate", "owner": "doc-drift-check" }
+    ]
+  }
+}

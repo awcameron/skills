@@ -10,5 +10,6 @@
   "license": "MIT",
   "skills": "./skills",
   "commands": ["./.claude/commands"],
+  "hooks": "./hooks/hooks.json",
   "keywords": ["skills", "agent-skills", "code-review", "testing", "documentation"]
 }

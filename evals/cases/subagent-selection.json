@@ -1,0 +1,13 @@
+{
+  "skill_name": "subagent-selection",
+  "trigger": {
+    "positive": [
+      { "prompt": "which agent should I use for this task", "top_k": 2 },
+      { "prompt": "should this be a read-only agent or a full write agent", "top_k": 2 },
+      { "prompt": "what model should I spawn this subagent on", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "write tests for this change", "owner": "write-tests" }
+    ]
+  }
+}

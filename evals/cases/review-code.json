@@ -1,0 +1,14 @@
+{
+  "skill_name": "review-code",
+  "trigger": {
+    "positive": [
+      { "prompt": "review my changes before I open a PR", "top_k": 2 },
+      { "prompt": "does this look right, anything wrong with this diff", "top_k": 3 },
+      { "prompt": "check my code for issues before merging", "top_k": 2 }
+    ],
+    "negative": [
+      { "prompt": "add test coverage for this bug fix", "owner": "write-tests" },
+      { "prompt": "open a PR for this branch", "owner": "create-pr" }
+    ]
+  }
+}

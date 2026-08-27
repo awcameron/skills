@@ -1,0 +1,14 @@
+{
+  "skill_name": "write-tests",
+  "trigger": {
+    "positive": [
+      { "prompt": "write tests for this bug fix", "top_k": 2 },
+      { "prompt": "what's untested here, add coverage", "top_k": 2 },
+      { "prompt": "scaffold a spec for this new function", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "review this diff for code quality issues", "owner": "review-code" },
+      { "prompt": "is this function idiomatic, clean it up", "owner": "idiomatic-typescript" }
+    ]
+  }
+}

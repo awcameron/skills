@@ -1,0 +1,13 @@
+{
+  "skill_name": "create-pr",
+  "trigger": {
+    "positive": [
+      { "prompt": "open a PR for these changes", "top_k": 2 },
+      { "prompt": "let's ship this branch", "top_k": 2 },
+      { "prompt": "push this up and get it reviewed", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "review the code before merging", "owner": "review-code" }
+    ]
+  }
+}

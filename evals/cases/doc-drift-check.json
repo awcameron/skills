@@ -1,0 +1,13 @@
+{
+  "skill_name": "doc-drift-check",
+  "trigger": {
+    "positive": [
+      { "prompt": "does this README still match how we actually do things now", "top_k": 2 },
+      { "prompt": "check this doc for staleness against the codebase", "top_k": 2 },
+      { "prompt": "is this onboarding doc still accurate", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "fix the markdown formatting in this file", "owner": "format-docs" }
+    ]
+  }
+}

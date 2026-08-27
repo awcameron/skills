@@ -1,0 +1,12 @@
+{
+  "skill_name": "brevity",
+  "trigger": {
+    "positive": [
+      { "prompt": "just give me a short answer, keep it terse", "top_k": 2 },
+      { "prompt": "how many tests passed, don't give me a whole paragraph", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "write a detailed PR description with a summary and test plan", "owner": "create-pr" }
+    ]
+  }
+}

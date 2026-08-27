@@ -60,12 +60,18 @@ ln -s ../agent-skills/skills .agents/skills
 ### Claude Code, as an installable plugin
 
 This repo is also a self-contained Claude Code plugin — `.claude-plugin/plugin.json` at its root
-declares `skills/` and `.claude/commands/`, so Claude Code discovers everything automatically:
+declares `skills/`, `.claude/commands/`, and `hooks/`, so Claude Code discovers everything
+automatically, including a `SessionStart` hook that injects a one-line-per-skill catalog into
+every new session:
 
 ```
 /plugin marketplace add <your-github-username>/agent-skills
 /plugin install agent-skills
 ```
+
+Symlinked in instead of installed as a plugin? The hook isn't auto-discovered outside the plugin
+system — see [`hooks/README.md`](hooks/README.md) to wire it into your project's own
+`.claude/settings.json`.
 
 ### Global install (any tool)
 
@@ -76,8 +82,17 @@ them available in every project without repeating the setup above.
 ## Contributing / adapting a skill
 
 See [`docs/skill-anatomy.md`](docs/skill-anatomy.md) for the frontmatter and structure rules, and
-run `npm run validate` before opening a PR — it checks every `skills/*/SKILL.md` for a valid,
-directory-matching `name` and a description that actually states a trigger condition.
+run these two before opening a PR:
+
+```bash
+npm run validate   # frontmatter is well-formed: valid name, directory match, a stated trigger
+npm run eval       # your positive/negative evals/cases/<skill>.json prompts actually route right
+```
+
+`npm run eval` is a deterministic (no LLM call) trigger-routing check — see
+[`evals/README.md`](evals/README.md) for what it does and doesn't catch. Add a case file for any
+new skill; it's what actually caught and fixed a real description collision during this repo's
+own build (see that README's own example).
 
 Every skill here is written to *discover* a repo's conventions rather than assume them — read a
 repo's own conventions doc, check real git/GitHub history, read a couple of existing files before
