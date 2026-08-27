@@ -1,17 +1,18 @@
 ---
 name: create-pr
 description: >-
-  Take a set of local changes through a repo's real branch/commit/push/PR workflow. Use this
-  skill when the user asks to "open a PR", "create a PR", "make a pull request", "ship this
-  branch", "submit this for review", "push this up", "put up a PR", "get this reviewed", or wants
-  a branch created, changes committed, or a PR opened. Also use when the user says "let's land
-  this" or "send this out for review". This skill discovers the repo's own branch-naming,
-  commit-message, and PR-title/body conventions from its documented conventions plus its actual
-  git/GitHub history -- it takes real, visible git/GitHub actions (push, `gh pr create`), so it
-  shows the planned branch name, commit message, PR title, and PR body and gets explicit
-  confirmation before each visible/remote step. It does not review code quality (see
-  `review-code` for that).
-allowed-tools: [Read, Grep, Glob, Bash(git status:*), Bash(git branch:*), Bash(git rev-parse:*), Bash(git diff:*), Bash(git log:*), Bash(git checkout:*), Bash(git add:*), Bash(git commit:*), Bash(git push:*), Bash(gh issue view:*), Bash(gh pr view:*), Bash(gh pr create:*)]
+  Take a set of local changes through a repo's real branch/commit/push/PR workflow, and sync up
+  the local repo once that PR is done. Use this skill when the user asks to "open a PR", "create a
+  PR", "make a pull request", "ship this branch", "submit this for review", "push this up", "put up
+  a PR", "get this reviewed", or wants a branch created, changes committed, or a PR opened. Also
+  covers the tail end of that workflow, when the user reports "it's done"/"that's in now" --
+  confirm the PR's actual state, pull the default branch, and delete the leftover branch locally
+  and on the remote. This skill discovers the repo's own branch-naming, commit-message,
+  and PR-title/body conventions from its documented conventions plus its actual git/GitHub
+  history -- it takes real, visible git/GitHub actions (push, `gh pr create`), so it shows the
+  planned branch name, commit message, PR title, and PR body and gets explicit confirmation
+  before each visible/remote step. It does not review code quality (see `review-code` for that).
+allowed-tools: [Read, Grep, Glob, Bash(git status:*), Bash(git branch:*), Bash(git rev-parse:*), Bash(git diff:*), Bash(git log:*), Bash(git checkout:*), Bash(git add:*), Bash(git commit:*), Bash(git push:*), Bash(git pull:*), Bash(gh issue view:*), Bash(gh pr view:*), Bash(gh pr list:*), Bash(gh pr create:*), Bash(gh pr merge:*), Bash(gh pr checks:*), Bash(gh repo view:*)]
 ---
 
 # Create PR
@@ -204,7 +205,18 @@ Report the resulting PR URL back to the user once created. `gh pr create` someti
 warning about uncommitted changes when unrelated stray files sit in the working tree — don't add
 a follow-up sentence explaining or dismissing that warning; just report the PR normally.
 
-## Step 7: Merge
+## Step 7: Merge and clean up
+
+There are two ways this step gets reached, and they converge on the same cleanup tail:
+
+- **This skill does the merge itself** (see "Merging" below), or
+- **The user reports an external merge** — "it's merged", "pr merged", "all merged now" — because
+  they merged it themselves in the GitHub UI, or something else did. This is a first-class trigger
+  for this skill, not an afterthought: don't assume the branch is already cleaned up just because
+  nobody asked explicitly, and don't skip verification just because the user said so — confirm it
+  actually merged (see below) before touching branches.
+
+### Merging (only when this skill is doing it)
 
 Don't assume a standing authorization to merge without asking — confirm with the user (once, up
 front, or per-PR) whether they want you to merge automatically once CI is green, and which method
@@ -216,14 +228,6 @@ gh pr checks <n>   # confirm green first
 gh pr merge <n> --squash   # or whichever method was confirmed
 ```
 
-Then sync the default branch and clean up:
-
-```bash
-git checkout <default-branch>
-git pull origin <default-branch>
-git branch -D <branch-name>
-```
-
 **Still stop and ask before merging** when the PR carries something that's genuinely the user's
 call, not merge mechanics:
 
@@ -232,6 +236,46 @@ call, not merge mechanics:
   dependency, a schema change, a convention/ADR amendment) that wasn't already explicitly
   confirmed earlier in this conversation.
 - A review (`review-code`, or similar) surfaced a finding that changes what the PR should contain.
+
+### Verify, then sync and clean up (every merge, whichever path got here)
+
+```bash
+gh pr view <n> --json state,mergedAt
+```
+
+Don't skip this even when the user just told you it's merged — confirming which PR and that it's
+actually `MERGED` (not just `CLOSED`) takes one call and avoids syncing/deleting branches based on
+a mistaken assumption. If the user says "all merged" for several PRs at once, run this for each one
+before touching any branches.
+
+```bash
+git checkout <default-branch>
+git pull --ff-only
+git branch -d <branch-name>
+```
+
+`git branch -d` (lowercase) is deliberate here, not `-D` — it refuses to delete a branch that
+genuinely isn't merged, which is a useful safety check on top of the `gh pr view` confirmation
+above. Expect it to print a `"has been merged to 'refs/remotes/origin/<branch>' but not yet merged
+to HEAD"` warning and still succeed — that's normal for a squash-merged branch (the squash commit
+on the default branch has a different SHA than the branch tip, so git can't verify the merge by
+ancestry alone, but its remote-tracking check confirms it anyway). Treat that warning as expected,
+not a sign something went wrong; only investigate if the delete actually fails.
+
+Finally, delete the remote branch too — GitHub does not always do this automatically:
+
+```bash
+gh repo view --json deleteBranchOnMerge -q .deleteBranchOnMerge
+```
+
+If that's `false` (or the repo's setting is unknown), delete it explicitly:
+
+```bash
+git push origin --delete <branch-name>
+```
+
+If it's `true`, GitHub already deleted the remote branch on merge — skip this and don't try to
+delete something that's already gone.
 
 ## Edge cases
 
@@ -242,3 +286,7 @@ call, not merge mechanics:
   straight to `gh pr create` (still gated by Checkpoint 3).
 - **A PR already exists for this branch**: don't open a duplicate — check with `gh pr view
   <branch>` first, and if one exists, tell the user instead of creating a second one.
+- **"All merged" for multiple PRs at once**: run the verify-and-clean-up sequence in Step 7 once
+  per PR/branch rather than assuming they're identical — a batch report can still include one that
+  didn't actually merge, or a branch created by something other than this skill (e.g. an
+  automation's own PR) that never got tracked as "in flight" in this conversation.
