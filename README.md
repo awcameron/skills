@@ -98,6 +98,9 @@ them available in every project without repeating the setup above.
 
 ## Contributing / adapting a skill
 
+For this repo's own branch/commit/PR/release conventions (as opposed to skill content itself),
+see [AGENTS.md](AGENTS.md).
+
 See [`docs/skill-anatomy.md`](docs/skill-anatomy.md) for the frontmatter and structure rules, and
 run these two before opening a PR:
 

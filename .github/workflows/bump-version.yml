@@ -2,7 +2,7 @@ name: Bump version
 
 # Manual trigger, not automatic on every merge -- a version bump is a deliberate release act,
 # not something that should fire on every doc/chore PR. Opens a PR instead of committing directly
-# to main, consistent with how every other change in this repo lands (see CONTRIBUTING /
+# to main, consistent with how every other change in this repo lands (see AGENTS.md /
 # create-pr skill).
 #
 # Note: a PR opened with the default GITHUB_TOKEN does not itself trigger other workflows
