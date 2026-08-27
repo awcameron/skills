@@ -1,0 +1,13 @@
+{
+  "name": "agent-skills",
+  "owner": {
+    "name": "Antonio Cameron"
+  },
+  "plugins": [
+    {
+      "name": "agent-skills",
+      "source": ".",
+      "description": "A portable library of agent skills for Claude Code, Cursor, OpenCode, and Codex CLI."
+    }
+  ]
+}

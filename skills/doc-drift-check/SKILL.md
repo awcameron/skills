@@ -1,0 +1,140 @@
+---
+name: doc-drift-check
+description: >-
+  Cross-check a doc's factual and architectural claims against current truth and flag anything
+  that's gone stale -- hosting/deploy targets, stack choices, layering rules, and documented
+  conventions against the repo's own canonical docs (README/CONTRIBUTING/AGENTS.md-equivalent,
+  ADRs, architecture specs), but also referenced file paths, branch/commit/PR/issue naming
+  conventions, object counts or CI job names a doc summarizes, and npm/CLI commands a doc tells
+  the reader to run -- checked directly against the codebase, scripts, and git/GitHub history, not
+  just the repo's curated docs, and not trusting those unquestioningly either (see Sources of
+  truth below: the canonical doc itself can be the stale one). Use this skill when the user asks
+  whether a doc "is still accurate", "matches how we actually do things now", to "check this doc
+  for staleness", to "review/update a spec or plan/README/onboarding doc against current project
+  facts", or points at any doc and asks you to verify or update it against reality. Also covers
+  agent-skill files themselves -- "check this skill for drift", "is this skill still accurate", or
+  before trusting/reusing a skill's factual claims for other work -- a skill file is documentation
+  an agent acts on directly, so drift there is executed, not just read. Also reach for this before
+  trusting a doc's claims about deployment, stack, file locations, or naming conventions when
+  using it as a source for other work (e.g. a plan's "Technical Context" section, or a tutorial
+  telling a reader which file to create) -- a stale claim there should be caught, not propagated.
+  Does NOT do mechanical Markdown formatting (whitespace, list indentation, table alignment --
+  that's `format-docs`) and does NOT review code quality or spec-compliance of a code change (a
+  separate code-review skill's job). Only checks factual claims already made in prose against
+  current truth -- not general copyediting.
+allowed-tools: [Read, Grep, Glob]
+---
+
+# Doc Drift Check
+
+Docs describe the project as of whenever they were last touched. The project keeps moving.
+Nothing forces a doc's prose to keep up -- so specs, plans, and READMEs quietly accumulate claims
+that were true once and aren't anymore. This skill's job is narrow: catch that drift and report
+it, without doing anything else to the doc.
+
+## Scope
+
+This is a fact-check pass, not an editorial one. It looks for claims about things that change
+over time in a project:
+
+- Deployment/hosting targets (where frontend/backend deploy, DNS provider)
+- Stack choices (frameworks, libraries, database)
+- Architectural decisions (layering rules, API style, module structure)
+- Documented conventions (naming, testing, branch/PR format)
+
+It is not a grammar check, a formatting pass, or a code review. If the doc's wording is fine but
+outdated, that's exactly the job; if the wording is awkward but accurate, that's out of scope.
+
+**Agent-skill files are in scope**, not just prose docs. A skill file makes the same kind of
+checkable claims (a directory pattern, a library choice, a naming convention) and often quotes or
+paraphrases one of the repo's canonical docs directly -- but unlike a README, an agent reads a
+skill and then *acts* on it, so a stale claim there doesn't just mislead a reader, it gets
+executed. When the user asks generally about "the docs," don't assume they meant only the prose
+docs directory -- ask, or check both if the request is broad enough to plausibly cover skills too.
+
+## Sources of truth
+
+For architecture/convention-level claims, in rough order of authority (adjust to whatever a given
+repo actually has):
+
+1. A canonical conventions doc (`AGENTS.md`, `CONTRIBUTING.md`, or equivalent) -- the repo's own
+   statement of architecture, conventions, and boundaries, if one exists.
+2. Architectural Decision Records (`docs/adr/*.md` or similar) -- individual decisions with their
+   own status/context/rationale.
+3. An architecture spec or design doc describing the target structure and rollout plan.
+
+If these disagree with each other, that's a separate problem worth surfacing to the user, not
+something to silently resolve by picking one.
+
+**None of these is ground truth by construction -- each can itself be the stale document.** A
+canonical doc's own convention prose is a claim about the codebase, same as anything in a spec or
+README, and it goes stale the same way: a module gets renamed, a pattern gets adopted, and the
+sentence describing it doesn't get updated to match. So when a claim traces back to one of these
+docs, still spot-check it against the tree when that's cheap (see below) rather than treating the
+doc's word as final just because it outranks other docs in this list. A conflict between a
+canonical doc and the actual codebase is a finding to report, not a reason to trust the doc over
+the code.
+
+**Most claims worth checking aren't covered by canonical docs at all**, and need the codebase
+itself as the source of truth instead:
+
+- **A referenced file/directory path** -- `find`/`ls`/`Read` it, don't assume the name in the doc
+  still matches. A file gets renamed or consolidated without every doc that names it getting a
+  matching edit.
+- **A branch/commit/PR-title naming convention** -- `git for-each-ref`/`git log --oneline` for
+  real recent examples, not the doc's own stated rule; a convention can drift in practice without
+  anyone updating the doc that states it.
+- **An issue-title/tracker convention** -- `gh issue list` for real recent titles, same reasoning.
+- **A specific object count, script assertion, or CI job name** -- read the actual script or
+  workflow file a doc's prose claims to summarize, not the doc's last-written number. A change
+  landing shifts a count; a doc summarizing "asserts N tables" doesn't update itself.
+- **An npm script or CLI command a doc tells the reader to run** -- check it actually exists
+  (e.g. `grep '"<script>"' package.json`) and does what the doc says.
+
+Treat these the same way as canonical docs: cite what you actually checked (the file path, the
+git command's real output, the script line) in the finding, not "seems outdated."
+
+## Workflow
+
+1. **Read the target doc(s).** If the user pointed at a specific file (including a skill file),
+   start there. If they asked about "the docs" generally, ask which one(s) before scanning
+   broadly, and don't assume that excludes skills -- don't guess scope.
+
+2. **Extract factual/architectural claims.** Pull out every sentence that asserts something
+   checkable: "the frontend deploys to X", "we use GraphQL", "auth is handled by Y", "branches are
+   named Z", "this file is 15 lines", "the verify script asserts 7 tables", "business logic lives
+   in `usecases/<action>/`". Skip prose that's just narrative, rationale, or opinion with nothing
+   to verify.
+
+3. **Cross-check each claim against the codebase itself whenever that's cheap**, even when the
+   claim also traces back to a canonical doc -- a cited path exists (`find`/`Read`), a named
+   directory pattern actually appears, a named library is really a dependency
+   (`grep '"<pkg>"' */package.json`). Don't stop at "the doc says so" and call the claim confirmed:
+   that's exactly what a stale claim looks like right up until the one-command check. Only fall
+   back to citing the canonical doc's own text, without an independent tree check, for a claim
+   that's genuinely too broad or subjective to spot-check this way (an architectural rationale, a
+   design intent) -- most of what's worth checking isn't that kind of claim (see above).
+
+4. **Report findings**, one entry per contradiction found:
+
+   ```
+   ## [doc path]: [short label for the claim]
+   **Doc says:** "[quoted claim, with line reference]"
+   **Current truth:** [what the codebase/canonical doc actually shows now], per [source]
+   ```
+
+   If nothing is stale, say so plainly -- don't manufacture findings to justify the pass.
+
+5. **Do not edit the doc.** Propose the fix as part of the finding (what the corrected sentence
+   would say) and wait for the user to confirm before touching the file. A doc's wording is the
+   user's call, even when the fact behind it is unambiguous -- correct it only after the user
+   confirms the actual answer, never by silently rewriting the sentence during the check.
+
+## Why not fold this into `format-docs`
+
+`format-docs` deliberately stays mechanical -- formatting-safe whitespace it can apply directly,
+versus structural issues (headings, cross-doc consistency) it flags but never silently resolves.
+Fact-checking a doc's claims against the rest of the repo is a different kind of risk again:
+getting it wrong doesn't just misformat a file, it either misses real drift or "corrects"
+something the user didn't actually confirm. Keeping it a separate skill keeps that risk boundary
+clear rather than quietly expanding what `format-docs` is trusted to decide on its own.

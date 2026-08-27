@@ -1,0 +1,9 @@
+{
+  "name": "agent-skills",
+  "version": "1.0.0",
+  "description": "A portable library of agent skills, extracted and genericized from real production repos, for Claude Code, Cursor, OpenCode, and Codex CLI.",
+  "author": {
+    "name": "Antonio Cameron"
+  },
+  "keywords": ["skills", "agent-skills", "code-review", "testing", "documentation"]
+}

@@ -1,0 +1,183 @@
+---
+name: format-docs
+description: >-
+  Format and check consistency of a repo's Markdown docs (README, AGENTS.md/CONTRIBUTING.md-style
+  files, docs/**). Use this skill when the user asks to "format the docs", "format markdown",
+  "lint the docs", "check doc formatting", "clean up the docs", "fix markdown formatting", or
+  points at a `.md` file and asks for formatting/consistency fixes. Also use when the user says
+  "does this doc look right" or "check this markdown" for a doc-focused (not code-focused)
+  request. Discovers whatever Markdown formatter the repo already uses (Prettier is the common
+  default) and applies its mechanical formatting directly (whitespace, list-marker indentation,
+  table alignment, trailing newlines), showing the diff. Flags but does not silently apply
+  anything that changes wording, restructures headings, or resolves a cross-doc inconsistency
+  (e.g. prose-wrap style) -- those are proposed as an edit for the user to confirm. Does not
+  review code (see `review-code`) and is not the same as a repo's TS/JS formatting, which usually
+  already runs via its own pre-commit hook and CI.
+allowed-tools:
+  [
+    Read,
+    Grep,
+    Glob,
+    Edit,
+    Bash(npx --no-install prettier:*),
+    Bash(git diff:*),
+    Bash(git status:*),
+  ]
+---
+
+# Format Docs
+
+This skill formats and checks the consistency of a repo's Markdown documentation. It has two
+distinct jobs, kept separate because they carry different risk:
+
+1. **Mechanical formatting** -- whitespace, list-marker indentation, table column alignment,
+   trailing newlines. Safe, reversible, no wording changes. Apply directly, then show the diff.
+2. **Structural consistency** -- heading hierarchy, code-fence language tags, cross-doc
+   conventions like prose-wrap style. Report what's inconsistent; propose a specific fix; do not
+   apply it without the user confirming. This includes anything that would change wording or
+   restructure headings.
+
+Never blur the two: don't fold a wording change into a "mechanical" commit, and don't ask for
+confirmation on something that's genuinely just whitespace.
+
+## Step 0: Find out what's already enforced
+
+Before assuming there's a gap to fill, check whether the repo already formats/lints its Markdown
+automatically -- most of the time there's already a real answer, and re-discovering it is cheap:
+
+- Root (and per-workspace) `package.json` `scripts` for a `format`/`format:check`/`lint:md` entry,
+  and what glob it targets.
+- A pre-commit hook (`.husky/`, `lint-staged.config.*`, `.lintstagedrc*`) for a `"**/*.md"` entry.
+- CI workflow files (`.github/workflows/*.yml` or equivalent) for a job that runs the format
+  script unconditionally.
+- A Markdown-specific config: `.markdownlint.json`/`.markdownlint.yml`, a `remark` config, or a
+  `.prettierrc` that isn't scoped away from `.md` files.
+
+If Markdown formatting is already enforced automatically, say so, and treat this skill's
+mechanical-formatting job as *running that same check manually* -- useful before committing, or
+against a file the automated path didn't reach (an out-of-scope file the user names explicitly, or
+a doc edited through a path that skipped the hook, e.g. `git commit --no-verify` or a web UI
+edit). A doc that's already been through a normal commit should already be clean; finding drift
+there is a signal something bypassed the hook, worth mentioning to the user, not just silently
+fixing.
+
+If nothing is configured, say that too, and treat the mechanical pass below as introducing a
+check, not enforcing an existing one -- flag that distinction to the user rather than implying a
+convention exists when it doesn't yet.
+
+## Mechanical formatting: reuse the repo's own tool, don't invent new rules
+
+Prettier is overwhelmingly the common default for Markdown and formats it out of the box using
+whatever `.prettierrc` the repo already has for its code -- so the default here is to point it at
+target `.md` files rather than invent bespoke mechanical rules, provided the repo already has
+Prettier installed:
+
+```bash
+npx --no-install prettier --check "<path-or-glob>"
+npx --no-install prettier --write "<path-or-glob>"
+```
+
+`--no-install` guarantees this resolves the repo's already-installed local `prettier` instead of
+npx fetching a version from the network. If a workspace has its own `prettier` version but no
+config file of its own, it resolves the nearest parent config -- check whether that's actually
+the intended target before assuming a monorepo's sub-package needs its own pass.
+
+Read the resolved config (`printWidth`, `proseWrap`, etc.) before running `--write`, and note in
+particular whether `proseWrap` is set. If it's unset, Prettier defaults to `preserve` -- it will
+not rewrap paragraphs, only touch list/table/whitespace mechanics. That's what makes a Prettier
+pass safe to treat as "mechanical": it cannot silently change how a paragraph reads. If a repo
+*does* set `proseWrap: always` (or similar), a Prettier run can reflow prose -- treat that as a
+structural-risk case worth flagging before running `--write` broadly, not as more of the same
+mechanical pass.
+
+## What formatters like Prettier do *not* fix: know the boundary before you touch anything
+
+Do not assume a Markdown formatter is a complete style checker. Prettier in particular does not:
+
+- Enforce heading hierarchy or level choice.
+- Enforce or add code-fence language tags.
+- Catch broken internal links, stale file-path references, or wording issues.
+
+Those require reading the docs and using judgment (see below).
+
+## Structural consistency: derive patterns from the repo itself
+
+Don't apply generic Markdown best-practice opinions -- read a representative sample of the repo's
+actual docs (its README, its `AGENTS.md`/`CONTRIBUTING.md`-equivalent, a handful of files under
+`docs/`) and derive what's *already* consistent there before flagging anything as wrong. Typical
+things worth checking once you know the repo's own pattern:
+
+- **Heading hierarchy**: does every file start at `#` (one per file, the title), then `##` for
+  major sections? Flag a file that skips a level or starts below `#` only if that's not already
+  how other files in the repo do it.
+- **List markers**: is `-` used consistently, or does the repo mix `-` and `*`? Flag inconsistency
+  within a file, not a repo-wide marker choice you'd prefer.
+- **Code-fence language tags**: are fenced blocks containing real shell/code commands tagged
+  consistently (`` ```bash ``, etc.) in the files that already have them? A bare fence around a
+  file-tree diagram or an abstract pattern illustration (not actual source in a language) is
+  usually fine as-is -- don't flag those as missing a tag.
+
+**Prose-wrap style is a common source of real, unresolved inconsistency** -- some files hard-wrap
+paragraphs at a fixed column, others write each paragraph as one long unwrapped line, and a single
+file sometimes mixes both across sections. Since `proseWrap` is usually unset (`preserve`), a
+formatter will never resolve this on its own -- it isn't a formatting bug, it's an undocumented
+split in authoring convention. **Do not pick one and rewrap the other's files or sections to
+match -- that's a wording-adjacent structural change.** Surface it as a call the user (or a
+follow-up issue) should make explicitly, and only rewrap after that's answered.
+
+## `.mdc`/tool-specific rule files: usually out of scope
+
+If the repo has tool-specific rule files (e.g. Cursor's `.cursor/rules/*.mdc`), treat those as a
+different document type with their own frontmatter contract that a generic Markdown formatter has
+no awareness of -- they are not general-purpose Markdown. Default to targeting only plain `.md`
+files (the README, docs, and other `.md` files the user explicitly names). If asked to format one
+of these tool-specific files, say so explicitly and stop rather than running a Markdown formatter
+against it unreviewed.
+
+## What's in scope by default
+
+- The repo's canonical conventions doc (README, `AGENTS.md`/`CONTRIBUTING.md`, etc.) and
+  everything under its main docs directory (commonly `docs/**/*.md`).
+- Any other `.md` file the user explicitly points at.
+- Anything the repo's own conventions mark off-limits (a deprecated/legacy directory, a scaffold
+  slated for removal) -- check for that kind of boundary doc before sweeping broadly.
+- A one-line include file with no prose of its own (e.g. a root file that just references another
+  doc) -- skip it rather than reporting it as untouched; there's nothing for this skill to do
+  there.
+
+## Workflow
+
+1. **Determine target files.** Default to the repo's canonical doc + its main docs directory if
+   the user doesn't name specific files. Confirm the target list back to the user if it's broader
+   than a file or two, so nothing unexpected gets swept in.
+
+2. **Run the formatter in check mode first**, don't jump straight to `--write`:
+
+   ```bash
+   npx --no-install prettier --check "<canonical-doc>" "docs/**/*.md"
+   ```
+
+   This tells you which files actually have mechanical drift before touching anything.
+
+3. **Apply mechanical fixes directly** to whatever `--check` flagged:
+
+   ```bash
+   npx --no-install prettier --write "<flagged files>"
+   ```
+
+   Then show the result with `git diff -- <flagged files>` so the user can see exactly what
+   changed -- list-marker indentation, table alignment, trailing newlines. If the diff contains
+   anything beyond whitespace/list/table mechanics, stop and treat it as a structural change
+   instead (see step 5) rather than reporting it as "just formatting."
+
+4. **Check structural consistency** (heading hierarchy, code-fence tags, list markers) against the
+   patterns you derived from the repo's own docs, for every target file, not just ones the
+   formatter flagged -- a Markdown formatter doesn't check any of this.
+
+5. **For anything structural** -- a heading-level fix, adding a missing language tag, or a
+   prose-wrap split -- propose the specific edit (the exact `Edit` you'd make) and get
+   confirmation before applying it. Don't fold these into the mechanical diff from step 3.
+
+6. **Report** what was applied directly (mechanical) vs. what's proposed and awaiting confirmation
+   (structural), file by file. If nothing needed fixing, say so plainly rather than manufacturing
+   findings.
