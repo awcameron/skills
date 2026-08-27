@@ -1,0 +1,40 @@
+{
+  "skill_name": "format-docs",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Can you format the markdown docs in this repo? README.md has some inconsistent list markers.",
+      "expected_output": "Discovers Prettier via package.json/.prettierrc, runs npx --no-install prettier --check then --write against README.md, reports the mechanical diff (list markers/whitespace only).",
+      "files": [],
+      "expectations": [
+        "Discovers and names Prettier as the formatter to use, citing package.json/.prettierrc as the source",
+        "Does not claim to use mdformat, dprint, or markdownlint-cli2",
+        "Attempts npx --no-install prettier (check and/or write), not a bare 'prettier' or a different tool's command",
+        "Report does not silently claim success if the npx command actually failed (e.g. due to no network access)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "format the markdown docs in this project",
+      "expected_output": "Discovers mdformat via pyproject.toml's [tool.mdformat] section (no package.json exists in this repo at all), checks the wrap setting before treating a write as mechanical (mdformat rewraps prose by default), and does not default to or mention Prettier as the tool being used.",
+      "files": [],
+      "expectations": [
+        "Discovers and names mdformat as the formatter to use, citing pyproject.toml's [tool.mdformat] section as the source",
+        "Explicitly notes there is no package.json in this repo (does not assume a JS/Prettier context by default)",
+        "Does not claim to use or default to Prettier as the tool being run",
+        "Mentions mdformat's default prose-rewrap behavior (or the --wrap flag) as a safety check before treating a write as mechanical"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "lint the docs for whitespace and list indentation issues",
+      "expected_output": "Discovers markdownlint-cli2 via .markdownlint-cli2.jsonc, runs it (not Prettier) to check/fix, and does not default to or mention Prettier as the tool being used.",
+      "files": [],
+      "expectations": [
+        "Discovers and names markdownlint-cli2 as the tool to use, citing .markdownlint-cli2.jsonc as the source",
+        "Does not claim to use or default to Prettier as the tool being run",
+        "Attempts npx --no-install markdownlint-cli2 (check and/or --fix), not a different tool's command"
+      ]
+    }
+  ]
+}
