@@ -3,8 +3,8 @@
 ## Option 1: Native skill discovery (recommended)
 
 Gemini CLI has a native skills system that auto-discovers `SKILL.md` files in `.gemini/skills/`
-or `.agents/skills/`. This repo already ships both as symlinks to the canonical `skills/`
-directory, so cloning it into a project and pointing either path at `skills/` is enough:
+or `.agents/skills/`. This repo already ships `.agents/skills` as a symlink to the canonical
+`skills/` directory, so cloning it into a project and pointing either path at `skills/` is enough:
 
 ```bash
 git clone https://github.com/<your-github-username>/agent-skills.git

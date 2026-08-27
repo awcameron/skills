@@ -6,13 +6,13 @@ globally, including `.claude/skills/`, `.cursor/skills/`, `.agents/skills/`, and
 
 ## Project setup
 
-This repo already ships a `.cursor/skills` symlink to the canonical `skills/` directory. Clone it
-alongside your project and symlink that path in:
+Clone this repo alongside your project and symlink its canonical `skills/` directory into
+whichever compatible path you prefer in *your* project:
 
 ```bash
 git clone https://github.com/<your-github-username>/agent-skills.git
 cd your-project
-ln -s ../agent-skills/skills .cursor/skills
+ln -s ../agent-skills/skills .cursor/skills    # or .claude/skills / .agents/skills -- any works
 ```
 
 Cursor's Agent then has every skill available automatically -- it decides when a skill is
