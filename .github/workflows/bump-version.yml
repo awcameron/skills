@@ -1,0 +1,69 @@
+name: Bump version
+
+# Manual trigger, not automatic on every merge -- a version bump is a deliberate release act,
+# not something that should fire on every doc/chore PR. Opens a PR instead of committing directly
+# to main, consistent with how every other change in this repo lands (see CONTRIBUTING /
+# create-pr skill).
+#
+# Note: a PR opened with the default GITHUB_TOKEN does not itself trigger other workflows
+# (CI, PR title lint) -- that's a deliberate GitHub anti-recursion safeguard, not a bug here.
+# Re-run those checks manually on the opened PR, or merge a follow-up empty commit to trigger
+# them, until/unless a PAT is wired in to change that.
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version bump type"
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+
+      - name: Run validate + eval before bumping
+        run: |
+          npm run validate
+          npm run eval
+
+      - name: Bump package.json version
+        id: bump
+        run: |
+          npm version "${{ github.event.inputs.bump }}" --no-git-tag-version
+          echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Sync plugin.json version
+        run: npm run sync-plugin-version
+
+      - name: Open version-bump PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.bump.outputs.version }}
+        run: |
+          BRANCH="chore/bump-version-${VERSION}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add package.json .claude-plugin/plugin.json
+          git commit -m "chore: bump version to ${VERSION}"
+          git push origin "$BRANCH"
+          gh pr create \
+            --title "chore: bump version to ${VERSION}" \
+            --body "Automated ${{ github.event.inputs.bump }} version bump via workflow_dispatch, keeping package.json and .claude-plugin/plugin.json in sync." \
+            --base main \
+            --head "$BRANCH"
