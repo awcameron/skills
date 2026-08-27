@@ -7,6 +7,7 @@ on:
       - "evals/**"
       - "scripts/**"
       - "package.json"
+      - "**/*.md"
   push:
     branches: [main]
     paths:
@@ -14,6 +15,7 @@ on:
       - "evals/**"
       - "scripts/**"
       - "package.json"
+      - "**/*.md"
 
 jobs:
   validate-and-eval:

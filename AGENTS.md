@@ -33,9 +33,10 @@ Nothing is pushed directly to `main` — every change, including a one-line doc 
 
 ## CI coverage gap
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) (`npm run validate` + `npm run eval`) only
-runs on PRs/pushes touching `skills/**`, `evals/**`, `scripts/**`, or `package.json`. A docs-only
-or workflow-only PR gets no automated check — review those by hand before merging.
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) (`npm run validate` + `npm run eval`) runs
+on PRs/pushes touching `skills/**`, `evals/**`, `scripts/**`, `package.json`, or any `.md` file. A
+workflow-only PR (e.g. editing a `.github/workflows/*.yml` file with no accompanying doc/skill
+change) still gets no automated check — review those by hand before merging.
 
 ## Post-merge cleanup
 
