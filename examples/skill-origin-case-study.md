@@ -1,11 +1,10 @@
 # Case study: where these skills actually came from
 
 The skills in this repo weren't drafted speculatively — they were built for, and iterated on
-inside, a real production SaaS monorepo (a NestJS + React + Postgres app, private repo, available
-on request). Each one went through the same loop: something went wrong or got noticed in a real
-session, the skill got a rule added to catch it next time, and — for this repo — the rule got
-rewritten to drop the original project's specific facts in favor of a "go find out what *this*
-repo does" step in the same place.
+inside, a real, actively-developed production codebase. Each one went through the same loop:
+something went wrong or got noticed in a real session, the skill got a rule added to catch it
+next time, and — for this repo — the rule got rewritten to drop the original project's specific
+facts in favor of a "go find out what *this* repo does" step in the same place.
 
 A few concrete examples of what that looked like before the genericizing pass:
 
