@@ -112,3 +112,38 @@ export const b = base + 1;
 Extracting the piece both modules actually depend on into a third module (or restructuring so the
 dependency is genuinely one-directional) resolves the cycle instead of relying on both modules'
 own load order, and function-body deferral, to keep saving it.
+
+## Prefer named exports -- a default export's name is a fiction
+
+A default export has no fixed name of its own; every importer picks whatever name it wants, and
+nothing keeps those names consistent with each other or with the file that defines it.
+
+**Before:**
+
+```ts
+// formatDate.ts
+export default function formatDate(date: Date): string { /* ... */ }
+
+// consumer.ts
+import formatToday from './formatDate'; // any name compiles -- typos and drift both go unflagged
+```
+
+A rename of the source function doesn't propagate anywhere; every importer's chosen name is
+independent of it. An automated rename tool also can't reliably rename a default export's local
+name across the codebase the way it can a named one, because there's no shared identifier to
+search for.
+
+**After:**
+
+```ts
+// formatDate.ts
+export function formatDate(date: Date): string { /* ... */ }
+
+// consumer.ts
+import { formatDate } from './formatDate';
+```
+
+Now every importer uses the same name, a rename tool can update every call site in one pass, and a
+typo'd import name is a compile error instead of a silently different local binding. Reach for a
+default export only where the ecosystem specifically expects one (a framework's page/route file
+convention, e.g. Next.js's `pages/`), not as the default choice for an ordinary module.

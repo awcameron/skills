@@ -1,6 +1,6 @@
 ---
 name: idiomatic-typescript
-description: Staff/Principal-Engineer-level best practices for writing and reviewing TypeScript and JavaScript functions and classes -- the judgment calls a linter or formatter can't enforce, like comment discipline, type-casting discipline, function and class design, error-handling shape, promise/async handling, naming, immutability, and import organization. Use this whenever writing new TS/JS code, reviewing or refactoring existing code, or when the user asks things like "clean this up," "is this idiomatic," "review this for best practices," "does this look right," or describes a function/class as messy or hard to follow -- even if they don't name a specific practice or use the word "style."
+description: Staff/Principal-Engineer-level best practices for writing and reviewing TypeScript and JavaScript functions and classes -- the judgment calls a linter or formatter can't enforce, like comment discipline, type-casting discipline, function and class design, error-handling shape, promise/async handling, naming, immutability, import organization, type narrowing/discriminated unions, and enum/interface-vs-type design. Use this whenever writing new TS/JS code, reviewing or refactoring existing code, or when the user asks things like "clean this up," "is this idiomatic," "review this for best practices," "does this look right," or describes a function/class as messy or hard to follow -- even if they don't name a specific practice or use the word "style."
 ---
 
 # Idiomatic TypeScript/JavaScript
@@ -18,12 +18,12 @@ config catches.
 formatting rules without thinking about them. You shouldn't need to stop and consult a reference
 file for every function -- the principles below should start to feel like instinct.
 
-**Reviewing or refactoring existing code**: treat the nine categories below as lenses, not a
-checklist to run top-to-bottom against every single function. Skim the code, notice which lenses
-actually apply (a 5-line pure function doesn't need the class-design lens; a class with no
-branching doesn't need the error-handling lens), and open the matching reference file only for
-those. Forcing every category onto every piece of code produces noise, not signal -- exactly the
-kind of review a junior engineer gives and a Staff Engineer doesn't.
+**Reviewing or refactoring existing code**: treat the categories below as lenses, not a checklist
+to run top-to-bottom against every single function. Skim the code, notice which lenses actually
+apply (a 5-line pure function doesn't need the class-design lens; a class with no branching
+doesn't need the error-handling lens), and open the matching reference file only for those.
+Forcing every category onto every piece of code produces noise, not signal -- exactly the kind of
+review a junior engineer gives and a Staff Engineer doesn't.
 
 **When flagging something**: point at the concrete failure mode, not just the rule name. "This
 comment restates the code below it" is useful; "violates comment best practices" is not. Every
@@ -51,10 +51,12 @@ silently deviating or silently complying.
 | [`async.md`](references/async.md) | A `Promise`-returning call isn't awaited, an `async` function never awaits anything, or awaits run one after another with no data dependency between them. |
 | [`naming.md`](references/naming.md) | A name needs its type or implementation read to understand what it holds or does. |
 | [`immutability.md`](references/immutability.md) | Something reassigns with `let` where `const` would do, mutates a function's argument, or mutates an array/object another part of the program still holds a reference to. |
-| [`imports-modules.md`](references/imports-modules.md) | A barrel/index file uses `export *`, or import order looks arbitrary. |
+| [`imports-modules.md`](references/imports-modules.md) | A barrel/index file uses `export *`, import order looks arbitrary, or a module reaches for a default export. |
+| [`narrowing.md`](references/narrowing.md) | A shape has optional fields that are never all present together, or the same runtime type check is repeated inline instead of named. |
+| [`type-design.md`](references/type-design.md) | A numeric/string `enum` is being declared, or the same object shape is duplicated across `interface` and `type` with no extension or union involved. |
 
 Each file is short and self-contained -- read the one that matches what you're looking at, not
-all nine up front.
+all of them up front.
 
 ## Adapting this to a specific repo
 
