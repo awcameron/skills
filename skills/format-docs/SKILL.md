@@ -190,8 +190,14 @@ against it unreviewed.
    the user doesn't name specific files. Confirm the target list back to the user if it's broader
    than a file or two, so nothing unexpected gets swept in.
 
-2. **Run the discovered tool's check command first**, don't jump straight to writing. E.g. for
-   Prettier:
+2. **Before running anything, read the discovered tool's prose-rewrap default** (see "Know each
+   tool's prose-rewrap default" above) -- do this as part of discovery, not as an afterthought
+   right before writing. Knowing upfront whether the tool is safe-by-default (Prettier,
+   markdownlint-cli2) or needs an explicit flag checked (mdformat, dprint) shapes how you read its
+   next result: a tool with a risky default means even its *check* output needs a second look
+   before you treat anything it flags as simple mechanical drift.
+
+3. **Run the discovered tool's check command**, don't jump straight to writing. E.g. for Prettier:
 
    ```bash
    npx --no-install prettier --check "<canonical-doc>" "docs/**/*.md"
@@ -200,24 +206,24 @@ against it unreviewed.
    (Substitute the matching check command from the table above for whatever Step 0 found instead.)
    This tells you which files actually have mechanical drift before touching anything.
 
-3. **Apply mechanical fixes directly** to whatever the check step flagged, using that same tool's
+4. **Apply mechanical fixes directly** to whatever the check step flagged, using that same tool's
    write command (e.g. `npx --no-install prettier --write "<flagged files>"`, or `dprint fmt`,
    `mdformat`, etc. per the table above) -- provided its prose-rewrap default checked out safe in
-   the previous section.
+   step 2.
 
    Then show the result with `git diff -- <flagged files>` so the user can see exactly what
    changed -- list-marker indentation, table alignment, trailing newlines. If the diff contains
    anything beyond whitespace/list/table mechanics, stop and treat it as a structural change
-   instead (see step 5) rather than reporting it as "just formatting."
+   instead (see step 6) rather than reporting it as "just formatting."
 
-4. **Check structural consistency** (heading hierarchy, code-fence tags, list markers) against the
+5. **Check structural consistency** (heading hierarchy, code-fence tags, list markers) against the
    patterns you derived from the repo's own docs, for every target file, not just ones the
    formatter flagged -- a Markdown formatter doesn't check any of this.
 
-5. **For anything structural** -- a heading-level fix, adding a missing language tag, or a
+6. **For anything structural** -- a heading-level fix, adding a missing language tag, or a
    prose-wrap split -- propose the specific edit (the exact `Edit` you'd make) and get
-   confirmation before applying it. Don't fold these into the mechanical diff from step 3.
+   confirmation before applying it. Don't fold these into the mechanical diff from step 4.
 
-6. **Report** what was applied directly (mechanical) vs. what's proposed and awaiting confirmation
+7. **Report** what was applied directly (mechanical) vs. what's proposed and awaiting confirmation
    (structural), file by file. If nothing needed fixing, say so plainly rather than manufacturing
    findings.
