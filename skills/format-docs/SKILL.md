@@ -6,12 +6,12 @@ description: >-
   "lint the docs", "check doc formatting", "clean up the docs", "fix markdown formatting", or
   points at a `.md` file and asks for formatting/consistency fixes -- also "does this doc look
   right" or "check this markdown" for a doc-focused request. Discovers whatever Markdown formatter
-  the repo already uses (Prettier is the common default) and applies its mechanical formatting
-  directly (whitespace, list-marker indentation, table alignment, trailing newlines), showing the
-  diff. Flags but does not silently apply anything that changes wording, restructures headings, or
-  resolves a cross-doc inconsistency (e.g. prose-wrap style) -- those are proposed for the user to
-  confirm. Does not review code (see `review-code`) and is not the same as a repo's TS/JS
-  formatting, which usually already runs via its own pre-commit hook and CI.
+  the repo already uses (Prettier, dprint, markdownlint-cli2, mdformat, remark) and applies its
+  mechanical formatting directly (whitespace, list-marker indentation, table alignment, trailing
+  newlines), showing the diff. Flags but does not silently apply anything that changes wording,
+  restructures headings, or resolves a cross-doc inconsistency (e.g. prose-wrap style) -- those
+  are proposed for the user to confirm. Does not review code (see `review-code`) and is not the
+  same as a repo's own code formatter, usually run via its own pre-commit hook/CI.
 allowed-tools:
   [
     Read,
@@ -19,6 +19,12 @@ allowed-tools:
     Glob,
     Edit,
     Bash(npx --no-install prettier:*),
+    Bash(npx --no-install dprint:*),
+    Bash(dprint:*),
+    Bash(npx --no-install markdownlint-cli2:*),
+    Bash(npx --no-install remark:*),
+    Bash(mdformat:*),
+    Bash(python -m mdformat:*),
     Bash(git diff:*),
     Bash(git status:*),
   ]
@@ -42,15 +48,25 @@ confirmation on something that's genuinely just whitespace.
 ## Step 0: Find out what's already enforced
 
 Before assuming there's a gap to fill, check whether the repo already formats/lints its Markdown
-automatically -- most of the time there's already a real answer, and re-discovering it is cheap:
+automatically -- most of the time there's already a real answer, and re-discovering it is cheap.
+Don't assume the tool is Prettier -- a repo with no `package.json` at all (a Python, Rust, or Go
+project) can still have a real Markdown formatter configured:
 
 - Root (and per-workspace) `package.json` `scripts` for a `format`/`format:check`/`lint:md` entry,
   and what glob it targets.
-- A pre-commit hook (`.husky/`, `lint-staged.config.*`, `.lintstagedrc*`) for a `"**/*.md"` entry.
+- A pre-commit hook (`.husky/`, `lint-staged.config.*`, `.lintstagedrc*`, or a non-JS equivalent
+  like `.pre-commit-config.yaml`) for a `"**/*.md"` (or `\.md$`) entry.
 - CI workflow files (`.github/workflows/*.yml` or equivalent) for a job that runs the format
   script unconditionally.
-- A Markdown-specific config: `.markdownlint.json`/`.markdownlint.yml`, a `remark` config, or a
-  `.prettierrc` that isn't scoped away from `.md` files.
+- Tool-specific config files, since more than one of these can coexist:
+  - `.prettierrc*` / a `prettier` dependency (Prettier) -- not scoped away from `.md` files.
+  - `dprint.json`/`dprint.jsonc` with a markdown plugin entry (dprint).
+  - `.markdownlint.json`/`.yml` or `.markdownlint-cli2.jsonc` (markdownlint-cli2).
+  - `pyproject.toml` `[tool.mdformat]`, or `mdformat` in a `requirements*`/lockfile (mdformat).
+  - `.remarkrc*` that isn't just Prettier's own Markdown support underneath (standalone remark).
+
+If more than one of these is present, don't just pick one -- flag it to the user; it's usually
+leftover config from a migration, and running the wrong one can produce a confusing diff.
 
 If Markdown formatting is already enforced automatically, say so, and treat this skill's
 mechanical-formatting job as *running that same check manually* -- useful before committing, or
@@ -64,34 +80,58 @@ If nothing is configured, say that too, and treat the mechanical pass below as i
 check, not enforcing an existing one -- flag that distinction to the user rather than implying a
 convention exists when it doesn't yet.
 
-## Mechanical formatting: reuse the repo's own tool, don't invent new rules
+## Mechanical formatting: reuse whatever tool the repo already uses, don't invent new rules
 
-Prettier is overwhelmingly the common default for Markdown and formats it out of the box using
-whatever `.prettierrc` the repo already has for its code -- so the default here is to point it at
-target `.md` files rather than invent bespoke mechanical rules, provided the repo already has
-Prettier installed:
+Act on whatever Step 0 actually found configured -- don't default to Prettier just because it's
+the most common case. Match the check/write pair to the tool that's actually there:
 
-```bash
-npx --no-install prettier --check "<path-or-glob>"
-npx --no-install prettier --write "<path-or-glob>"
-```
+| Tool | Found via | Check | Write |
+|---|---|---|---|
+| Prettier | `.prettierrc*`, a `prettier` dependency, a `format`/`format:check` script | `npx --no-install prettier --check "<path>"` | `npx --no-install prettier --write "<path>"` |
+| dprint | `dprint.json`/`.jsonc` with a markdown plugin | `dprint check` (scoped by its config, or `--` a path) | `dprint fmt` |
+| markdownlint-cli2 | `.markdownlint.json`/`.yml`/`.markdownlint-cli2.jsonc` | `npx --no-install markdownlint-cli2 "<path>"` | `npx --no-install markdownlint-cli2 --fix "<path>"` |
+| mdformat | `pyproject.toml` `[tool.mdformat]`, or an `mdformat` dependency | `mdformat --check "<path>"` | `mdformat "<path>"` |
+| remark (standalone) | `.remarkrc*` not just underlying Prettier | `npx --no-install remark "<path>" --frail` | `npx --no-install remark "<path>" -o` |
 
-`--no-install` guarantees this resolves the repo's already-installed local `prettier` instead of
-npx fetching a version from the network. If a workspace has its own `prettier` version but no
-config file of its own, it resolves the nearest parent config -- check whether that's actually
-the intended target before assuming a monorepo's sub-package needs its own pass.
+If nothing is configured, Prettier remains the reasonable **default to propose** -- most repos
+that touch JS/TS tooling at all have it available and it formats Markdown out of the box with no
+extra setup. But say explicitly that this introduces a check rather than enforcing an existing
+one (per Step 0), and confirm before running any `--write`/`fmt` step against real files.
 
-Read the resolved config (`printWidth`, `proseWrap`, etc.) before running `--write`, and note in
-particular whether `proseWrap` is set. If it's unset, Prettier defaults to `preserve` -- it will
-not rewrap paragraphs, only touch list/table/whitespace mechanics. That's what makes a Prettier
-pass safe to treat as "mechanical": it cannot silently change how a paragraph reads. If a repo
-*does* set `proseWrap: always` (or similar), a Prettier run can reflow prose -- treat that as a
-structural-risk case worth flagging before running `--write` broadly, not as more of the same
-mechanical pass.
+`--no-install` (Prettier, markdownlint-cli2, remark) guarantees npx resolves the repo's
+already-installed local binary instead of fetching one from the network -- never drop it. For a
+workspace with its own tool version but no config of its own, check whether it resolves the
+nearest parent config, and whether that's actually the intended target before assuming a
+monorepo sub-package needs its own pass.
 
-## What formatters like Prettier do *not* fix: know the boundary before you touch anything
+## Know each tool's prose-rewrap default before running --write
 
-Do not assume a Markdown formatter is a complete style checker. Prettier in particular does not:
+The property that makes a formatting pass "mechanical" (safe to apply without confirmation) is
+that it cannot silently change how a paragraph reads -- it only touches whitespace, list markers,
+table alignment, trailing newlines. That property is **not** universal across tools, so check the
+resolved config for whichever one applies before assuming it holds:
+
+- **Prettier**: `proseWrap` defaults to `preserve` -- safe by default. If a repo's config sets
+  `proseWrap: always` (or similar), a Prettier run *can* reflow prose -- treat that as
+  structural risk (see below), not a mechanical pass.
+- **mdformat**: reflows/wraps paragraphs to a fixed width **by default**, unless the repo passes
+  `--wrap=no`/`--wrap=preserve` or sets the equivalent option. Confirm that flag is set before
+  treating an mdformat run as mechanical -- the unflagged default is not safe to apply without
+  confirmation.
+- **dprint's markdown plugin**: check its resolved `textWrap` setting the same way -- it has no
+  universal safe default to assume.
+- **markdownlint-cli2 `--fix`**: fixes lint violations (list markers, trailing whitespace, heading
+  spacing) and does not reflow prose -- safe by default.
+- **remark**: reflow behavior depends entirely on which plugins/options are configured (e.g.
+  `remark-stringify` width settings) -- read the config rather than assuming either behavior.
+
+When a given tool's config doesn't make the answer clear, treat the pass as structural risk and
+confirm before writing, rather than assuming mechanical safety by default.
+
+## What these formatters do *not* fix: know the boundary before you touch anything
+
+None of the tools above are a complete style checker. Beyond mechanical whitespace/list/table
+fixes (and, for markdownlint, its specific lint rules), none of them:
 
 - Enforce heading hierarchy or level choice.
 - Enforce or add code-fence language tags.
@@ -150,19 +190,20 @@ against it unreviewed.
    the user doesn't name specific files. Confirm the target list back to the user if it's broader
    than a file or two, so nothing unexpected gets swept in.
 
-2. **Run the formatter in check mode first**, don't jump straight to `--write`:
+2. **Run the discovered tool's check command first**, don't jump straight to writing. E.g. for
+   Prettier:
 
    ```bash
    npx --no-install prettier --check "<canonical-doc>" "docs/**/*.md"
    ```
 
+   (Substitute the matching check command from the table above for whatever Step 0 found instead.)
    This tells you which files actually have mechanical drift before touching anything.
 
-3. **Apply mechanical fixes directly** to whatever `--check` flagged:
-
-   ```bash
-   npx --no-install prettier --write "<flagged files>"
-   ```
+3. **Apply mechanical fixes directly** to whatever the check step flagged, using that same tool's
+   write command (e.g. `npx --no-install prettier --write "<flagged files>"`, or `dprint fmt`,
+   `mdformat`, etc. per the table above) -- provided its prose-rewrap default checked out safe in
+   the previous section.
 
    Then show the result with `git diff -- <flagged files>` so the user can see exactly what
    changed -- list-marker indentation, table alignment, trailing newlines. If the diff contains
