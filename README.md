@@ -48,7 +48,7 @@ Every skill also ships a matching slash command (`.claude/commands/<name>.md`,
 Every skill here started as something built for a real, actively-developed production codebase —
 not a toy or a demo — and was rewritten to drop that project's specific facts (its stack, its file
 layout, its branch-naming precedent) in favor of a "discover this repo's own conventions first"
-step in the same place. See [`examples/summersync-case-study.md`](examples/summersync-case-study.md)
+step in the same place. See [`examples/skill-origin-case-study.md`](examples/skill-origin-case-study.md)
 for the concrete story behind a few of them, including a real skill-drift bug this repo's own
 `doc-drift-check` skill was built to catch.
 
