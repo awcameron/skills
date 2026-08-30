@@ -112,6 +112,13 @@ Every one of these can produce a green test over broken code:
 - **A "called with" assertion while something fires more than once.** It matches if *any* call
   matches the expected arguments, so it says nothing about how many calls happened. When "exactly
   once" is part of the behaviour, assert the call count too.
+- **The mirror image: a call-count assertion standing in for a "called with" one.** A test named
+  for what a call was scoped to or invoked with (an id, a filter, a specific argument) but that
+  only asserts `toHaveBeenCalledTimes(n)` proves nothing about *which* id or argument was used —
+  it would pass identically if the code queried the wrong thing entirely, as long as it queried
+  something the same number of times. If the mock doesn't capture its call arguments, it can't
+  back up a claim about what was passed; either assert on the captured arguments or rename the
+  test to describe what it actually checks.
 - **A fixture that makes the case unreachable.** A spec named for disambiguating repeated items
   passes only because the fixture happens to contain just one. If the test is about N items, the
   fixture needs N.

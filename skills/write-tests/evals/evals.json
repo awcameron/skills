@@ -1,0 +1,17 @@
+{
+  "skill_name": "write-tests",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Can you write tests for apps/web/src/lib/email-verification.ts? It doesn't have any coverage yet.",
+      "expected_output": "A new vitest spec file (colocated, matching the repo's *.test.ts naming) covering getEmailVerificationStatus's three branches (signed-out -> null, verified true, verified false via email_confirmed_at) and requireEmailVerificationStatus's redirect-on-signed-out behavior, using the repo's actual vi.mock('./supabase', ...) convention (see supabase-session.test.ts). The test should be run and shown passing, and ideally shown to fail against a deliberately-broken version of the logic.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Write tests for MeRepository.findCurrentUser in apps/api/src/modules/me/me.repository.ts -- it's not covered right now.",
+      "expected_output": "A new vitest spec file covering the happy path plus both DataIntegrityError branches (missing user row, missing org row), using the repo's actual Drizzle-chainable-mock + withRlsContext mocking convention (see rooms.repository.spec.ts / camps.repository.spec.ts) rather than inventing a different mocking approach. Run and shown passing.",
+      "files": []
+    }
+  ]
+}
