@@ -9,10 +9,10 @@ description: >-
   unrelated noise. Use this skill when the user asks to "upgrade X", "bump this dependency",
   "update to the latest version of Y", "is it safe to upgrade X", or points at an outdated or
   flagged-vulnerable package and asks to update it. Discovers whatever package manager the repo
-  already uses (npm/yarn/pnpm, pip/poetry/uv, cargo, go modules, bundler, etc.) rather than
-  assuming one. Does not add a brand-new dependency (a different, judgment-heavy decision) -- only
-  bumps one already in use.
-allowed-tools: [Read, Grep, Glob, Edit, WebFetch, Bash(git diff:*), Bash(git log:*), Bash(git show:*), Bash(npm outdated:*), Bash(npm view:*), Bash(npm install:*), Bash(yarn upgrade:*), Bash(yarn info:*), Bash(pnpm update:*), Bash(pnpm outdated:*), Bash(pip list:*), Bash(poetry show:*), Bash(poetry add:*), Bash(cargo update:*), Bash(cargo outdated:*), Bash(go get:*), Bash(go list:*), Bash(npm test:*), Bash(npm run test:*), Bash(pytest:*), Bash(cargo test:*), Bash(go test:*)]
+  already uses (npm/yarn/pnpm, pip/poetry/uv, cargo, go modules, Maven, Gradle, bundler, etc.)
+  rather than assuming one. Does not add a brand-new dependency (a different, judgment-heavy
+  decision) -- only bumps one already in use.
+allowed-tools: [Read, Grep, Glob, Edit, WebFetch, Bash(git diff:*), Bash(git log:*), Bash(git show:*), Bash(npm outdated:*), Bash(npm view:*), Bash(npm install:*), Bash(yarn upgrade:*), Bash(yarn info:*), Bash(pnpm update:*), Bash(pnpm outdated:*), Bash(pip list:*), Bash(poetry show:*), Bash(poetry add:*), Bash(cargo update:*), Bash(cargo outdated:*), Bash(go get:*), Bash(go list:*), Bash(mvn versions:display-dependency-updates:*), Bash(mvn versions:use-latest-releases:*), Bash(mvn versions:set-property:*), Bash(mvn dependency:tree:*), Bash(./gradlew dependencies:*), Bash(./gradlew dependencyUpdates:*), Bash(npm test:*), Bash(npm run test:*), Bash(pytest:*), Bash(cargo test:*), Bash(go test:*), Bash(mvn test:*), Bash(./gradlew test:*)]
 ---
 
 # Upgrade Dependency
@@ -23,9 +23,13 @@ changes -- not "bump and see what breaks."
 ## Step 1: Determine the target and discover the repo's own package manager
 
 Which package, its currently-installed version, and the target (a named version, or
-"latest"/"outdated" if the user didn't say). Confirm the manager from the lockfile actually
-present (`package-lock.json`/`yarn.lock`/`pnpm-lock.yaml`, `poetry.lock`, `Cargo.lock`, `go.sum`)
-rather than assuming one.
+"latest"/"outdated" if the user didn't say). Confirm the manager from what's actually present --
+usually a lockfile (`package-lock.json`/`yarn.lock`/`pnpm-lock.yaml`, `poetry.lock`, `Cargo.lock`,
+`go.sum`), but **not every ecosystem has one by convention**: Maven resolves from `pom.xml` alone
+with no lockfile at all, and Gradle's dependency locking (`gradle.lockfile`) is opt-in and often
+absent even in a real Gradle project. For those, key discovery off the manifest/build file itself
+(`pom.xml`, `build.gradle`/`build.gradle.kts`, `settings.gradle[.kts]`) rather than expecting a
+lockfile to confirm it.
 
 **When more than one version of the same package is already live** (e.g. one workspace pinned to
 an old major while a transitive dependency elsewhere already pulled in a newer one), "upgrade to
@@ -58,6 +62,13 @@ A breaking change the repo's code never touches is noise here, not a risk. Only 
 
 `npm install pkg@version`, `poetry add pkg@version`, `cargo update -p pkg --precise version`, etc.
 -- never by hand-editing a version string and leaving the lockfile stale.
+
+**Maven and Gradle don't have a single "install this version" command** the way npm/poetry/cargo
+do -- the version lives directly in the manifest. Use `mvn versions:set-property`/`mvn
+versions:use-latest-releases -Dincludes=<pkg>` where the plugin's already in the build, or edit the
+`<version>`/property in `pom.xml` directly; for Gradle, edit the version in `build.gradle[.kts]` or
+its version catalog (`gradle/libs.versions.toml`) if the repo uses one. Either way this is still
+"the manager's own mechanism" in spirit: the source of truth for the version, not a copy of it.
 
 **Installing the version and actually deduplicating a workspace tree are different outcomes.** In
 a monorepo, a plain install can leave several copies of the same package nested under different
