@@ -18,7 +18,7 @@ instructions. Verify with `/skills list`.
 
 ## Option 2: Slash commands
 
-The repo also ships 10 slash commands under `.gemini/commands/` -- one thin wrapper per skill,
+The repo also ships 11 slash commands under `.gemini/commands/` -- one thin wrapper per skill,
 for explicit invocation instead of waiting on auto-discovery:
 
 | Command | Skill it invokes |
@@ -27,6 +27,7 @@ for explicit invocation instead of waiting on auto-discovery:
 | `/write-tests` | `write-tests` |
 | `/diagnose-bug` | `diagnose-bug` |
 | `/fix-bug` | `fix-bug` |
+| `/upgrade-dependency` | `upgrade-dependency` |
 | `/create-pr` | `create-pr` |
 | `/doc-fact-check` | `doc-fact-check` |
 | `/format-docs` | `format-docs` |
