@@ -83,6 +83,44 @@ itself as the source of truth instead:
 Treat these the same way as canonical docs: cite what you actually checked (the file path, the
 git command's real output, the script line) in the finding, not "seems outdated."
 
+**When a claim is about what's actually deployed or enabled, more than one file in the repo can
+plausibly answer it -- and only one of them reflects reality.** A project can have a migrations
+directory that's genuinely applied to production alongside a separate one an ORM generates for
+local dev or CI (or a feature flag file next to the code path it's supposed to gate, or a staging
+config next to a prod one). The trap is subtle: the *first* candidate a grep turns up is often a
+local/CI-only one, because that's the one a test or verify script builds fresh on every run and
+therefore the one with the most obvious, quotable assertion (an `EXPECT_*` constant, a "Builds the
+schema from scratch and asserts N tables" comment) -- exactly the kind of concrete, checkable fact
+this skill otherwise wants you to prefer. That concreteness is not the same as correctness: a
+script asserting something about a database *it just built locally* proves the schema is defined
+somewhere, not that it's live in the system users actually hit.
+
+**This applies whether or not the doc's own sentence says "production" or "live."** Most claims
+about security enforcement, access control, or what a system currently does for real users are
+implicitly claims about the deployed system, not about what the code is capable of once built --
+a doc rarely bothers spelling out "in production" for a security claim any more than it spells out
+"when you're breathing" for a claim about a running process. The tell isn't the doc's wording, it's
+the *subject*: ask whether this fact could plausibly differ between a fresh local build and what's
+actually live for real users (a security policy, a feature's availability, a deploy target). If
+it could, treat it as exactly this kind of claim regardless of whether the sentence in front of you
+happens to say so. Before treating such a count or flag as settled:
+
+- **Ask whether a second candidate exists before trusting the first.** Search the whole repo for
+  the general concept (`grep -ri` for the doc's actual keyword -- "migration", "row level
+  security", "feature flag" -- not just the specific path the first hit came from), since a
+  same-sounding fact can live in two differently-structured places (e.g. an ORM's numbered
+  migrations next to a separately-versioned, timestamp-named directory the actual database
+  provider applies).
+- **Look for what a deploy step actually pushes**, not what a local script rebuilds. A CI
+  workflow, `Makefile` target, or `db push`/`migrate:deploy`-style command that names one specific
+  directory is the tell for which one governs the live system; a script that starts from an empty
+  database and reports "N tables" is proving its own fixture, not production.
+- **Grep the docs directory itself for the same keyword**, not just the code. A companion doc
+  covering the same topic in more careful language is often the fastest way to discover a fact has
+  more nuance than the doc in front of you assumes -- cheaper than re-deriving it from the
+  codebase alone, and two docs quietly disagreeing about the same claim (one already corrected) is
+  itself exactly the kind of drift this skill exists to catch.
+
 ## Workflow
 
 1. **Read the target doc(s).** If the user pointed at a specific file (including a skill file),
