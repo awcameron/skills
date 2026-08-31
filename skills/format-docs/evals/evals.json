@@ -35,6 +35,18 @@
         "Does not claim to use or default to Prettier as the tool being run",
         "Attempts npx --no-install markdownlint-cli2 (check and/or --fix), not a different tool's command"
       ]
+    },
+    {
+      "id": 4,
+      "prompt": "clean up the markdown formatting across the repo, we use biome for everything",
+      "expected_output": "Discovers biome.json/.jsonc, but does not assume it covers Markdown just because it exists -- checks whether its markdown formatter is actually configured/enabled before treating a biome check/write as safe, and does not default to Prettier.",
+      "files": [],
+      "expectations": [
+        "Discovers and names Biome as the tool the repo uses, citing biome.json/.jsonc as the source",
+        "Explicitly checks or questions whether Biome's markdown formatting is actually enabled/covers .md files rather than assuming it because biome.json exists",
+        "Does not default to or mention Prettier as the tool being run",
+        "Does not claim a prose-rewrap default for Biome without checking the resolved config/version"
+      ]
     }
   ]
 }

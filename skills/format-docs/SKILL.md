@@ -25,8 +25,11 @@ allowed-tools:
     Bash(npx --no-install remark:*),
     Bash(mdformat:*),
     Bash(python -m mdformat:*),
+    Bash(npx --no-install biome:*),
+    Bash(biome:*),
     Bash(git diff:*),
     Bash(git status:*),
+    Bash(scripts/detect_formatter.sh:*),
   ]
 ---
 
@@ -50,7 +53,18 @@ confirmation on something that's genuinely just whitespace.
 Before assuming there's a gap to fill, check whether the repo already formats/lints its Markdown
 automatically -- most of the time there's already a real answer, and re-discovering it is cheap.
 Don't assume the tool is Prettier -- a repo with no `package.json` at all (a Python, Rust, or Go
-project) can still have a real Markdown formatter configured:
+project) can still have a real Markdown formatter configured.
+
+Run the bundled scan first instead of grepping for each config file by hand:
+
+```bash
+scripts/detect_formatter.sh <repo-root>
+```
+
+It checks in one pass for everything below and prints what it found (or says plainly that nothing
+is configured). Treat its output as a lead to verify, not a final answer -- it flags *candidate*
+config, but you still need to read the flagged file when the setup is ambiguous (e.g. it can't tell
+you what a `dprint.json` markdown plugin's `textWrap` is set to, only that the plugin is present):
 
 - Root (and per-workspace) `package.json` `scripts` for a `format`/`format:check`/`lint:md` entry,
   and what glob it targets.
@@ -64,9 +78,13 @@ project) can still have a real Markdown formatter configured:
   - `.markdownlint.json`/`.yml` or `.markdownlint-cli2.jsonc` (markdownlint-cli2).
   - `pyproject.toml` `[tool.mdformat]`, or `mdformat` in a `requirements*`/lockfile (mdformat).
   - `.remarkrc*` that isn't just Prettier's own Markdown support underneath (standalone remark).
+  - `biome.json`/`biome.jsonc` (Biome) -- its Markdown formatter is newer than the rest of its
+    toolchain and sometimes disabled or unconfigured even when the file exists for JS/TS; confirm
+    it actually covers `.md` before treating it as the answer.
 
-If more than one of these is present, don't just pick one -- flag it to the user; it's usually
-leftover config from a migration, and running the wrong one can produce a confusing diff.
+If the script (or a manual check, if it's unavailable for some reason) turns up more than one of
+these, don't just pick one -- flag it to the user; it's usually leftover config from a migration,
+and running the wrong one can produce a confusing diff.
 
 If Markdown formatting is already enforced automatically, say so, and treat this skill's
 mechanical-formatting job as *running that same check manually* -- useful before committing, or
@@ -92,6 +110,7 @@ the most common case. Match the check/write pair to the tool that's actually the
 | markdownlint-cli2 | `.markdownlint.json`/`.yml`/`.markdownlint-cli2.jsonc` | `npx --no-install markdownlint-cli2 "<path>"` | `npx --no-install markdownlint-cli2 --fix "<path>"` |
 | mdformat | `pyproject.toml` `[tool.mdformat]`, or an `mdformat` dependency | `mdformat --check "<path>"` | `mdformat "<path>"` |
 | remark (standalone) | `.remarkrc*` not just underlying Prettier | `npx --no-install remark "<path>" --frail` | `npx --no-install remark "<path>" -o` |
+| Biome | `biome.json`/`.jsonc` with markdown covered | `npx --no-install biome check "<path>"` | `npx --no-install biome check --write "<path>"` |
 
 If nothing is configured, Prettier remains the reasonable **default to propose** -- most repos
 that touch JS/TS tooling at all have it available and it formats Markdown out of the box with no
@@ -114,16 +133,20 @@ resolved config for whichever one applies before assuming it holds:
 - **Prettier**: `proseWrap` defaults to `preserve` -- safe by default. If a repo's config sets
   `proseWrap: always` (or similar), a Prettier run *can* reflow prose -- treat that as
   structural risk (see below), not a mechanical pass.
-- **mdformat**: reflows/wraps paragraphs to a fixed width **by default**, unless the repo passes
-  `--wrap=no`/`--wrap=preserve` or sets the equivalent option. Confirm that flag is set before
-  treating an mdformat run as mechanical -- the unflagged default is not safe to apply without
-  confirmation.
+- **mdformat**: its own default (`--wrap keep`, confirmed against a real install) preserves
+  existing line breaks -- an *unconfigured* mdformat run is safe. The risk runs the other way: if
+  the repo's config sets `wrap` to a fixed integer (or CLI usage passes `--wrap=<n>`), *that*
+  reflows prose and needs the structural-risk treatment below. Check the resolved `wrap` setting
+  either way rather than assuming which case you're in.
 - **dprint's markdown plugin**: check its resolved `textWrap` setting the same way -- it has no
   universal safe default to assume.
 - **markdownlint-cli2 `--fix`**: fixes lint violations (list markers, trailing whitespace, heading
   spacing) and does not reflow prose -- safe by default.
 - **remark**: reflow behavior depends entirely on which plugins/options are configured (e.g.
   `remark-stringify` width settings) -- read the config rather than assuming either behavior.
+- **Biome**: its Markdown formatter is a newer addition than its JS/CSS/JSON formatters and its
+  defaults have moved between versions -- check the resolved config (and the installed version)
+  rather than assuming either a preserve or reflow default.
 
 When a given tool's config doesn't make the answer clear, treat the pass as structural risk and
 confirm before writing, rather than assuming mechanical safety by default.
@@ -193,9 +216,10 @@ against it unreviewed.
 2. **Before running anything, read the discovered tool's prose-rewrap default** (see "Know each
    tool's prose-rewrap default" above) -- do this as part of discovery, not as an afterthought
    right before writing. Knowing upfront whether the tool is safe-by-default (Prettier,
-   markdownlint-cli2) or needs an explicit flag checked (mdformat, dprint) shapes how you read its
-   next result: a tool with a risky default means even its *check* output needs a second look
-   before you treat anything it flags as simple mechanical drift.
+   markdownlint-cli2, mdformat's own unconfigured default) or needs its resolved config checked for
+   a reflow setting (dprint, remark, Biome, or an mdformat config that sets `wrap` explicitly)
+   shapes how you read its next result: a tool that *can* reflow means even its *check* output
+   needs a second look before you treat anything it flags as simple mechanical drift.
 
 3. **Run the discovered tool's check command**, don't jump straight to writing. E.g. for Prettier:
 
