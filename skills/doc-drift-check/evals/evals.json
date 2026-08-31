@@ -1,0 +1,17 @@
+{
+  "skill_name": "doc-drift-check",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Can you check docs/architecture-map.md for staleness? Not sure if it's still accurate.",
+      "expected_output": "Flags the system-context diagram's Postgres label '7 tables, RLS enabled' as overstated -- the codebase shows RLS is only confirmed enabled in production on organizations/memberships/users, not on camps/rooms/notes/audit_log, which are only confirmed enabled locally/CI/e2e (per the production migrations directory vs. a separate local-only one, and open GitHub issue #430). Should not fabricate unrelated findings.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Does docs/architecture-overview.html still match reality? It's a big landing page describing the docs/ and skills setup, wanted to make sure nothing's drifted.",
+      "expected_output": "Flags the isolation-lab section's RLS table-count claim ('on all seven tables') as stale/imprecise, checking the actual production migrations directory (not just a local/CI-only one) and ideally cross-referencing docs/architecture-map.md, which already documents the same production-vs-local RLS gap. Should correctly leave the ADR count claim ('Twenty-one architectural decisions') unflagged, since it's actually accurate.",
+      "files": []
+    }
+  ]
+}
