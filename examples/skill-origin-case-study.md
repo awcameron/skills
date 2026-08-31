@@ -61,6 +61,21 @@ for a fresh checkout that isn't runnable yet, and no convention for naming a thr
 so it doesn't get mistaken for real test coverage — both fixed before the skill's steps were
 considered settled.
 
+## `fix-bug`: the same real bug, but as an implementation test
+
+Once `diagnose-bug` had a confirmed root cause for the Rooms re-entrancy bug above, `fix-bug` was
+tested by handing an agent that exact diagnosis — not the real fix, not the file it landed in —
+against the same pre-fix checkout, and asking it to implement a fix. The change it produced
+(rescoping the guard from a single page-wide flag to one keyed per cell) was functionally
+equivalent to the real merged fix, which did the same rescoping through a small extracted hook
+instead. More tellingly, the skill's "check for the same defect shape elsewhere" step led the agent
+to inspect a sibling feature (Keys) built on a different substrate (TanStack Query) — and correctly
+conclude it did *not* share the bug, for the same reason the real fix's own commit message gives
+almost word for word. That step could easily have produced an unnecessary edit to code that was
+already correct; it didn't. The run also caught a real ambiguity between "verify the fix" and
+"don't write the regression test" (resolved: verify with a throwaway check, leave the durable test
+to `write-tests`) and the same missing-build-tooling gap `diagnose-bug` had already hit once.
+
 ## Why this matters for the genericized versions
 
 None of the rewritten skills in this repo invent new content to sound more general — they keep

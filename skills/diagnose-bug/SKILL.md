@@ -9,9 +9,10 @@ description: >-
   unexpectedly ("this is broken", "why is X happening", "I get an error when I do Y", "this test
   is flaky", "this got slow"), asks to "debug this" or "find out why", or points at a stack
   trace/error message and asks what's wrong. Produces a confirmed root cause with the evidence
-  that proves it, not a fix -- see write-tests to prove a fix, review-code to check one. Not for a
-  bug whose cause is already known and only the fix itself is needed.
-allowed-tools: [Read, Grep, Glob, Edit, Write, Bash(git log:*), Bash(git blame:*), Bash(git show:*), Bash(git diff:*), Bash(git bisect:*), Bash(git stash:*), Bash(npm test:*), Bash(npm run test:*), Bash(npx playwright test:*), Bash(pytest:*), Bash(python -m pytest:*), Bash(go test:*), Bash(cargo test:*)]
+  that proves it, not a fix -- see fix-bug to implement the fix, write-tests to prove it,
+  review-code to check it. Not for a bug whose cause is already known and only the fix itself is
+  needed.
+allowed-tools: [Read, Grep, Glob, Edit, Write, Bash(git log:*), Bash(git blame:*), Bash(git show:*), Bash(git diff:*), Bash(git bisect:*), Bash(git stash:*), Bash(npm install:*), Bash(npm ci:*), Bash(npm run build:*), Bash(npm test:*), Bash(npm run test:*), Bash(npx playwright test:*), Bash(pytest:*), Bash(python -m pytest:*), Bash(go test:*), Bash(cargo test:*)]
 ---
 
 # Diagnose Bug

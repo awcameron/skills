@@ -9,7 +9,8 @@
     "negative": [
       { "prompt": "write tests for this bug fix", "owner": "write-tests" },
       { "prompt": "review this diff for code quality issues", "owner": "review-code" },
-      { "prompt": "open a PR for this fix", "owner": "create-pr" }
+      { "prompt": "open a PR for this fix", "owner": "create-pr" },
+      { "prompt": "here's the root cause, go implement the fix", "owner": "fix-bug" }
     ]
   }
 }
