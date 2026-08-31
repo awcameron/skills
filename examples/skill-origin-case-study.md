@@ -8,14 +8,14 @@ facts in favor of a "go find out what *this* repo does" step in the same place.
 
 A few concrete examples of what that looked like before the genericizing pass:
 
-## `doc-drift-check`: a skill's own claim was the stale one
+## `doc-fact-check`: a skill's own claim was the stale one
 
 A skill file described the backend's feature-organization pattern using a directory name
 (`usecases/<action>/`) that had been copied from the project's own canonical conventions doc.
 By the time anyone checked, every module in the actual codebase had already moved to a different
 pattern (`features/<action>/`) — the convention doc itself hadn't been updated to match the
 refactor, so an agent trusting "the docs say so" would have kept the stale name alive by acting on
-it, not just reading it. That's the reason `doc-drift-check` treats a repo's canonical docs as
+it, not just reading it. That's the reason `doc-fact-check` treats a repo's canonical docs as
 *checkable claims*, not ground truth by construction — and it's why the skill explicitly covers
 other skill files as in-scope, not just prose documentation. An agent doesn't just read a stale
 skill claim, it executes it.
@@ -35,7 +35,7 @@ months earlier. Nobody had gone back to fix the sentence. Same failure mode, dif
   the work being done. That's a GitHub parsing quirk worth knowing regardless of what repo you're
   in, which is why it's called out explicitly in the skill rather than left as tribal knowledge.
 
-## `subagent-selection`: a real audit, not a guess
+## `choose-subagent`: a real audit, not a guess
 
 An audit of that project's own agent-call history found that roughly a fifth of "full write-agent"
 calls were actually pure read-and-report tasks (a PR review, an investigation) that never touched

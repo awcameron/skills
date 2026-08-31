@@ -1,5 +1,5 @@
 ---
-name: idiomatic-typescript
+name: ts-best-practices
 description: Staff-Engineer-level best practices for writing and reviewing TypeScript and JavaScript functions and classes -- the judgment calls a linter or formatter can't enforce, like comment discipline, type-casting discipline, function and class design, error-handling shape, promise/async handling, naming, immutability, import organization, type narrowing/discriminated unions, and enum/interface-vs-type design. Use this whenever writing new TS/JS code, reviewing or refactoring existing code, or when the user asks things like "clean this up," "is this idiomatic," "review this for best practices," "does this look right," or describes a function/class as messy or hard to follow -- even if they don't name a specific practice or use the word "style."
 ---
 

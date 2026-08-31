@@ -1,5 +1,5 @@
 ---
-name: subagent-selection
+name: choose-subagent
 description: >-
   Decision checklist for which subagent type/model to use before spawning an Agent call, in any
   repo -- the right choice depends on whether the task writes anything, not on its topic. Use

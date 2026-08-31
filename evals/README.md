@@ -30,7 +30,7 @@ failure modes that actually dominate real trigger bugs --
 
 -- without needing a token spend to check for either one. A Tier-2 failure usually means *fix the
 description*, not the eval or the test case. That's a real thing this repo's own eval run caught:
-`brevity`'s description originally listed "PR descriptions" as an example of what it *doesn't*
+`terse-reports`'s description originally listed "PR descriptions" as an example of what it *doesn't*
 apply to, and that vocabulary overlap alone was enough to briefly outrank `create-pr` on a prompt
 about writing one -- the description was reworded to drop the specific phrase, not the test.
 

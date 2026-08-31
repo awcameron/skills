@@ -37,7 +37,7 @@ they're the house style, not a generic guide.
 
 **If the repo previously had a documented gap here (a missing runner, a "don't write frontend
 tests yet" note) that's since closed, trust what you actually find over a stale doc** — check
-`doc-drift-check` if there's any doubt the docs still match reality.
+`doc-fact-check` if there's any doubt the docs still match reality.
 
 ## Step 1: Identify what's untested
 

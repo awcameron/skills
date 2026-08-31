@@ -8,7 +8,7 @@
     ],
     "negative": [
       { "prompt": "review this diff for code quality issues", "owner": "review-code" },
-      { "prompt": "is this function idiomatic, clean it up", "owner": "idiomatic-typescript" }
+      { "prompt": "is this function idiomatic, clean it up", "owner": "ts-best-practices" }
     ]
   }
 }

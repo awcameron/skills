@@ -2,7 +2,7 @@
 description: Decide which subagent type/model fits a task before spawning an Agent call
 ---
 
-Invoke the agent-skills:subagent-selection skill before spawning a subagent for: $ARGUMENTS
+Invoke the agent-skills:choose-subagent skill before spawning a subagent for: $ARGUMENTS
 
 Classify by what the task actually *does* (does it write anything?), not by its topic. Read-only
 tasks (review, audit, investigate) belong on a read-only/exploration agent or a cheaper model;

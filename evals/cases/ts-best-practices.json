@@ -1,5 +1,5 @@
 {
-  "skill_name": "idiomatic-typescript",
+  "skill_name": "ts-best-practices",
   "trigger": {
     "positive": [
       { "prompt": "is this idiomatic, clean this function up", "top_k": 2 },

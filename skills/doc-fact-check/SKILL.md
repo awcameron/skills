@@ -1,5 +1,5 @@
 ---
-name: doc-drift-check
+name: doc-fact-check
 description: >-
   Cross-check a doc's factual and architectural claims against current truth and flag anything
   that's gone stale -- hosting/deploy targets, stack choices, layering rules, documented
