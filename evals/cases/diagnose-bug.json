@@ -1,0 +1,15 @@
+{
+  "skill_name": "diagnose-bug",
+  "trigger": {
+    "positive": [
+      { "prompt": "this endpoint keeps throwing a 500 and I can't tell why", "top_k": 2 },
+      { "prompt": "why does this test fail intermittently in CI", "top_k": 2 },
+      { "prompt": "the app crashes on startup, help me figure out why", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "write tests for this bug fix", "owner": "write-tests" },
+      { "prompt": "review this diff for code quality issues", "owner": "review-code" },
+      { "prompt": "open a PR for this fix", "owner": "create-pr" }
+    ]
+  }
+}

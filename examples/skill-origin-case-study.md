@@ -46,6 +46,21 @@ as an anecdote rather than a claim this repo's version makes about your project 
 kind of audit is cheap to run against any repo with enough agent-call history, and tends to turn
 up the same shape of waste.
 
+## `diagnose-bug`: checked out before the fix, not read after it
+
+Rather than write the diagnosis loop from a description of how debugging usually goes, it was
+tested blind against a real, already-fixed bug: a production app's Rooms page had a re-entrancy
+guard (`useRef(false)`) meant to stop one cell's Enter-then-blur from double-committing, but the
+guard was scoped to the whole page, not the specific room being edited. Committing a second room's
+cell while a first room's save was still in flight hit the same guard and silently no-op'd — no
+error, cell left open. An agent given only a plain description of that symptom (not the fix, not
+which file, checked out at the commit *before* the real fix landed) followed the skill's steps and
+landed on the exact real root cause, confirmed by writing a throwaway repro test rather than
+resting on a static read. That run also surfaced two real gaps in the first draft — no guidance
+for a fresh checkout that isn't runnable yet, and no convention for naming a throwaway repro file
+so it doesn't get mistaken for real test coverage — both fixed before the skill's steps were
+considered settled.
+
 ## Why this matters for the genericized versions
 
 None of the rewritten skills in this repo invent new content to sound more general — they keep
