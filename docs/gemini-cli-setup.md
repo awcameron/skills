@@ -26,11 +26,11 @@ for explicit invocation instead of waiting on auto-discovery:
 | `/review-code` | `review-code` |
 | `/write-tests` | `write-tests` |
 | `/create-pr` | `create-pr` |
-| `/doc-drift-check` | `doc-drift-check` |
+| `/doc-fact-check` | `doc-fact-check` |
 | `/format-docs` | `format-docs` |
-| `/idiomatic-typescript` | `idiomatic-typescript` |
-| `/subagent-selection` | `subagent-selection` |
-| `/brevity` | `brevity` |
+| `/ts-best-practices` | `ts-best-practices` |
+| `/choose-subagent` | `choose-subagent` |
+| `/terse-reports` | `terse-reports` |
 
 Gemini CLI auto-discovers `.gemini/commands/*.toml` files when run from the project root -- no
 separate install step.
@@ -43,7 +43,7 @@ For a skill you want always loaded rather than activated on demand, add it to yo
 ```markdown
 # Project Instructions
 
-@skills/idiomatic-typescript/SKILL.md
+@skills/ts-best-practices/SKILL.md
 ```
 
 > **Skills vs. GEMINI.md:** skills are on-demand and keep the context window clean; GEMINI.md is

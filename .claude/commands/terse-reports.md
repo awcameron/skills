@@ -2,7 +2,7 @@
 description: Report status updates and summaries in terse, fact-dense style for the rest of this session
 ---
 
-Invoke the agent-skills:brevity skill for the rest of this session.
+Invoke the agent-skills:terse-reports skill for the rest of this session.
 
 From now on, report status updates, task summaries, and answers to direct questions in the
 fewest words that still carry every fact -- grammar is disposable, facts are not. This applies

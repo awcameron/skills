@@ -1,5 +1,5 @@
 {
-  "skill_name": "doc-drift-check",
+  "skill_name": "doc-fact-check",
   "trigger": {
     "positive": [
       { "prompt": "does this README still match how we actually do things now", "top_k": 2 },

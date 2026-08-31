@@ -35,11 +35,11 @@ process and vocabulary; this one is meant to disappear into whatever repo it's d
 | [`review-code`](skills/review-code/SKILL.md) | Discovers a repo's own coding/observability standards and reviews a diff or PR against them — findings only, no auto-fix. |
 | [`write-tests`](skills/write-tests/SKILL.md) | Writes real, runnable tests grounded in a repo's actual test conventions, with a hard rule: every new test must be shown to fail against the unfixed code. |
 | [`create-pr`](skills/create-pr/SKILL.md) | Carries local changes through a repo's real branch → commit → push → PR workflow, discovering its naming/title conventions from its docs and history, with a confirmation checkpoint before every visible/remote action. |
-| [`doc-drift-check`](skills/doc-drift-check/SKILL.md) | Cross-checks a doc's factual claims (stack, hosting, conventions, file paths) against the codebase itself — including skill files, since an agent *executes* a stale skill claim instead of just reading it. Deliberately a separate skill from `format-docs`: fact-checking prose never edits without confirmation, mechanical formatting always does. |
+| [`doc-fact-check`](skills/doc-fact-check/SKILL.md) | Cross-checks a doc's factual claims (stack, hosting, conventions, file paths) against the codebase itself — including skill files, since an agent *executes* a stale skill claim instead of just reading it. Deliberately a separate skill from `format-docs`: fact-checking prose never edits without confirmation, mechanical formatting always does. |
 | [`format-docs`](skills/format-docs/SKILL.md) | Applies a repo's own Markdown formatter mechanically, and flags (without silently resolving) structural inconsistencies like prose-wrap style. |
-| [`idiomatic-typescript`](skills/idiomatic-typescript/SKILL.md) | Staff-engineer-level TypeScript/JavaScript judgment calls a linter can't enforce — comment discipline, casting, function/class design, error handling, immutability, type narrowing, type design — as short, example-driven reference files. |
-| [`subagent-selection`](skills/subagent-selection/SKILL.md) | A decision checklist for which subagent type/model to spawn a task on, based on whether the task writes anything — not what it's about. |
-| [`brevity`](skills/brevity/SKILL.md) | A communication-style skill: report status/summaries in terse, fact-dense language, without touching the grammar of anything meant for someone else to read (code, commits, PR bodies). |
+| [`ts-best-practices`](skills/ts-best-practices/SKILL.md) | Staff-engineer-level TypeScript/JavaScript judgment calls a linter can't enforce — comment discipline, casting, function/class design, error handling, immutability, type narrowing, type design — as short, example-driven reference files. |
+| [`choose-subagent`](skills/choose-subagent/SKILL.md) | A decision checklist for which subagent type/model to spawn a task on, based on whether the task writes anything — not what it's about. |
+| [`terse-reports`](skills/terse-reports/SKILL.md) | A communication-style skill: report status/summaries in terse, fact-dense language, without touching the grammar of anything meant for someone else to read (code, commits, PR bodies). |
 
 Every skill also ships a matching slash command (`.claude/commands/<name>.md`,
 `.gemini/commands/<name>.toml`) for explicit invocation instead of waiting on auto-discovery.
@@ -51,7 +51,7 @@ not a toy or a demo — and was rewritten to drop that project's specific facts 
 layout, its branch-naming precedent) in favor of a "discover this repo's own conventions first"
 step in the same place. See [`examples/skill-origin-case-study.md`](examples/skill-origin-case-study.md)
 for the concrete story behind a few of them, including a real skill-drift bug this repo's own
-`doc-drift-check` skill was built to catch.
+`doc-fact-check` skill was built to catch.
 
 ## Using this with your tool
 

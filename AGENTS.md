@@ -23,7 +23,7 @@ Nothing is pushed directly to `main` — every change, including a one-line doc 
   [`.github/workflows/pr-title-lint.yml`](.github/workflows/pr-title-lint.yml) —
   `<type>(<scope>): <subject>`, subject not capitalized. Valid types: `feat`, `fix`, `docs`,
   `chore`, `refactor`, `test`, `style`, `perf`, `ci`, `build`, `revert`. By convention (see git
-  log), `<scope>` is the skill name touched (e.g. `feat(idiomatic-typescript): ...`); omit the
+  log), `<scope>` is the skill name touched (e.g. `feat(ts-best-practices): ...`); omit the
   scope entirely for a change that spans the repo rather than one skill (e.g. `ci: ...`,
   `chore: ...`).
 - **Step-by-step mechanics** (branch naming, confirmation checkpoints before each visible/remote

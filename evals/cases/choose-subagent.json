@@ -1,5 +1,5 @@
 {
-  "skill_name": "subagent-selection",
+  "skill_name": "choose-subagent",
   "trigger": {
     "positive": [
       { "prompt": "which agent should I use for this task", "top_k": 2 },

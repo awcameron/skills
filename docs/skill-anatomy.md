@@ -15,7 +15,7 @@ skills/
 ```
 
 `SKILL.md` is the only required file. Add `references/` only when a skill genuinely needs
-supporting material split out (see `idiomatic-typescript/references/` for an example: nine short
+supporting material split out (see `ts-best-practices/references/` for an example: nine short
 files, one per judgment-call category, so an agent opens only the one that applies instead of
 loading all nine).
 
@@ -47,7 +47,7 @@ allowed-tools: [Read, Grep, Glob]   # optional -- Claude Code-specific, ignored 
 
 No single rigid template is enforced across this repo's skills -- they range from a tight
 numbered workflow with confirmation checkpoints (`create-pr`) to a set of principles plus
-reference files opened on demand (`idiomatic-typescript`). What every skill here does share:
+reference files opened on demand (`ts-best-practices`). What every skill here does share:
 
 - **State the mechanism, not just the goal.** "Review code for quality" is a goal; the actual
   steps, the order to check things in, and what to do when a check fails are the mechanism --

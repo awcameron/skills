@@ -1,5 +1,5 @@
 ---
-name: brevity
+name: terse-reports
 description: >-
   Report status updates, task summaries, and answers to direct questions in extremely terse,
   telegraphic style -- sacrifice grammar for concision. Use this skill whenever reporting what was

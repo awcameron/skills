@@ -45,7 +45,7 @@ rough priority order:
   actually enforced mechanically vs. merely a stated preference.
 
 If a repo has none of this, say so, and fall back to the general-purpose judgment in the
-`idiomatic-typescript` skill (or the closest equivalent for the language in use) rather than
+`ts-best-practices` skill (or the closest equivalent for the language in use) rather than
 inventing house rules that aren't actually this repo's.
 
 **Distinguish enforced rules from stated preferences.** A conventions doc will often say something

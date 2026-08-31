@@ -1,5 +1,5 @@
 {
-  "skill_name": "brevity",
+  "skill_name": "terse-reports",
   "trigger": {
     "positive": [
       { "prompt": "just give me a short answer, keep it terse", "top_k": 2 },

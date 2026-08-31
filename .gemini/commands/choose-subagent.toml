@@ -1,7 +1,7 @@
 description = "Decide which subagent type/model fits a task before spawning an Agent call"
 
 prompt = """
-Invoke the agent-skills:subagent-selection skill before spawning a subagent for: {{args}}
+Invoke the agent-skills:choose-subagent skill before spawning a subagent for: {{args}}
 
 Classify by what the task actually does (does it write anything?), not by its topic. Read-only
 tasks (review, audit, investigate) belong on a read-only/exploration agent or a cheaper model;
