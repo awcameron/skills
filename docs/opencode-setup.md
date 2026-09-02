@@ -1,4 +1,4 @@
-# Using agent-skills with OpenCode
+# Using skills with OpenCode
 
 OpenCode discovers `SKILL.md` files from several locations, searched in order: `.opencode/skills/`,
 `.claude/skills/`, `.agents/skills/` (project-level, walking up to the git worktree root), then
@@ -10,15 +10,15 @@ This repo already ships a `.claude/skills` symlink (and `.agents/skills`) to the
 `skills/` directory -- either is enough for OpenCode to pick everything up:
 
 ```bash
-git clone https://github.com/awcameron/agent-skills.git
+git clone https://github.com/awcameron/skills.git
 cd your-project
-ln -s ../agent-skills/skills .opencode/skills
+ln -s ../skills/skills .opencode/skills
 ```
 
 ## Global setup
 
 ```bash
-ln -s /path/to/agent-skills/skills ~/.config/opencode/skills
+ln -s /path/to/skills/skills ~/.config/opencode/skills
 ```
 
 Available in every OpenCode session from then on, without a per-project symlink.

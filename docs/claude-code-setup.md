@@ -1,4 +1,4 @@
-# Using agent-skills with Claude Code
+# Using skills with Claude Code
 
 ## Option 1: Install as a plugin (recommended)
 
@@ -7,11 +7,11 @@ declares the `skills/` and `.claude/commands/` directories, so Claude Code disco
 automatically:
 
 ```
-/plugin marketplace add awcameron/agent-skills
-/plugin install agent-skills
+/plugin marketplace add awcameron/skills
+/plugin install skills
 ```
 
-Skills load as `agent-skills:<skill-name>` (e.g. `agent-skills:review-code`) and activate
+Skills load as `skills:<skill-name>` (e.g. `skills:review-code`) and activate
 automatically when your request matches a skill's description. The slash commands under
 `.claude/commands/` (`/review-code`, `/write-tests`, `/create-pr`, etc.) are thin wrappers that
 invoke a specific skill explicitly, for when you don't want to wait for auto-discovery.
@@ -19,9 +19,9 @@ invoke a specific skill explicitly, for when you don't want to wait for auto-dis
 ## Option 2: Symlink into a project
 
 ```bash
-git clone https://github.com/awcameron/agent-skills.git
+git clone https://github.com/awcameron/skills.git
 cd your-project
-ln -s ../agent-skills/skills .claude/skills
+ln -s ../skills/skills .claude/skills
 ```
 
 Claude Code discovers any `SKILL.md` under `.claude/skills/<name>/` without a plugin install
@@ -35,7 +35,7 @@ through the plugin install in Option 1. To get it here, wire it into your projec
 ## Option 3: Global install
 
 ```bash
-ln -s /path/to/agent-skills/skills/review-code ~/.claude/skills/review-code
+ln -s /path/to/skills/skills/review-code ~/.claude/skills/review-code
 ```
 
 Symlink one skill (or the whole `skills/` directory) into `~/.claude/skills/` to make it

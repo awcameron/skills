@@ -2,7 +2,7 @@
 description: Diagnose the root cause of a bug -- evidence, minimal repro, one hypothesis at a time
 ---
 
-Invoke the agent-skills:diagnose-bug skill against: $ARGUMENTS
+Invoke the skills:diagnose-bug skill against: $ARGUMENTS
 
 Get the actual error/stack trace/failing output before reading any code, reproduce it minimally
 (confirming the repro environment actually runs first), localize by reading -- not guessing --

@@ -1,7 +1,7 @@
 description = "Diagnose the root cause of a bug -- evidence, minimal repro, one hypothesis at a time"
 
 prompt = """
-Invoke the agent-skills:diagnose-bug skill against: {{args}}
+Invoke the skills:diagnose-bug skill against: {{args}}
 
 Get the actual error/stack trace/failing output before reading any code, reproduce it minimally
 (confirming the repro environment actually runs first), localize by reading -- not guessing -- and

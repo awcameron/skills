@@ -2,7 +2,7 @@
 description: Safely bump a dependency -- real changelog, real usage check, real test results
 ---
 
-Invoke the agent-skills:upgrade-dependency skill against: $ARGUMENTS
+Invoke the skills:upgrade-dependency skill against: $ARGUMENTS
 
 Discover the repo's own package manager, read the actual changelog/migration guide across the
 whole version range being crossed, grep the repo for real usage of anything flagged as breaking,

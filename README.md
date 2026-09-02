@@ -1,4 +1,4 @@
-# Agent Skills
+# Skills
 
 A portable library of **12 agent skills** — genericized from real workflows built and iterated on
 while building a real application, not written speculatively. Each skill is a plain `SKILL.md`: a
@@ -112,9 +112,9 @@ Quick version, if your tool reads `.agents/skills/` (Codex CLI, Gemini CLI, Open
 equivalent compat path (`.claude/skills/`, `.cursor/skills/`):
 
 ```bash
-git clone https://github.com/awcameron/agent-skills.git
+git clone https://github.com/awcameron/skills.git
 cd your-project
-ln -s ../agent-skills/skills .agents/skills
+ln -s ../skills/skills .agents/skills
 ```
 
 ### Claude Code, as an installable plugin
@@ -125,8 +125,8 @@ automatically, including a `SessionStart` hook that injects a one-line-per-skill
 every new session:
 
 ```
-/plugin marketplace add awcameron/agent-skills
-/plugin install agent-skills
+/plugin marketplace add awcameron/skills
+/plugin install skills
 ```
 
 Symlinked in instead of installed as a plugin? The hook isn't auto-discovered outside the plugin

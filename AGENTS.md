@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This file is for developing *this* repo (agent-skills itself) — an agent or human contributing a
+This file is for developing *this* repo (skills itself) — an agent or human contributing a
 skill, doc, or workflow change here. It is not the skill content this repo distributes to
 consumers; see [README.md](README.md) for what this repo is and how it's consumed.
 
@@ -69,7 +69,7 @@ Version lives in both `package.json` and `.claude-plugin/plugin.json`, kept in s
 - `skills/` — canonical skill content.
 - `.claude-plugin/` — `plugin.json` (versioned metadata: `skills`/`commands`/`hooks` paths, kept
   in sync with `package.json`, see "Versioning and releases" below) and `marketplace.json` (what
-  `/plugin marketplace add awcameron/agent-skills` actually reads).
+  `/plugin marketplace add awcameron/skills` actually reads).
 - `.claude/commands/`, `.gemini/commands/` — thin per-tool slash-command wrappers.
 - `.agents/skills/`, `.claude/skills/` — symlinks back to `skills/`, for tools that discover
   skills from those paths directly.

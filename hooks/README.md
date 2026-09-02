@@ -29,7 +29,7 @@ outside the plugin system, so copy the hook registration into the project's own
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"/path/to/agent-skills/hooks/session-start.sh\""
+            "command": "bash \"/path/to/skills/hooks/session-start.sh\""
           }
         ]
       }

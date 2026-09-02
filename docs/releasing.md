@@ -15,7 +15,7 @@ automatically on merge, since that would fire on every doc/chore PR.
 **Via the `gh` CLI:**
 
 ```bash
-gh workflow run bump-version.yml --repo <your-github-username>/agent-skills -f bump=patch
+gh workflow run bump-version.yml --repo <your-github-username>/skills -f bump=patch
 ```
 
 (swap `patch` for `minor`/`major` as needed)

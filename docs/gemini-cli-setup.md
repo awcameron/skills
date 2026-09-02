@@ -1,4 +1,4 @@
-# Using agent-skills with Gemini CLI
+# Using skills with Gemini CLI
 
 ## Option 1: Native skill discovery (recommended)
 
@@ -7,9 +7,9 @@ or `.agents/skills/`. This repo already ships `.agents/skills` as a symlink to t
 `skills/` directory, so cloning it into a project and pointing either path at `skills/` is enough:
 
 ```bash
-git clone https://github.com/awcameron/agent-skills.git
+git clone https://github.com/awcameron/skills.git
 cd your-project
-ln -s ../agent-skills/skills .gemini/skills    # or .agents/skills -- either works
+ln -s ../skills/skills .gemini/skills    # or .agents/skills -- either works
 ```
 
 Gemini CLI injects each skill's name and description into the prompt automatically. When it
