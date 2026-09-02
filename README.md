@@ -41,11 +41,14 @@ process and vocabulary; this one is meant to disappear into whatever repo it's d
 | [`doc-fact-check`](skills/doc-fact-check/SKILL.md) | Cross-checks a doc's factual claims (stack, hosting, conventions, file paths) against the codebase itself — including skill files, since an agent *executes* a stale skill claim instead of just reading it. Deliberately a separate skill from `format-docs`: fact-checking prose never edits without confirmation, mechanical formatting always does. |
 | [`format-docs`](skills/format-docs/SKILL.md) | Applies a repo's own Markdown formatter mechanically, and flags (without silently resolving) structural inconsistencies like prose-wrap style. |
 | [`ts-best-practices`](skills/ts-best-practices/SKILL.md) | Staff-engineer-level TypeScript/JavaScript judgment calls a linter can't enforce — comment discipline, casting, function/class design, error handling, immutability, type narrowing, type design — as short, example-driven reference files. |
+| [`zero-trust-architecture`](skills/zero-trust-architecture/SKILL.md) | Never trust a request based on what layer already checked it: an ordered request-layer authorization chain, a database-layer tenant-isolation backstop, and client-side session-token handling, each discovered against a repo's own stack rather than assumed. |
 | [`choose-subagent`](skills/choose-subagent/SKILL.md) | A decision checklist for which subagent type/model to spawn a task on, based on whether the task writes anything — not what it's about. |
 | [`terse-reports`](skills/terse-reports/SKILL.md) | A communication-style skill: report status/summaries in terse, fact-dense language, without touching the grammar of anything meant for someone else to read (code, commits, PR bodies). |
 
-Every skill also ships a matching slash command (`.claude/commands/<name>.md`,
-`.gemini/commands/<name>.toml`) for explicit invocation instead of waiting on auto-discovery.
+Every skill except `zero-trust-architecture` also ships a matching slash command
+(`.claude/commands/<name>.md`, `.gemini/commands/<name>.toml`) for explicit invocation instead of
+waiting on auto-discovery — `zero-trust-architecture` is meant to auto-trigger on ordinary
+feature/review requests instead.
 
 ## Where this came from
 
