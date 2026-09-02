@@ -17,7 +17,7 @@ difference shows up in how each one is laid out on disk:
 
 - `review-code` *discovers* a repo's own standards (its documented conventions, its lint config,
   its real git history) — it has no fixed opinions of its own, so there's nothing fixed to split
-  out; it's a single `SKILL.md`.
+  into `references/`.
 - `ts-best-practices` and `zero-trust-architecture` each carry a fixed, portable body of judgment
   calls — TypeScript/JavaScript idiom, and Zero Trust authorization architecture, respectively —
   that apply across repos, with an explicit step to check whether a given repo's own documented
