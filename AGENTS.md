@@ -73,6 +73,9 @@ Version lives in both `package.json` and `.claude-plugin/plugin.json`, kept in s
 ## Where things live
 
 - `skills/` — canonical skill content.
+- `.claude-plugin/` — `plugin.json` (versioned metadata: `skills`/`commands`/`hooks` paths, kept
+  in sync with `package.json`, see "Versioning and releases" below) and `marketplace.json` (what
+  `/plugin marketplace add awcameron/agent-skills` actually reads).
 - `.claude/commands/`, `.gemini/commands/` — thin per-tool slash-command wrappers.
 - `.agents/skills/`, `.claude/skills/` — symlinks back to `skills/`, for tools that discover
   skills from those paths directly.
