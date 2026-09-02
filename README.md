@@ -125,13 +125,13 @@ automatically, including a `SessionStart` hook that injects a one-line-per-skill
 every new session:
 
 ```
-/plugin marketplace add awcameron/skills
-/plugin install awcameron-skills
+claude plugin marketplace add awcameron/skills
+claude plugin install awcameron-skills
 ```
 
-Symlinked in instead of installed as a plugin? The hook isn't auto-discovered outside the plugin
-system — see [`hooks/README.md`](hooks/README.md) to wire it into your project's own
-`.claude/settings.json`.
+See [`docs/claude-code-setup.md`](docs/claude-code-setup.md) for the in-session slash-command
+form, and the symlink caveat if you install without the plugin system (the `SessionStart` catalog
+hook needs manual wiring in that case — see [`hooks/README.md`](hooks/README.md)).
 
 ### Global install (any tool)
 
