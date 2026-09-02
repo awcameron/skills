@@ -158,21 +158,10 @@ available in every project without repeating the setup above.
 ## Contributing / adapting a skill
 
 For this repo's own branch/commit/PR/release conventions (as opposed to skill content itself),
-see [AGENTS.md](AGENTS.md).
+see [AGENTS.md](AGENTS.md) — it's the canonical contributor doc, for humans and agents alike.
 
-Requires Node >=20 + npm (for the two checks below). See
-[`docs/skill-anatomy.md`](docs/skill-anatomy.md) for the frontmatter and structure rules, and run
-these two before opening a PR:
-
-```bash
-npm run validate   # frontmatter is well-formed: valid name, directory match, a stated trigger
-npm run eval       # your positive/negative evals/cases/<skill>.json prompts actually route right
-```
-
-`npm run eval` is a deterministic (no LLM call) trigger-routing check. See
-[`evals/README.md`](evals/README.md) for what it does and doesn't catch. Add a case file for any
-new skill; it's what actually caught and fixed a real description collision during this repo's
-own build (see that README's own example).
+For adding or changing a skill itself, see [`docs/skill-anatomy.md`](docs/skill-anatomy.md) for
+the frontmatter/structure rules and the step-by-step contributing checklist.
 
 Hold new and existing skills to the "discover, don't dictate" principle above: a skill should read
 a repo's own conventions doc, check real git/GitHub history, and read a couple of existing files

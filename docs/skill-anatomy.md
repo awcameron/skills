@@ -90,3 +90,6 @@ reference files opened on demand (`ts-best-practices`). What every skill here do
 5. If the skill deserves a slash-command shortcut, add a matching `.claude/commands/<name>.md`
    and `.gemini/commands/<name>.toml` (see any existing pair for the shape) -- optional, only
    worth it for a skill you'd want to invoke explicitly rather than wait on auto-discovery for.
+6. Add a row for the skill in [README.md](../README.md)'s "What's here" list, under whichever
+   category it fits (see [`docs/skill-categories.md`](skill-categories.md) if none of the existing
+   categories fit). Skipping this step ships a working skill that never shows up in the catalog.
