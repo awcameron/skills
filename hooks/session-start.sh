@@ -34,11 +34,11 @@ emit() {
 }
 
 if [ ! -d "$SKILLS_DIR" ]; then
-  emit "skills: skills directory not found at $SKILLS_DIR -- skipping catalog injection."
+  emit "awcameron-skills: skills directory not found at $SKILLS_DIR -- skipping catalog injection."
   exit 0
 fi
 
-catalog="skills is available this session. Each skill activates automatically when a request matches its description, or can be invoked explicitly via its matching slash command:"
+catalog="awcameron-skills is available this session. Each skill activates automatically when a request matches its description, or can be invoked explicitly via its matching slash command:"
 
 found_any=0
 for skill_md in "$SKILLS_DIR"/*/SKILL.md; do
@@ -78,7 +78,7 @@ for skill_md in "$SKILLS_DIR"/*/SKILL.md; do
 done
 
 if [ "$found_any" -eq 0 ]; then
-  emit "skills: no SKILL.md files found under $SKILLS_DIR -- skipping catalog injection."
+  emit "awcameron-skills: no SKILL.md files found under $SKILLS_DIR -- skipping catalog injection."
   exit 0
 fi
 
