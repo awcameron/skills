@@ -1,4 +1,4 @@
-# Skills
+# Agent Skills
 
 A portable library of **12 agent skills** — genericized from real workflows built and iterated on
 while building a real application, not written speculatively. Each skill is a plain `SKILL.md`: a
