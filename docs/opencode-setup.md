@@ -10,7 +10,7 @@ This repo already ships a `.claude/skills` symlink (and `.agents/skills`) to the
 `skills/` directory -- either is enough for OpenCode to pick everything up:
 
 ```bash
-git clone https://github.com/<your-github-username>/agent-skills.git
+git clone https://github.com/awcameron/agent-skills.git
 cd your-project
 ln -s ../agent-skills/skills .opencode/skills
 ```

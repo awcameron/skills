@@ -7,7 +7,7 @@ or `.agents/skills/`. This repo already ships `.agents/skills` as a symlink to t
 `skills/` directory, so cloning it into a project and pointing either path at `skills/` is enough:
 
 ```bash
-git clone https://github.com/<your-github-username>/agent-skills.git
+git clone https://github.com/awcameron/agent-skills.git
 cd your-project
 ln -s ../agent-skills/skills .gemini/skills    # or .agents/skills -- either works
 ```

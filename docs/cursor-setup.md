@@ -10,7 +10,7 @@ Clone this repo alongside your project and symlink its canonical `skills/` direc
 whichever compatible path you prefer in *your* project:
 
 ```bash
-git clone https://github.com/<your-github-username>/agent-skills.git
+git clone https://github.com/awcameron/agent-skills.git
 cd your-project
 ln -s ../agent-skills/skills .cursor/skills    # or .claude/skills / .agents/skills -- any works
 ```

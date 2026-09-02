@@ -7,7 +7,7 @@ declares the `skills/` and `.claude/commands/` directories, so Claude Code disco
 automatically:
 
 ```
-/plugin marketplace add <your-github-username>/agent-skills
+/plugin marketplace add awcameron/agent-skills
 /plugin install agent-skills
 ```
 
@@ -19,7 +19,7 @@ invoke a specific skill explicitly, for when you don't want to wait for auto-dis
 ## Option 2: Symlink into a project
 
 ```bash
-git clone https://github.com/<your-github-username>/agent-skills.git
+git clone https://github.com/awcameron/agent-skills.git
 cd your-project
 ln -s ../agent-skills/skills .claude/skills
 ```
