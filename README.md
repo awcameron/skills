@@ -8,16 +8,15 @@ it what to actually do.
 As of 2026, Claude Code, Cursor, OpenCode, Codex CLI, and Gemini CLI have all converged on the
 same shape for this — a `SKILL.md` file with YAML frontmatter, discovered from a `skills/`-style
 directory. That means this repo needs **no per-tool format conversion**: one canonical `skills/`
-directory, exposed to each tool through the discovery path it already looks for, plus a thin
-slash-command wrapper per tool for explicit invocation.
+directory, exposed through each tool's own discovery path, plus a thin slash-command wrapper per
+tool for explicit invocation.
 
-**Design principle: discover, don't dictate.** This isn't a prescriptive lifecycle framework —
-there's no imposed spec→plan→build→ship pipeline, no fixed set of gates every change must pass.
-Every skill here is written to *discover* a repo's own conventions (its stack, its file layout,
-its naming precedent, its actual test setup) rather than assume or impose them. That's a
-deliberate difference from larger, more opinionated skill packs, which tend to bring their own
-process and vocabulary; this one is meant to disappear into whatever repo it's dropped into. See
-[Where this came from](#where-this-came-from) for the concrete story behind that choice.
+**Design principle: discover, don't dictate.** No imposed spec→plan→build→ship pipeline, no fixed
+set of gates every change must pass — every skill here *discovers* a repo's own conventions (its
+stack, file layout, naming precedent, test setup) rather than assuming or imposing them. That's a
+deliberate difference from larger, more opinionated skill packs, which bring their own process and
+vocabulary; this one is meant to disappear into whatever repo it's dropped into. See
+[Where this came from](#where-this-came-from) for the concrete story.
 
 ## Table of contents
 
