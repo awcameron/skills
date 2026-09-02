@@ -49,7 +49,11 @@ allowed-tools: [Read, Grep, Glob]   # optional -- Claude Code-specific, ignored 
   phrasing an agent would actually see in a request ("review this", "does this have tests"), not
   just an abstract category. This is what every supported tool actually reads to decide whether
   to activate the skill, so vague or purely categorical descriptions are the main reason a skill
-  never triggers.
+  never triggers. A `>-` folded block (as above) is the common shape for a longer description, but
+  a plain single-line scalar (`description: What the skill does...`) works too -- see
+  `ts-best-practices/SKILL.md` for a real example. These are the only two shapes the tooling
+  actually reads (`scripts/lib/parse-skill.js`, and the `SessionStart` hook -- see
+  [`hooks/README.md`](../hooks/README.md)); anything else won't parse.
 - `allowed-tools`: optional, Claude Code-only. Other tools ignore it; don't rely on it to
   actually restrict behavior outside Claude Code.
 
