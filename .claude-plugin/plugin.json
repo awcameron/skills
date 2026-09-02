@@ -12,7 +12,6 @@
   "commands": [
     "./.claude/commands"
   ],
-  "hooks": "./hooks/hooks.json",
   "keywords": [
     "skills",
     "code-review",
