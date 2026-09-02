@@ -142,14 +142,14 @@ self-contained explanation in the same comment, so the comment still works even 
 becomes unfindable someday:
 
 ```ts
-// Bad: a bare pointer -- useless the moment SMSY-97 is unfindable
-// see SMSY-97 for why
+// Bad: a bare pointer -- useless the moment TICKET-4521 is unfindable
+// see TICKET-4521 for why
 
-// Good: the reasoning is in the comment itself; SMSY-97 is a bonus pointer
-// to the original discussion, not a required lookup
-// CallerMembershipGuard (SMSY-97): rooms have no :orgId in the URL, so this
-// derives the caller's own org and rejects outright (403) a caller with no
-// membership anywhere.
+// Good: the reasoning is in the comment itself; TICKET-4521 is a bonus
+// pointer to the original discussion, not a required lookup
+// resolveCallerOrg (TICKET-4521): some routes carry no :orgId in the URL,
+// so this derives the caller's own org and rejects outright (403) a
+// caller with no membership anywhere.
 ```
 
 ## TSDoc, and tagged comments
