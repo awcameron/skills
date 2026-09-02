@@ -52,18 +52,12 @@ Two real cases:
 
 ## Post-merge cleanup
 
-After a PR merges (whether merged here or reported by the user as done elsewhere):
-
-```bash
-gh pr view <n> --json state,mergedAt   # confirm it actually merged
-git checkout main && git pull --ff-only
-git branch -d <branch>                  # a "not fully merged" warning here is expected/benign
-                                         # on a squash-merge -- the delete still succeeds
-gh repo view --json deleteBranchOnMerge -q .deleteBranchOnMerge   # currently false for this repo
-git push origin --delete <branch>       # only if the above is false
-```
-
-See `create-pr`'s own "Merge and clean up" step for the full mechanism.
+After a PR merges (whether merged here or reported by the user as done elsewhere), verify it
+actually merged before touching branches, then clean up — see the `create-pr` skill's own "Merge
+and clean up" step ([`skills/create-pr/SKILL.md`](skills/create-pr/SKILL.md)) for the full
+mechanism. One fact the skill can't hardcode since it's written generically: `deleteBranchOnMerge`
+is currently `false` for this repo, so the remote branch needs an explicit
+`git push origin --delete <branch>` too, not just the local `git branch -d`.
 
 ## Versioning and releases
 
