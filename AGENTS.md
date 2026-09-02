@@ -64,8 +64,11 @@ Version lives in both `package.json` and `.claude-plugin/plugin.json`, kept in s
 
 - `skills/` — canonical skill content.
 - `.claude/commands/`, `.gemini/commands/` — thin per-tool slash-command wrappers.
-- `.agents/skills/`, `.claude/skills/`, `.codex/skills/` — symlinks back to `skills/`, for tools
-  that discover skills from those paths directly.
+- `.agents/skills/`, `.claude/skills/` — symlinks back to `skills/`, for tools that discover
+  skills from those paths directly.
+- `.codex/skills/` — same symlink target, kept for legacy/defensive coverage; Codex CLI's own
+  docs say it reads `.agents/skills`, not this path, and no confirmed tool actually discovers
+  skills from `.codex/skills/` (see `docs/codex-setup.md`, which never references it).
 - `evals/` — the trigger-routing eval system; see [`evals/README.md`](evals/README.md).
 - `hooks/` — the SessionStart hook; see [`hooks/README.md`](hooks/README.md).
 - `docs/*-setup.md` — per-tool consumer setup instructions (not relevant to developing this repo).
