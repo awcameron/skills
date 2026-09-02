@@ -1,9 +1,17 @@
 # Agent Skills
 
-A portable library of **12 agent skills** — genericized from real workflows built and iterated on
-while building a real application, not written speculatively. Each skill is a plain `SKILL.md`: a
+A portable library of agent skills — genericized from real workflows built and iterated on while
+building a real application, not written speculatively. Each skill is a plain `SKILL.md`: a
 description that tells an agent when to reach for it, and a body that tells it what to actually
 do.
+
+```
+claude plugin marketplace add awcameron/skills
+claude plugin install awcameron-skills
+```
+
+Works the same way with Cursor, Codex CLI, Gemini CLI, and OpenCode — see
+[Using this with your tool](#using-this-with-your-tool) for each.
 
 As of 2026, Claude Code, Cursor, OpenCode, Codex CLI, and Gemini CLI have all converged on the
 same shape for this — a `SKILL.md` file with YAML frontmatter, discovered from a `skills/`-style
@@ -25,6 +33,9 @@ story behind a few of these skills, including a real skill-drift bug this repo's
 
 - [What's here](#whats-here)
 - [Using this with your tool](#using-this-with-your-tool)
+  - [Quick install (compat-path tools)](#quick-install-compat-path-tools)
+  - [Claude Code, as an installable plugin](#claude-code-as-an-installable-plugin)
+  - [Global install (any tool)](#global-install-any-tool)
 - [Contributing / adapting a skill](#contributing--adapting-a-skill)
 - [Releasing](#releasing)
 - [License](#license)
@@ -40,48 +51,48 @@ how the skills in each one hand off to each other.
 | Skill | What it does |
 |---|---|
 | [`review-code`](skills/review-code/SKILL.md) | Discovers a repo's own coding/observability standards and reviews a diff or PR against them — findings only, no auto-fix. |
-| [`ts-best-practices`](skills/ts-best-practices/SKILL.md) | Staff-engineer-level TypeScript/JavaScript judgment calls a linter can't enforce — comment discipline, casting, function/class design, error handling, immutability, type narrowing, type design — as short, example-driven reference files. |
-| [`zero-trust-architecture`](skills/zero-trust-architecture/SKILL.md) | Never trust a caller based on what layer already checked it: an ordered request-layer authorization chain, service-to-service calls, background-job identity, a database-layer tenant-isolation backstop, and client-side session-token handling, each discovered against a repo's own stack rather than assumed. |
+| [`ts-best-practices`](skills/ts-best-practices/SKILL.md) | Staff-engineer-level TypeScript/JavaScript judgment calls a linter can't enforce, as short, example-driven reference files. |
+| [`zero-trust-architecture`](skills/zero-trust-architecture/SKILL.md) | Never trusts a caller based on what layer already checked it — verifies identity and ownership explicitly across the whole request chain, discovered against a repo's own stack. |
 
 **The bug lifecycle** — a designed two-step pipeline: diagnosis produces a confirmed root cause,
 fixing consumes it rather than re-guessing
 
 | Skill | What it does |
 |---|---|
-| [`diagnose-bug`](skills/diagnose-bug/SKILL.md) | Finds the confirmed root cause of a failing/crashing/flaky/slow bug -- evidence first, a minimal repro, one falsifiable hypothesis at a time -- and reports it with proof, without implementing the fix. |
-| [`fix-bug`](skills/fix-bug/SKILL.md) | Implements a fix from an already-confirmed root cause, targeting the actual cause rather than the symptom and checking for the same defect shape elsewhere -- then hands off to `write-tests`/`review-code`/`create-pr` instead of duplicating them. |
+| [`diagnose-bug`](skills/diagnose-bug/SKILL.md) | Finds the confirmed root cause of a failing/crashing/flaky/slow bug, evidence-first, without implementing the fix. |
+| [`fix-bug`](skills/fix-bug/SKILL.md) | Implements a fix from an already-confirmed root cause, targeting the actual cause rather than the symptom. |
 
 **Test authoring**
 
 | Skill | What it does |
 |---|---|
-| [`write-tests`](skills/write-tests/SKILL.md) | Writes real, runnable tests grounded in a repo's actual test conventions, with a hard rule: every new test must be shown to fail against the unfixed code. |
+| [`write-tests`](skills/write-tests/SKILL.md) | Writes real, runnable tests grounded in a repo's actual test conventions — every new test must fail against the unfixed code first. |
 
 **Dependency maintenance**
 
 | Skill | What it does |
 |---|---|
-| [`upgrade-dependency`](skills/upgrade-dependency/SKILL.md) | Bumps a dependency grounded in what the version jump actually changes -- reads the real changelog across the range crossed, checks the repo for real usage of anything flagged as breaking, and separates genuine breakage from unrelated noise. |
+| [`upgrade-dependency`](skills/upgrade-dependency/SKILL.md) | Bumps a dependency grounded in what the version jump actually changes — real changelog, real usage check, real test results. |
 
 **Shipping workflow**
 
 | Skill | What it does |
 |---|---|
-| [`create-pr`](skills/create-pr/SKILL.md) | Carries local changes through a repo's real branch → commit → push → PR workflow, discovering its naming/title conventions from its docs and history, with a confirmation checkpoint before every visible/remote action. |
+| [`create-pr`](skills/create-pr/SKILL.md) | Carries local changes through a repo's real branch → commit → push → PR workflow, discovering its naming/title conventions from its own history. |
 
 **Documentation integrity** — orthogonal axes: factual accuracy vs. mechanical formatting
 
 | Skill | What it does |
 |---|---|
-| [`doc-fact-check`](skills/doc-fact-check/SKILL.md) | Cross-checks a doc's factual claims (stack, hosting, conventions, file paths) against the codebase itself — including skill files, since an agent *executes* a stale skill claim instead of just reading it. Deliberately a separate skill from `format-docs`: fact-checking prose never edits without confirmation, mechanical formatting always does. |
-| [`format-docs`](skills/format-docs/SKILL.md) | Applies a repo's own Markdown formatter mechanically, and flags (without silently resolving) structural inconsistencies like prose-wrap style. |
+| [`doc-fact-check`](skills/doc-fact-check/SKILL.md) | Cross-checks a doc's factual claims — including skill files — against the codebase itself, since an agent *executes* a stale skill claim instead of just reading it. |
+| [`format-docs`](skills/format-docs/SKILL.md) | Applies a repo's own Markdown formatter mechanically, flagging (not silently resolving) structural inconsistencies. |
 
 **Agent meta-behavior** — governs how the agent itself operates, not the target codebase
 
 | Skill | What it does |
 |---|---|
 | [`choose-subagent`](skills/choose-subagent/SKILL.md) | A decision checklist for which subagent type/model to spawn a task on, based on whether the task writes anything — not what it's about. |
-| [`terse-reports`](skills/terse-reports/SKILL.md) | A communication-style skill: report status/summaries in terse, fact-dense language, without touching the grammar of anything meant for someone else to read (code, commits, PR bodies). |
+| [`terse-reports`](skills/terse-reports/SKILL.md) | Reports status/summaries in terse, fact-dense language — never touches code, commit, or PR-body grammar. |
 
 Every skill except `zero-trust-architecture` also ships a matching slash command
 (`.claude/commands/<name>.md`, `.gemini/commands/<name>.toml`) for explicit invocation instead of
@@ -100,8 +111,10 @@ including its slash commands and any tool-specific quirks, is documented separat
 - [`docs/codex-setup.md`](docs/codex-setup.md)
 - [`docs/opencode-setup.md`](docs/opencode-setup.md)
 
-Quick version, if your tool reads `.agents/skills/` (Codex CLI, Gemini CLI, OpenCode) or an
-equivalent compat path (`.claude/skills/`, `.cursor/skills/`):
+### Quick install (compat-path tools)
+
+If your tool reads `.agents/skills/` (Codex CLI, Gemini CLI, OpenCode) or an equivalent compat
+path (`.claude/skills/`, `.cursor/skills/`):
 
 ```bash
 git clone https://github.com/awcameron/skills.git
@@ -136,8 +149,9 @@ them available in every project without repeating the setup above.
 For this repo's own branch/commit/PR/release conventions (as opposed to skill content itself),
 see [AGENTS.md](AGENTS.md).
 
-See [`docs/skill-anatomy.md`](docs/skill-anatomy.md) for the frontmatter and structure rules, and
-run these two before opening a PR:
+Requires Node >=20 + npm (for the two checks below). See
+[`docs/skill-anatomy.md`](docs/skill-anatomy.md) for the frontmatter and structure rules, and run
+these two before opening a PR:
 
 ```bash
 npm run validate   # frontmatter is well-formed: valid name, directory match, a stated trigger
