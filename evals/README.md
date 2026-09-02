@@ -12,9 +12,14 @@ How this repo checks whether its skills actually work: that they're well-formed,
 
 Both are deterministic and dependency-free -- no LLM call, safe to run in CI on every change.
 
-There is no Tier 3 (behavioral, actually running a skill through a real agent and grading the
-transcript) here yet -- that's a real thing worth having eventually, but a meaningfully bigger
-piece of work than these two tiers, and out of scope for what's built so far.
+There's a Tier 3 too -- behavioral, actually running a skill through a real agent and grading the
+transcript against an expected outcome -- but it isn't run or orchestrated by anything in this
+`evals/` directory. It lives as `skills/<name>/evals/evals.json` (a real prompt plus an
+`expected_output` description of what a correct run should catch, without fabricating unrelated
+findings), one per skill, run via `claude plugin eval` -- see
+[`docs/skill-anatomy.md`](../docs/skill-anatomy.md) for the file's location and format. Only
+`doc-fact-check`, `format-docs`, `review-code`, `ts-best-practices`, and `write-tests` have one so
+far -- it's not required the way Tier 1/2 are.
 
 ## What Tier 2 actually is
 
