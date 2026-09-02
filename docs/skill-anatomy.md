@@ -12,12 +12,22 @@ skills/
   skill-name/
     SKILL.md          # Required: the skill definition
     references/       # Optional: skill-specific reference docs, loaded on demand
+    evals/evals.json  # Optional: claude plugin eval cases for this skill (see `claude plugin eval`)
+    scripts/           # Optional: helper scripts the skill's body shells out to
 ```
 
-`SKILL.md` is the only required file. Add `references/` only when a skill genuinely needs
-supporting material split out (see `ts-best-practices/references/` for an example: nine short
-files, one per judgment-call category, so an agent opens only the one that applies instead of
-loading all nine).
+`SKILL.md` is the only required file.
+
+- `references/` -- only when a skill genuinely needs supporting material split out (see
+  `ts-best-practices/references/` for an example: eleven short files, one per judgment-call
+  category, so an agent opens only the one that applies instead of loading all eleven; also used
+  by `zero-trust-architecture`).
+- `evals/evals.json` -- a per-skill eval-case file for `claude plugin eval`, distinct from this
+  repo's own top-level `evals/cases/<skill>.json` trigger-routing evals (see
+  [`evals/README.md`](../evals/README.md)); present on `doc-fact-check`, `format-docs`,
+  `review-code`, `ts-best-practices`, and `write-tests` so far.
+- `scripts/` -- only when a skill's body benefits from mechanizing a repeatable step instead of
+  re-deriving it one Read/Grep at a time (see `format-docs/scripts/detect_formatter.sh`).
 
 ## SKILL.md format
 
