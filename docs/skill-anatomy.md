@@ -79,6 +79,10 @@ reference files opened on demand (`ts-best-practices`). What every skill here do
    nothing underneath it.
 2. Add a directory under `skills/` and a `SKILL.md` following the frontmatter rules above.
 3. Run `node scripts/validate-skills.js` and fix anything it flags.
-4. If the skill deserves a slash-command shortcut, add a matching `.claude/commands/<name>.md`
+4. Add `evals/cases/<skill-name>.json` (see [`evals/README.md`](../evals/README.md) for the
+   format) with a few positive/negative trigger-routing prompts, then run `npm run eval` and fix
+   anything it flags -- this is what actually catches a skill whose description doesn't carry the
+   vocabulary a user would say, or that collides with an existing skill's.
+5. If the skill deserves a slash-command shortcut, add a matching `.claude/commands/<name>.md`
    and `.gemini/commands/<name>.toml` (see any existing pair for the shape) -- optional, only
    worth it for a skill you'd want to invoke explicitly rather than wait on auto-discovery for.
