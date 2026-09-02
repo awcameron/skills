@@ -45,53 +45,65 @@ Grouped by what stage of work each skill acts on — see
 [`docs/skill-categories.md`](docs/skill-categories.md) for the reasoning behind the grouping and
 how the skills in each one hand off to each other.
 
-**Code-quality lenses**: read code against a body of standards, whether writing or reviewing
+### Code-quality lenses
 
-| Skill | What it does |
-|---|---|
-| [`review-code`](skills/review-code/SKILL.md) | Discovers a repo's own coding/observability standards, then reviews a diff or PR against them with findings only (no auto-fix). |
-| [`ts-best-practices`](skills/ts-best-practices/SKILL.md) | Staff-engineer-level TypeScript/JavaScript judgment calls a linter can't enforce, as short, example-driven reference files. |
-| [`zero-trust-architecture`](skills/zero-trust-architecture/SKILL.md) | Never trusts a caller based on what layer already checked it. Verifies identity and ownership explicitly across the whole request chain, discovered against a repo's own stack. |
+Read code against a body of standards, whether writing or reviewing.
 
-**The bug lifecycle**: a two-step pipeline where diagnosis produces a confirmed root cause and
-fixing consumes it instead of re-guessing
+- **[`review-code`](skills/review-code/SKILL.md)** — discovers a repo's own coding/observability
+  standards, then reviews a diff or PR against them with findings only (no auto-fix).
+- **[`ts-best-practices`](skills/ts-best-practices/SKILL.md)** — staff-engineer-level
+  TypeScript/JavaScript judgment calls a linter can't enforce, as short, example-driven reference
+  files.
+- **[`zero-trust-architecture`](skills/zero-trust-architecture/SKILL.md)** — never trusts a caller
+  based on what layer already checked it; verifies identity and ownership explicitly across the
+  whole request chain, discovered against a repo's own stack.
 
-| Skill | What it does |
-|---|---|
-| [`diagnose-bug`](skills/diagnose-bug/SKILL.md) | Finds the confirmed root cause of a failing/crashing/flaky/slow bug, evidence-first, without implementing the fix. |
-| [`fix-bug`](skills/fix-bug/SKILL.md) | Implements a fix from an already-confirmed root cause, targeting the actual cause rather than the symptom. |
+### The bug lifecycle
 
-**Test authoring**
+A two-step pipeline where diagnosis produces a confirmed root cause and fixing consumes it instead
+of re-guessing.
 
-| Skill | What it does |
-|---|---|
-| [`write-tests`](skills/write-tests/SKILL.md) | Writes real, runnable tests grounded in a repo's actual test conventions; every new test must fail against the unfixed code first. |
+- **[`diagnose-bug`](skills/diagnose-bug/SKILL.md)** — finds the confirmed root cause of a
+  failing/crashing/flaky/slow bug, evidence-first, without implementing the fix.
+- **[`fix-bug`](skills/fix-bug/SKILL.md)** — implements a fix from an already-confirmed root
+  cause, targeting the actual cause rather than the symptom.
 
-**Dependency maintenance**
+### Test authoring
 
-| Skill | What it does |
-|---|---|
-| [`upgrade-dependency`](skills/upgrade-dependency/SKILL.md) | Bumps a dependency grounded in what the version jump actually changes: a real changelog read, a real usage check, real test results. |
+- **[`write-tests`](skills/write-tests/SKILL.md)** — writes real, runnable tests grounded in a
+  repo's actual test conventions; every new test must fail against the unfixed code first.
 
-**Shipping workflow**
+### Dependency maintenance
 
-| Skill | What it does |
-|---|---|
-| [`create-pr`](skills/create-pr/SKILL.md) | Carries local changes through a repo's real branch → commit → push → PR workflow, discovering its naming/title conventions from its own history. |
+- **[`upgrade-dependency`](skills/upgrade-dependency/SKILL.md)** — bumps a dependency grounded in
+  what the version jump actually changes: a real changelog read, a real usage check, real test
+  results.
 
-**Documentation integrity**: two orthogonal axes, factual accuracy and mechanical formatting
+### Shipping workflow
 
-| Skill | What it does |
-|---|---|
-| [`doc-fact-check`](skills/doc-fact-check/SKILL.md) | Cross-checks a doc's factual claims (including skill files) against the codebase itself, since an agent *executes* a stale skill claim instead of just reading it. |
-| [`format-docs`](skills/format-docs/SKILL.md) | Applies a repo's own Markdown formatter mechanically, flagging (not silently resolving) structural inconsistencies. |
+- **[`create-pr`](skills/create-pr/SKILL.md)** — carries local changes through a repo's real
+  branch → commit → push → PR workflow, discovering its naming/title conventions from its own
+  history.
 
-**Agent meta-behavior**: governs how the agent itself operates, not the target codebase
+### Documentation integrity
 
-| Skill | What it does |
-|---|---|
-| [`choose-subagent`](skills/choose-subagent/SKILL.md) | A decision checklist for which subagent type/model to spawn a task on, based on whether the task writes anything, not what it's about. |
-| [`terse-reports`](skills/terse-reports/SKILL.md) | Reports status/summaries in terse, fact-dense language, without touching code, commit, or PR-body grammar. |
+Two orthogonal axes: factual accuracy and mechanical formatting.
+
+- **[`doc-fact-check`](skills/doc-fact-check/SKILL.md)** — cross-checks a doc's factual claims
+  (including skill files) against the codebase itself, since an agent *executes* a stale skill
+  claim instead of just reading it.
+- **[`format-docs`](skills/format-docs/SKILL.md)** — applies a repo's own Markdown formatter
+  mechanically, flagging (not silently resolving) structural inconsistencies.
+
+### Agent meta-behavior
+
+Governs how the agent itself operates, not the target codebase.
+
+- **[`choose-subagent`](skills/choose-subagent/SKILL.md)** — a decision checklist for which
+  subagent type/model to spawn a task on, based on whether the task writes anything, not what
+  it's about.
+- **[`terse-reports`](skills/terse-reports/SKILL.md)** — reports status/summaries in terse,
+  fact-dense language, without touching code, commit, or PR-body grammar.
 
 Every skill except `zero-trust-architecture` also ships a matching slash command
 (`.claude/commands/<name>.md`, `.gemini/commands/<name>.toml`) for explicit invocation instead of
