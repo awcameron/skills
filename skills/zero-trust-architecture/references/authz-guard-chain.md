@@ -38,14 +38,47 @@ routes carrying `:orgId`, compares it against the resolved membership) → `Role
 one way to do it, not the only correct shape — the load-bearing property is the *ordering
 dependency*, not the exact number of steps.
 
-The same shape shows up just as concretely on the JVM: a Spring Security filter chain that
-authenticates a bearer token and populates the `SecurityContext`, followed by a
-`@PreAuthorize`/method-security check that reads the resolved `Authentication`/`GrantedAuthority`
-set — never a claim re-read from the raw JWT inside the method body. Kotlin code on the same stack
-follows the identical ordering. A Scala service built on Play or http4s expresses it as composed
-`ActionFilter`s or authentication middleware/directives instead of annotations, but the dependency
-is the same: a later filter/directive reads a request attribute (or a typed context value) an
-earlier one attached, and the composition order is what makes that safe to assume.
+**The same shape, illustrated with Spring Security's own canonical API** (not a specific production
+codebase, unlike the example above — but the ordering dependency below is exactly how the framework
+itself is meant to be composed): a `SecurityFilterChain` bean registers a JWT authentication filter
+that verifies the bearer token and populates `SecurityContextHolder`, before any `@PreAuthorize`
+method-security check runs — because `@PreAuthorize`'s SpEL expressions (`hasRole(...)`,
+a custom `PermissionEvaluator`) read the `Authentication` that filter already resolved, never a claim
+re-read from the raw JWT inside the method body:
+
+```kotlin
+@Configuration
+@EnableMethodSecurity
+class SecurityConfig {
+  @Bean
+  fun filterChain(http: HttpSecurity): SecurityFilterChain =
+    http
+      .authorizeHttpRequests { it.anyRequest().authenticated() }
+      // Verifies the bearer JWT and populates SecurityContextHolder for
+      // everything downstream -- this step has to run before method
+      // security can read anything from it.
+      .oauth2ResourceServer { it.jwt(Customizer.withDefaults()) }
+      .build()
+}
+
+@RestController
+class RoomsController(private val rooms: RoomsRepository) {
+  // Reads the resolved Authentication -- populated by the filter chain
+  // above -- never a role claim decoded fresh from the token here.
+  @PreAuthorize("hasRole('MEMBER')")
+  @DeleteMapping("/orgs/{orgId}/rooms/{roomId}")
+  fun deleteRoom(@PathVariable orgId: String, @PathVariable roomId: String): ResponseEntity<Unit> {
+    // ...
+  }
+}
+```
+
+Kotlin and Java on Spring Security follow the identical ordering — the annotation-driven style above
+is idiomatic Kotlin; Java code on the same stack looks the same modulo syntax. A Scala service built
+on Play or http4s expresses the same dependency without annotations, as composed `ActionFilter`s or
+authentication middleware/directives instead: a later filter/directive reads a request attribute (or
+a typed context value) an earlier one attached, and the composition order is what makes that safe to
+assume.
 
 **The BOLA-relevant property to notice, regardless of framework:** none of these checks should trust
 anything the client sent except the credential itself. A tenant-match check doesn't say "the client
@@ -79,6 +112,26 @@ async function deleteRoomKey(request: DeleteRoomKeyRequest, membership: { orgId:
     // this specific room belongs to. This is the BOLA check a route-level
     // guard alone can't make, since it doesn't know which room until now.
     return err({ type: 'FORBIDDEN', reason: "Room does not belong to caller's organization" })
+  }
+  // ...
+}
+```
+
+The same check on Spring Security, as a `sealed class` result instead of an exception, follows the
+same shape:
+
+```kotlin
+sealed class RoomError {
+  data class NotFound(val roomId: String) : RoomError()
+  data class Forbidden(val reason: String) : RoomError()
+}
+
+fun deleteRoom(roomId: String, callerOrgId: String): Either<RoomError, Unit> {
+  val room = roomRepository.findById(roomId) ?: return RoomError.NotFound(roomId).left()
+  if (room.orgId != callerOrgId) {
+    // Same BOLA check as above: @PreAuthorize proved org membership in
+    // general, not that this specific room belongs to that org.
+    return RoomError.Forbidden("Room does not belong to caller's organization").left()
   }
   // ...
 }
