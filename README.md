@@ -1,30 +1,29 @@
 # Agent Skills
 
-A portable library of agent skills — genericized from real workflows built and iterated on while
-building a real application, not written speculatively. Each skill is a plain `SKILL.md`: a
-description that tells an agent when to reach for it, and a body that tells it what to actually
-do.
+A portable library of agent skills. Each one started as something built and iterated on while
+working on a real application, then got rewritten into a plain `SKILL.md`: a description that
+tells an agent when to reach for it, and a body that tells it what to actually do.
 
 ```
 claude plugin marketplace add awcameron/skills
 claude plugin install awcameron-skills
 ```
 
-Works the same way with Cursor, Codex CLI, Gemini CLI, and OpenCode — see
+It works the same way with Cursor, Codex CLI, Gemini CLI, and OpenCode; see
 [Using this with your tool](#using-this-with-your-tool) for each.
 
 As of 2026, Claude Code, Cursor, OpenCode, Codex CLI, and Gemini CLI have all converged on the
-same shape for this — a `SKILL.md` file with YAML frontmatter, discovered from a `skills/`-style
-directory. That means this repo needs **no per-tool format conversion**: one canonical `skills/`
-directory, exposed through each tool's own discovery path, plus a thin slash-command wrapper for
-the tools that support one (Claude Code, Gemini CLI) — the rest use each tool's own native
-explicit-invocation syntax (`/` in Cursor, `$skill-name` in Codex CLI, and so on).
+same shape for this: a `SKILL.md` file with YAML frontmatter, discovered from a `skills/`-style
+directory. That means this repo needs **no per-tool format conversion**. One canonical `skills/`
+directory gets exposed through each tool's own discovery path, plus a thin slash-command wrapper
+for the tools that support one (Claude Code, Gemini CLI). The rest use each tool's own native
+explicit-invocation syntax, like `/` in Cursor or `$skill-name` in Codex CLI.
 
-**Design principle: discover, don't dictate.** No imposed spec→plan→build→ship pipeline, no fixed
-set of gates every change must pass — every skill here *discovers* a repo's own conventions (its
-stack, file layout, naming precedent, test setup) rather than assuming or imposing them. That's a
-deliberate difference from larger, more opinionated skill packs, which bring their own process and
-vocabulary; this one is meant to disappear into whatever repo it's dropped into. See
+**Design principle: discover, don't dictate.** There's no imposed spec→plan→build→ship pipeline
+and no fixed set of gates every change must pass. Every skill here *discovers* a repo's own
+conventions — its stack, file layout, naming precedent, test setup — rather than assuming or
+imposing them. Larger, more opinionated skill packs bring their own process and vocabulary; this
+one is meant to disappear into whatever repo it's dropped into. See
 [`examples/skill-origin-case-study.md`](examples/skill-origin-case-study.md) for the concrete
 story behind a few of these skills, including a real skill-drift bug this repo's own
 `doc-fact-check` skill was built to catch.
@@ -46,16 +45,16 @@ Grouped by what stage of work each skill acts on — see
 [`docs/skill-categories.md`](docs/skill-categories.md) for the reasoning behind the grouping and
 how the skills in each one hand off to each other.
 
-**Code-quality lenses** — read code against a body of standards, whether writing or reviewing
+**Code-quality lenses**: read code against a body of standards, whether writing or reviewing
 
 | Skill | What it does |
 |---|---|
-| [`review-code`](skills/review-code/SKILL.md) | Discovers a repo's own coding/observability standards and reviews a diff or PR against them — findings only, no auto-fix. |
+| [`review-code`](skills/review-code/SKILL.md) | Discovers a repo's own coding/observability standards, then reviews a diff or PR against them with findings only (no auto-fix). |
 | [`ts-best-practices`](skills/ts-best-practices/SKILL.md) | Staff-engineer-level TypeScript/JavaScript judgment calls a linter can't enforce, as short, example-driven reference files. |
-| [`zero-trust-architecture`](skills/zero-trust-architecture/SKILL.md) | Never trusts a caller based on what layer already checked it — verifies identity and ownership explicitly across the whole request chain, discovered against a repo's own stack. |
+| [`zero-trust-architecture`](skills/zero-trust-architecture/SKILL.md) | Never trusts a caller based on what layer already checked it. Verifies identity and ownership explicitly across the whole request chain, discovered against a repo's own stack. |
 
-**The bug lifecycle** — a designed two-step pipeline: diagnosis produces a confirmed root cause,
-fixing consumes it rather than re-guessing
+**The bug lifecycle**: a two-step pipeline where diagnosis produces a confirmed root cause and
+fixing consumes it instead of re-guessing
 
 | Skill | What it does |
 |---|---|
@@ -66,13 +65,13 @@ fixing consumes it rather than re-guessing
 
 | Skill | What it does |
 |---|---|
-| [`write-tests`](skills/write-tests/SKILL.md) | Writes real, runnable tests grounded in a repo's actual test conventions — every new test must fail against the unfixed code first. |
+| [`write-tests`](skills/write-tests/SKILL.md) | Writes real, runnable tests grounded in a repo's actual test conventions; every new test must fail against the unfixed code first. |
 
 **Dependency maintenance**
 
 | Skill | What it does |
 |---|---|
-| [`upgrade-dependency`](skills/upgrade-dependency/SKILL.md) | Bumps a dependency grounded in what the version jump actually changes — real changelog, real usage check, real test results. |
+| [`upgrade-dependency`](skills/upgrade-dependency/SKILL.md) | Bumps a dependency grounded in what the version jump actually changes: a real changelog read, a real usage check, real test results. |
 
 **Shipping workflow**
 
@@ -80,29 +79,29 @@ fixing consumes it rather than re-guessing
 |---|---|
 | [`create-pr`](skills/create-pr/SKILL.md) | Carries local changes through a repo's real branch → commit → push → PR workflow, discovering its naming/title conventions from its own history. |
 
-**Documentation integrity** — orthogonal axes: factual accuracy vs. mechanical formatting
+**Documentation integrity**: two orthogonal axes, factual accuracy and mechanical formatting
 
 | Skill | What it does |
 |---|---|
-| [`doc-fact-check`](skills/doc-fact-check/SKILL.md) | Cross-checks a doc's factual claims — including skill files — against the codebase itself, since an agent *executes* a stale skill claim instead of just reading it. |
+| [`doc-fact-check`](skills/doc-fact-check/SKILL.md) | Cross-checks a doc's factual claims (including skill files) against the codebase itself, since an agent *executes* a stale skill claim instead of just reading it. |
 | [`format-docs`](skills/format-docs/SKILL.md) | Applies a repo's own Markdown formatter mechanically, flagging (not silently resolving) structural inconsistencies. |
 
-**Agent meta-behavior** — governs how the agent itself operates, not the target codebase
+**Agent meta-behavior**: governs how the agent itself operates, not the target codebase
 
 | Skill | What it does |
 |---|---|
-| [`choose-subagent`](skills/choose-subagent/SKILL.md) | A decision checklist for which subagent type/model to spawn a task on, based on whether the task writes anything — not what it's about. |
-| [`terse-reports`](skills/terse-reports/SKILL.md) | Reports status/summaries in terse, fact-dense language — never touches code, commit, or PR-body grammar. |
+| [`choose-subagent`](skills/choose-subagent/SKILL.md) | A decision checklist for which subagent type/model to spawn a task on, based on whether the task writes anything, not what it's about. |
+| [`terse-reports`](skills/terse-reports/SKILL.md) | Reports status/summaries in terse, fact-dense language, without touching code, commit, or PR-body grammar. |
 
 Every skill except `zero-trust-architecture` also ships a matching slash command
 (`.claude/commands/<name>.md`, `.gemini/commands/<name>.toml`) for explicit invocation instead of
-waiting on auto-discovery — `zero-trust-architecture` is meant to auto-trigger on ordinary
-feature/review requests instead.
+waiting on auto-discovery. `zero-trust-architecture` is the exception: it's meant to auto-trigger
+on ordinary feature/review requests instead.
 
 ## Using this with your tool
 
 Clone it (or add it as a submodule) into a project, then point your tool at `skills/` through
-whichever path it already looks for — a symlink is enough, no copying. Setup for each tool,
+whichever path it already looks for. A symlink is enough; no copying needed. Setup for each tool,
 including its slash commands and any tool-specific quirks, is documented separately:
 
 - [`docs/claude-code-setup.md`](docs/claude-code-setup.md) — plugin install or symlink, plus `.claude/commands/`
@@ -124,7 +123,7 @@ ln -s ../skills/skills .agents/skills
 
 ### Claude Code, as an installable plugin
 
-This repo is also a self-contained Claude Code plugin — `.claude-plugin/plugin.json` at its root
+This repo is also a self-contained Claude Code plugin. `.claude-plugin/plugin.json` at its root
 declares `skills/`, `.claude/commands/`, and `hooks/`, so Claude Code discovers everything
 automatically, including a `SessionStart` hook that injects a one-line-per-skill catalog into
 every new session:
@@ -136,13 +135,13 @@ claude plugin install awcameron-skills
 
 See [`docs/claude-code-setup.md`](docs/claude-code-setup.md) for the in-session slash-command
 form, and the symlink caveat if you install without the plugin system (the `SessionStart` catalog
-hook needs manual wiring in that case — see [`hooks/README.md`](hooks/README.md)).
+hook needs manual wiring in that case; see [`hooks/README.md`](hooks/README.md)).
 
 ### Global install (any tool)
 
 Symlink individual skills (or the whole directory) into your tool's global skills path instead of
-a per-project one — e.g. `~/.claude/skills/`, `~/.cursor/skills/`, `~/.agents/skills/` — to make
-them available in every project without repeating the setup above.
+a per-project one, e.g. `~/.claude/skills/`, `~/.cursor/skills/`, `~/.agents/skills/`, to make them
+available in every project without repeating the setup above.
 
 ## Contributing / adapting a skill
 
@@ -158,21 +157,21 @@ npm run validate   # frontmatter is well-formed: valid name, directory match, a 
 npm run eval       # your positive/negative evals/cases/<skill>.json prompts actually route right
 ```
 
-`npm run eval` is a deterministic (no LLM call) trigger-routing check — see
+`npm run eval` is a deterministic (no LLM call) trigger-routing check. See
 [`evals/README.md`](evals/README.md) for what it does and doesn't catch. Add a case file for any
 new skill; it's what actually caught and fixed a real description collision during this repo's
 own build (see that README's own example).
 
 Hold new and existing skills to the "discover, don't dictate" principle above: a skill should read
 a repo's own conventions doc, check real git/GitHub history, and read a couple of existing files
-before writing more in the same style — never hardcode a stack, a file layout, or a naming
+before writing more in the same style. Never hardcode a stack, a file layout, or a naming
 convention. If you find one that's drifted from that, that's worth an issue or a PR.
 
 ## Releasing
 
-See [`docs/releasing.md`](docs/releasing.md) for how to bump the version and cut a GitHub Release
-— it's a manual `workflow_dispatch` step, not something that happens automatically on merge.
+See [`docs/releasing.md`](docs/releasing.md) for how to bump the version and cut a GitHub Release.
+It's a manual `workflow_dispatch` step, not something that happens automatically on merge.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE).
