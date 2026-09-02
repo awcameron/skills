@@ -19,19 +19,23 @@ consumers; see [README.md](README.md) for what this repo is and how it's consume
 
 Nothing is pushed directly to `main` — every change, including a one-line doc fix, lands via PR.
 
-- **PR title / commit format**: Conventional Commits, enforced by
-  [`.github/workflows/pr-title-lint.yml`](.github/workflows/pr-title-lint.yml) —
-  `<type>(<scope>): <subject>`, subject not capitalized. Valid types: `feat`, `fix`, `docs`,
-  `chore`, `refactor`, `test`, `style`, `perf`, `ci`, `build`, `revert`. By convention (see git
-  log), `<scope>` is whatever the change is actually about: the skill name touched for a change
-  inside `skills/<name>/` (e.g. `feat(ts-best-practices): ...`), the doc's filename for a change
-  to one doc (e.g. `docs(skill-anatomy): ...`, `docs(readme): ...`) -- this is the more common
-  case for `docs` commits in practice -- or omit the scope entirely for a change that spans the
-  repo rather than one skill or doc (e.g. `ci: ...`, `chore: ...`).
-- **Step-by-step mechanics** (branch naming, confirmation checkpoints before each visible/remote
-  action, commit body shape, PR body template): use the `create-pr` skill
-  ([`skills/create-pr/SKILL.md`](skills/create-pr/SKILL.md)). It's written generically for any
-  repo it's dropped into, but it is exactly the process this repo itself follows.
+**PR title / commit format**: Conventional Commits, enforced by
+[`.github/workflows/pr-title-lint.yml`](.github/workflows/pr-title-lint.yml) —
+`<type>(<scope>): <subject>`, subject not capitalized. Valid types: `feat`, `fix`, `docs`,
+`chore`, `refactor`, `test`, `style`, `perf`, `ci`, `build`, `revert`.
+
+By convention (see git log), `<scope>` is whatever the change is actually about:
+
+- the skill name touched, for a change inside `skills/<name>/` (e.g. `feat(ts-best-practices): ...`)
+- the doc's filename, for a change to one doc (e.g. `docs(skill-anatomy): ...`, `docs(readme): ...`)
+  — the more common case for `docs` commits in practice
+- omitted entirely, for a change that spans the repo rather than one skill or doc
+  (e.g. `ci: ...`, `chore: ...`)
+
+**Step-by-step mechanics** (branch naming, confirmation checkpoints before each visible/remote
+action, commit body shape, PR body template): use the `create-pr` skill
+([`skills/create-pr/SKILL.md`](skills/create-pr/SKILL.md)). It's written generically for any
+repo it's dropped into, but it is exactly the process this repo itself follows.
 
 ## CI coverage gap
 
