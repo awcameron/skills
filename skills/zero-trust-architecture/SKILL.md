@@ -101,8 +101,7 @@ See the reference doc for each layer — read the one(s) relevant to what you're
 - Reinventing a tenant-isolation or auth-chain helper under a different name instead of using the
   one this repo already has — two helpers doing the same job under different names is its own source
   of drift.
-- Trusting a `tenantId`/`orgId`/`userId` embedded in a background job or queue payload instead of
-  re-verifying it — a payload is just as much unverified input as a request body once it's outside
-  the request-layer chain that originally checked it.
-- Assuming a call is legitimate because it came from inside the network/cluster instead of verifying
-  it the way the service would verify an external caller.
+
+Each reference file below has its own "Common mistakes" section scoped to that layer (background
+jobs, service-to-service calls, token revocation, etc.) — read the relevant one rather than expecting
+every mistake to be repeated here.

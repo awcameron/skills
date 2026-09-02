@@ -62,14 +62,13 @@ class SecurityConfig {
 }
 
 @RestController
-class RoomsController(private val rooms: RoomsRepository) {
+class RoomsController(private val rooms: RoomsService) {
   // Reads the resolved Authentication -- populated by the filter chain
   // above -- never a role claim decoded fresh from the token here.
   @PreAuthorize("hasRole('MEMBER')")
   @DeleteMapping("/orgs/{orgId}/rooms/{roomId}")
-  fun deleteRoom(@PathVariable orgId: String, @PathVariable roomId: String): ResponseEntity<Unit> {
-    // ...
-  }
+  fun deleteRoom(@PathVariable orgId: String, @PathVariable roomId: String): ResponseEntity<Unit> =
+    rooms.delete(roomId)
 }
 ```
 
@@ -117,8 +116,9 @@ async function deleteRoomKey(request: DeleteRoomKeyRequest, membership: { orgId:
 }
 ```
 
-The same check on Spring Security, as a `sealed class` result instead of an exception, follows the
-same shape:
+The same check on a JVM stack, as a typed result instead of an exception, follows the same shape.
+This uses Arrow's `Either` (not part of Kotlin's standard library — swap in a plain `sealed class`
+result type if this repo doesn't already depend on Arrow):
 
 ```kotlin
 sealed class RoomError {
