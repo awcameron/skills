@@ -15,7 +15,8 @@ targets are confirmed to work with it as-is.
 ## Setup
 
 **Installed as the Claude Code plugin** (see `docs/claude-code-setup.md`): nothing to do --
-`.claude-plugin/plugin.json`'s `"hooks": "./hooks/hooks.json"` field wires this up automatically.
+Claude Code auto-loads `hooks/hooks.json` from its standard path for any installed plugin, no
+`plugin.json` declaration needed (declaring it explicitly causes a duplicate-load error).
 
 **Symlinked into a project instead of installed as a plugin**: hooks are not auto-discovered
 outside the plugin system, so copy the hook registration into the project's own
