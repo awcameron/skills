@@ -1,6 +1,6 @@
 # Agent Skills
 
-A portable library of **8 agent skills** — genericized from real workflows built and iterated on
+A portable library of **12 agent skills** — genericized from real workflows built and iterated on
 in a substantial, real-world production codebase, not written speculatively. Each skill is a
 plain `SKILL.md`: a description that tells an agent when to reach for it, and a body that tells
 it what to actually do.
@@ -30,18 +30,55 @@ process and vocabulary; this one is meant to disappear into whatever repo it's d
 
 ## What's here
 
+Grouped by what stage of work each skill acts on — see
+[`docs/skill-categories.md`](docs/skill-categories.md) for the reasoning behind the grouping and
+how the skills in each one hand off to each other.
+
+**Code-quality lenses** — read code against a body of standards, whether writing or reviewing
+
 | Skill | What it does |
 |---|---|
 | [`review-code`](skills/review-code/SKILL.md) | Discovers a repo's own coding/observability standards and reviews a diff or PR against them — findings only, no auto-fix. |
-| [`write-tests`](skills/write-tests/SKILL.md) | Writes real, runnable tests grounded in a repo's actual test conventions, with a hard rule: every new test must be shown to fail against the unfixed code. |
+| [`ts-best-practices`](skills/ts-best-practices/SKILL.md) | Staff-engineer-level TypeScript/JavaScript judgment calls a linter can't enforce — comment discipline, casting, function/class design, error handling, immutability, type narrowing, type design — as short, example-driven reference files. |
+| [`zero-trust-architecture`](skills/zero-trust-architecture/SKILL.md) | Never trust a caller based on what layer already checked it: an ordered request-layer authorization chain, service-to-service calls, background-job identity, a database-layer tenant-isolation backstop, and client-side session-token handling, each discovered against a repo's own stack rather than assumed. |
+
+**The bug lifecycle** — a designed two-step pipeline: diagnosis produces a confirmed root cause,
+fixing consumes it rather than re-guessing
+
+| Skill | What it does |
+|---|---|
 | [`diagnose-bug`](skills/diagnose-bug/SKILL.md) | Finds the confirmed root cause of a failing/crashing/flaky/slow bug -- evidence first, a minimal repro, one falsifiable hypothesis at a time -- and reports it with proof, without implementing the fix. |
 | [`fix-bug`](skills/fix-bug/SKILL.md) | Implements a fix from an already-confirmed root cause, targeting the actual cause rather than the symptom and checking for the same defect shape elsewhere -- then hands off to `write-tests`/`review-code`/`create-pr` instead of duplicating them. |
+
+**Test authoring**
+
+| Skill | What it does |
+|---|---|
+| [`write-tests`](skills/write-tests/SKILL.md) | Writes real, runnable tests grounded in a repo's actual test conventions, with a hard rule: every new test must be shown to fail against the unfixed code. |
+
+**Dependency maintenance**
+
+| Skill | What it does |
+|---|---|
 | [`upgrade-dependency`](skills/upgrade-dependency/SKILL.md) | Bumps a dependency grounded in what the version jump actually changes -- reads the real changelog across the range crossed, checks the repo for real usage of anything flagged as breaking, and separates genuine breakage from unrelated noise. |
+
+**Shipping workflow**
+
+| Skill | What it does |
+|---|---|
 | [`create-pr`](skills/create-pr/SKILL.md) | Carries local changes through a repo's real branch → commit → push → PR workflow, discovering its naming/title conventions from its docs and history, with a confirmation checkpoint before every visible/remote action. |
+
+**Documentation integrity** — orthogonal axes: factual accuracy vs. mechanical formatting
+
+| Skill | What it does |
+|---|---|
 | [`doc-fact-check`](skills/doc-fact-check/SKILL.md) | Cross-checks a doc's factual claims (stack, hosting, conventions, file paths) against the codebase itself — including skill files, since an agent *executes* a stale skill claim instead of just reading it. Deliberately a separate skill from `format-docs`: fact-checking prose never edits without confirmation, mechanical formatting always does. |
 | [`format-docs`](skills/format-docs/SKILL.md) | Applies a repo's own Markdown formatter mechanically, and flags (without silently resolving) structural inconsistencies like prose-wrap style. |
-| [`ts-best-practices`](skills/ts-best-practices/SKILL.md) | Staff-engineer-level TypeScript/JavaScript judgment calls a linter can't enforce — comment discipline, casting, function/class design, error handling, immutability, type narrowing, type design — as short, example-driven reference files. |
-| [`zero-trust-architecture`](skills/zero-trust-architecture/SKILL.md) | Never trust a request based on what layer already checked it: an ordered request-layer authorization chain, a database-layer tenant-isolation backstop, and client-side session-token handling, each discovered against a repo's own stack rather than assumed. |
+
+**Agent meta-behavior** — governs how the agent itself operates, not the target codebase
+
+| Skill | What it does |
+|---|---|
 | [`choose-subagent`](skills/choose-subagent/SKILL.md) | A decision checklist for which subagent type/model to spawn a task on, based on whether the task writes anything — not what it's about. |
 | [`terse-reports`](skills/terse-reports/SKILL.md) | A communication-style skill: report status/summaries in terse, fact-dense language, without touching the grammar of anything meant for someone else to read (code, commits, PR bodies). |
 
