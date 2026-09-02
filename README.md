@@ -112,7 +112,7 @@ Quick version, if your tool reads `.agents/skills/` (Codex CLI, Gemini CLI, Open
 equivalent compat path (`.claude/skills/`, `.cursor/skills/`):
 
 ```bash
-git clone https://github.com/<your-github-username>/agent-skills.git
+git clone https://github.com/awcameron/agent-skills.git
 cd your-project
 ln -s ../agent-skills/skills .agents/skills
 ```
@@ -125,7 +125,7 @@ automatically, including a `SessionStart` hook that injects a one-line-per-skill
 every new session:
 
 ```
-/plugin marketplace add <your-github-username>/agent-skills
+/plugin marketplace add awcameron/agent-skills
 /plugin install agent-skills
 ```
 
