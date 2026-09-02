@@ -76,6 +76,21 @@ already correct; it didn't. The run also caught a real ambiguity between "verify
 "don't write the regression test" (resolved: verify with a throwaway check, leave the durable test
 to `write-tests`) and the same missing-build-tooling gap `diagnose-bug` had already hit once.
 
+## `upgrade-dependency`: a real major-version bump, read blind
+
+Tested against a real `zod` 3→4 dedup already merged in the same production repo, checked out
+before that commit. Given only the task ("apps/web already has zod 4 transitively, the rest of the
+repo is still on zod 3, dedupe onto one version"), an agent read zod's actual migration guide,
+correctly identified the one breaking change that mattered here (v4's stricter `.uuid()`
+validation) out of a dozen candidate items, confirmed the rest were genuinely unused in this
+codebase via grep rather than assumed, and correctly refused to blame the bump for an unrelated,
+pre-existing e2e failure once it checked. It landed on a *different* fix than the real commit did —
+loosening validation back to the old behavior (`.guid()`) rather than embracing the new strictness
+and fixing the affected fixtures — but explicitly flagged that exact fork as the point it would
+stop and ask a human, rather than silently picking a side of a genuinely debatable call. That run
+also surfaced that a plain `npm install` doesn't actually deduplicate a workspace tree by itself
+(a follow-up `dedupe` step does), which the skill didn't originally call out.
+
 ## Why this matters for the genericized versions
 
 None of the rewritten skills in this repo invent new content to sound more general — they keep

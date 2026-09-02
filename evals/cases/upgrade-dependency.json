@@ -1,0 +1,15 @@
+{
+  "skill_name": "upgrade-dependency",
+  "trigger": {
+    "positive": [
+      { "prompt": "can you bump lodash to the latest version", "top_k": 2 },
+      { "prompt": "is it safe to upgrade our zod dependency to v4", "top_k": 2 },
+      { "prompt": "update this package, it's flagged as vulnerable", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "why does this test fail intermittently in CI", "owner": "diagnose-bug" },
+      { "prompt": "review this diff for code quality issues", "owner": "review-code" },
+      { "prompt": "push this branch up and open a PR for review", "owner": "create-pr" }
+    ]
+  }
+}
