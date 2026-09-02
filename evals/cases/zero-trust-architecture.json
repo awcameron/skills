@@ -1,0 +1,19 @@
+{
+  "skill_name": "zero-trust-architecture",
+  "trigger": {
+    "positive": [
+      { "prompt": "add an endpoint to delete a room", "top_k": 3 },
+      { "prompt": "why does this user see another org's data", "top_k": 2 },
+      { "prompt": "review this handler for authorization gaps, can a user reach another tenant's records", "top_k": 2 },
+      { "prompt": "add a new guard to check that the caller owns this resource before updating it", "top_k": 2 },
+      { "prompt": "we're storing the session token in localStorage, is that safe", "top_k": 2 },
+      { "prompt": "add row-level security policies for the new invoices table", "top_k": 2 }
+    ],
+    "negative": [
+      { "prompt": "review my changes before I open a PR", "owner": "review-code" },
+      { "prompt": "add test coverage for this bug fix", "owner": "write-tests" },
+      { "prompt": "open a PR for this branch", "owner": "create-pr" },
+      { "prompt": "diagnose why this endpoint is throwing a 500", "owner": "diagnose-bug" }
+    ]
+  }
+}
