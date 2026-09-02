@@ -18,6 +18,11 @@
     "agent-skills",
     "code-review",
     "testing",
-    "documentation"
+    "documentation",
+    "debugging",
+    "security",
+    "typescript",
+    "pull-request",
+    "claude-code"
   ]
 }
