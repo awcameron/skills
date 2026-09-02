@@ -9,7 +9,7 @@ description, or when you mention it explicitly with `$skill-name`.
 This repo already ships an `.agents/skills` symlink to the canonical `skills/` directory:
 
 ```bash
-git clone https://github.com/<your-github-username>/agent-skills.git
+git clone https://github.com/awcameron/agent-skills.git
 cd your-project
 ln -s ../agent-skills/skills .agents/skills
 ```
