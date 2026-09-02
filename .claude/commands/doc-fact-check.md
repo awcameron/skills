@@ -2,7 +2,7 @@
 description: Cross-check a doc's factual claims against the current codebase and flag anything stale
 ---
 
-Invoke the skills:doc-fact-check skill against $ARGUMENTS (or ask me which doc if none was given).
+Invoke the awcameron-skills:doc-fact-check skill against $ARGUMENTS (or ask me which doc if none was given).
 
 Extract the doc's checkable factual/architectural claims (stack, hosting, file paths, naming
 conventions, counts, commands) and cross-check each one against the codebase itself, not just

@@ -126,7 +126,7 @@ every new session:
 
 ```
 /plugin marketplace add awcameron/skills
-/plugin install skills
+/plugin install awcameron-skills
 ```
 
 Symlinked in instead of installed as a plugin? The hook isn't auto-discovered outside the plugin
