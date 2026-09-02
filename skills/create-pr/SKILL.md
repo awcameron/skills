@@ -23,6 +23,41 @@ conventions plus its actual branch/PR/commit history (discovered fresh each time
 from another repo's habits). It does not judge code quality or standards compliance — that's
 `review-code`'s job; run that first if there's any doubt about the change itself.
 
+```
+Step 0 Orient
+   |
+Step 1 Determine ticket
+   |
+Step 2 Discover conventions
+   |
+Step 3 Construct branch name --[Checkpoint 1: confirm]--> git checkout -b
+   |
+Step 4 Stage + construct commit --[Checkpoint 2: confirm]--> git commit
+   |
+Step 5 Construct PR title + body
+   |
+Step 6 Push + open PR --[Checkpoint 3: confirm]--> git push, gh pr create
+   |
+Step 7 Merge and clean up
+   |
+   +-- path A: this skill merges -------+
+   |      gh pr checks green? --> gh pr merge     |
+   |      (not green / needs sign-off -> stop,    |
+   |       ask)                                   |
+   |                                               |
+   +-- path B: user reports "it's merged" --------+
+          (merged externally)                      |
+                                                     v
+                              Verify actually MERGED (gh pr view)
+                                                     |
+                                        git checkout <default>; git pull --ff-only
+                                                     |
+                                  [Checkpoint 4: confirm delete]
+                                                     |
+                                  delete local branch, delete remote
+                                  branch if not already gone
+```
+
 ## Guardrails (do not skip)
 
 - **Confirmation checkpoints, not one pass-through.** Never chain straight from "make a PR" to a
