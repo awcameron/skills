@@ -38,6 +38,23 @@ bump PR merges, it reads the new version, checks whether a release for that vers
 `v<version>` and cuts a GitHub Release with auto-generated notes. Nothing else to do — the tag and
 the release page appear on their own.
 
+## Choosing patch / minor / major
+
+- **Patch** — fixes, wording/doc corrections, metadata tweaks (e.g. `plugin.json` keywords). No
+  behavior or interface change.
+- **Minor** — anything additive: a new skill, a new command, expanded scope on an existing skill.
+  This is what most bumps so far have been.
+- **Major** — a change that breaks something a consumer already relies on: renaming or removing a
+  skill/command someone has wired up (`skills/<name>/`, `.claude/commands/<name>.md`, a compat
+  symlink like `.agents/skills`), restructuring `.claude-plugin/plugin.json`'s `skills`/
+  `commands`/`hooks` keys in a way older tooling can't read, or changing a skill's documented
+  behavior in a way that would silently change what an agent using it does.
+
+One caveat: this repo is still on a `0.x` line. Under semver, `0.x` means "anything may change at
+any time" — a minor bump is allowed to be breaking pre-1.0, and major is conventionally reserved
+for whenever a stable `1.0.0` is declared. There's no hard requirement to major-bump a breaking
+change right now, but doing so anyway is a reasonable way to signal it before that point.
+
 ## Known gaps
 
 - **The bump PR's branch isn't auto-deleted on merge.** Same as any PR in this repo — check
