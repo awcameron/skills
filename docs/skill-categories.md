@@ -11,16 +11,18 @@ other.
 
 `review-code`, `ts-best-practices`, `zero-trust-architecture`
 
-The three "read code, judge it against a body of standards" skills. They share a structure, not
-just a purpose: principles stated up front, detail split into `references/` files opened on
-demand rather than loaded all at once. They differ in where that body of standards comes from:
+The three "read code, judge it against a body of standards" skills. They share a purpose, not
+necessarily a structure — they differ in where that body of standards comes from, and that
+difference shows up in how each one is laid out on disk:
 
 - `review-code` *discovers* a repo's own standards (its documented conventions, its lint config,
-  its real git history) — it has no fixed opinions of its own.
+  its real git history) — it has no fixed opinions of its own, so there's nothing fixed to split
+  out; it's a single `SKILL.md`.
 - `ts-best-practices` and `zero-trust-architecture` each carry a fixed, portable body of judgment
   calls — TypeScript/JavaScript idiom, and Zero Trust authorization architecture, respectively —
   that apply across repos, with an explicit step to check whether a given repo's own documented
-  convention should win over the general default when the two conflict.
+  convention should win over the general default when the two conflict. Both split that detail
+  into `references/` files opened on demand rather than loaded all at once.
 
 All three apply equally while *writing* new code and while *reviewing* existing code — none of
 them is review-only.
