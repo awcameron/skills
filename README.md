@@ -17,12 +17,13 @@ set of gates every change must pass — every skill here *discovers* a repo's ow
 stack, file layout, naming precedent, test setup) rather than assuming or imposing them. That's a
 deliberate difference from larger, more opinionated skill packs, which bring their own process and
 vocabulary; this one is meant to disappear into whatever repo it's dropped into. See
-[Where this came from](#where-this-came-from) for the concrete story.
+[`examples/skill-origin-case-study.md`](examples/skill-origin-case-study.md) for the concrete
+story behind a few of these skills, including a real skill-drift bug this repo's own
+`doc-fact-check` skill was built to catch.
 
 ## Table of contents
 
 - [What's here](#whats-here)
-- [Where this came from](#where-this-came-from)
 - [Using this with your tool](#using-this-with-your-tool)
 - [Contributing / adapting a skill](#contributing--adapting-a-skill)
 - [Releasing](#releasing)
@@ -86,15 +87,6 @@ Every skill except `zero-trust-architecture` also ships a matching slash command
 (`.claude/commands/<name>.md`, `.gemini/commands/<name>.toml`) for explicit invocation instead of
 waiting on auto-discovery — `zero-trust-architecture` is meant to auto-trigger on ordinary
 feature/review requests instead.
-
-## Where this came from
-
-Every skill here started as something built for a real, actively-developed application —
-not a toy or a demo — and was rewritten to drop that project's specific facts (its stack, its file
-layout, its branch-naming precedent) in favor of a "discover this repo's own conventions first"
-step in the same place. See [`examples/skill-origin-case-study.md`](examples/skill-origin-case-study.md)
-for the concrete story behind a few of them, including a real skill-drift bug this repo's own
-`doc-fact-check` skill was built to catch.
 
 ## Using this with your tool
 
