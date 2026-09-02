@@ -46,7 +46,7 @@ For a skill you want always loaded rather than activated on demand, add it to yo
 ```markdown
 # Project Instructions
 
-@skills/ts-best-practices/SKILL.md
+@./.gemini/skills/ts-best-practices/SKILL.md
 ```
 
 > **Skills vs. GEMINI.md:** skills are on-demand and keep the context window clean; GEMINI.md is
@@ -56,5 +56,7 @@ For a skill you want always loaded rather than activated on demand, add it to yo
 
 - Each `SKILL.md`'s `description` frontmatter is what Gemini CLI uses for auto-discovery -- it's
   written to state both *what* the skill does and *when* to use it, for exactly this reason.
-- Explicitly load a skill mid-prompt with `@skills/<name>/SKILL.md` if you want to guarantee it's
-  followed rather than waiting on auto-discovery.
+- Explicitly load a skill mid-prompt with `@./.gemini/skills/<name>/SKILL.md` (adjust the path if
+  you symlinked into `.agents/skills` instead) if you want to guarantee it's followed rather than
+  waiting on auto-discovery. Gemini CLI's `@`-import requires an explicit `./`, `../`, or absolute
+  prefix -- a bare `@skills/...` path won't resolve.
