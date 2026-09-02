@@ -37,8 +37,11 @@ Nothing is pushed directly to `main` — every change, including a one-line doc 
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) (`npm run validate` + `npm run eval`) runs
 on PRs/pushes touching `skills/**`, `evals/**`, `scripts/**`, `package.json`, or any `.md` file. A
-workflow-only PR (e.g. editing a `.github/workflows/*.yml` file with no accompanying doc/skill
-change) still gets no automated check — review those by hand before merging.
+change outside those paths gets no automated check at all — review those by hand before merging.
+Two real cases: a `.github/workflows/*.yml`-only PR, and a `hooks/*.sh` or `hooks/hooks.json`
+change (`hooks/` isn't in the CI path filter either, so `session-start.sh`'s actual logic is only
+ever checked by the manual `bash hooks/session-start.sh | python3 -m json.tool` in
+[`hooks/README.md`](hooks/README.md), not CI).
 
 ## Post-merge cleanup
 
