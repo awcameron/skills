@@ -25,6 +25,28 @@ they belong on different agents.
 Before calling `Agent`, ask: **does this task write anything?** (Edit/Write a file, run
 `git commit`, `git push`, `gh pr create`, or otherwise change state.)
 
+```
+                    Does the task write anything?
+                 (Edit/Write, git commit/push, gh pr create)
+                                  |
+                 +----------------+----------------+
+                 | No                              | Yes
+                 v                                 v
+        read-only / exploration          default write-capable
+        agent  (or a cheaper-model            agent, unchanged
+        general-purpose agent if                    |
+        it needs broader tools)                      | unusually hard?
+                                              (ambiguous design,
+                                               stubborn bug, risky/
+                                               hard-to-reverse change)
+                                              +--------+--------+
+                                              | No              | Yes
+                                              v                 v
+                                        stay on default   same agent type,
+                                        model             override to a
+                                                           stronger model
+```
+
 - **No -- it only reads and reports** (code review, standards/spec review of a PR or diff,
   "investigate X decision", running a read-only skill against a PR, general research/exploration)
   -> use a read-only/exploration agent type if your harness has one.

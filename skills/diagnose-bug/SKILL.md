@@ -62,6 +62,30 @@ otherwise exactly one targeted log/breakpoint placed at the point that would con
 then remove it once done. Don't shotgun multiple speculative changes hoping one sticks -- confirm
 or discard each hypothesis before moving to the next.
 
+```
+        +----------------------------------------------------+
+        |                                                     |
+        v                                                     |
+  state ONE hypothesis                                        |
+  ("X is null because Y                                       |
+   is only set when Z")                                       |
+        |                                                     |
+        v                                                     |
+  test it the cheapest way                                    |
+  (read the code path, or                                     |
+   one targeted log/breakpoint)                                |
+        |                                                     |
+        v                                                     |
+  +-----------+                                                |
+  | confirmed |---- no, refuted ---- discard, remove          |
+  | ?         |                      instrumentation ---------+
+  +-----------+
+        |
+       yes
+        v
+  Step 5: confirm root cause
+```
+
 ## Step 5: Confirm root cause, not a symptom
 
 State the confirmed root cause with the specific evidence that proves it (the log line, the diff,
