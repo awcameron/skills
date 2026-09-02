@@ -1,11 +1,11 @@
 {
-  "name": "skills",
+  "name": "awcameron-skills",
   "owner": {
     "name": "Antonio Cameron"
   },
   "plugins": [
     {
-      "name": "skills",
+      "name": "awcameron-skills",
       "source": ".",
       "description": "A portable library of agent skills for Claude Code, Cursor, OpenCode, Codex CLI, and Gemini CLI."
     }

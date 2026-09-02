@@ -2,7 +2,7 @@
 description: Format this repo's Markdown docs mechanically, and flag structural inconsistencies for review
 ---
 
-Invoke the skills:format-docs skill.
+Invoke the awcameron-skills:format-docs skill.
 
 First discover whether this repo already enforces Markdown formatting automatically (a format
 script, a pre-commit hook, a CI job). Apply mechanical formatting (whitespace, list indentation,

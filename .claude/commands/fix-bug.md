@@ -2,7 +2,7 @@
 description: Implement a fix from a confirmed root cause, then hand off to write-tests/review-code/create-pr
 ---
 
-Invoke the skills:fix-bug skill against: $ARGUMENTS
+Invoke the awcameron-skills:fix-bug skill against: $ARGUMENTS
 
 Require a confirmed root cause before touching anything -- run diagnose-bug first if one isn't
 already established. Target the actual cause, not the reported symptom, check for the same
