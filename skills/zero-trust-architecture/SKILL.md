@@ -1,17 +1,17 @@
 ---
 name: zero-trust-architecture
 description: >-
-  Enforces Zero Trust security principles -- never trust a request based on where it came from or
+  Enforces Zero Trust security principles -- never trust a caller based on where it came from or
   what layer already ran, always verify identity and object-level ownership explicitly -- across a
-  request-layer authorization chain (guards/middleware/permission classes), a database-layer
-  tenant-isolation backstop (RLS or equivalent), and client-side session-token handling. Use this
-  skill when creating or modifying an auth guard or middleware, a handler/controller touching a
-  specific user- or org/tenant-owned resource, tenant-isolation policies, or anything that stores or
-  forwards a session token on the frontend -- even if the request doesn't say "security" explicitly,
-  e.g. "add an endpoint to delete a room" or "why does this user see another org's data" should both
-  trigger it. Also reach for this when reviewing or auditing existing code for authorization gaps
-  (BOLA/IDOR-style: does this handler trust a client-supplied id instead of the identity a guard
-  already verified?), not just when writing new code.
+  request-layer authorization chain, service-to-service calls, background-job/queue consumers, a
+  database-layer tenant-isolation backstop, and client-side session-token handling. Use this skill
+  when creating or modifying an auth guard or middleware, a handler touching a specific user- or
+  org/tenant-owned resource, an internal service call, a background job processing tenant data,
+  tenant-isolation policies, or anything that stores, forwards, or revokes a session token -- even
+  if the request doesn't say "security" explicitly, e.g. "add an endpoint to delete a room" or "why
+  does this user see another org's data" should both trigger it. Also reach for this when auditing
+  existing code for authorization gaps (BOLA/IDOR-style: does this handler trust a client-supplied
+  id instead of the identity a guard already verified?).
 allowed-tools: [Read, Grep, Glob, Edit, Write]
 ---
 
@@ -45,6 +45,13 @@ stack and don't guess at file locations:
 - **Client-side token seam, if there's a frontend.** Where is a session/auth token read, stored, and
   attached to outgoing requests? Is there already one shared place that does this, or is it done
   ad hoc per call site?
+- **Service-to-service trust boundary, if this app calls or is called by other services.** How does
+  a downstream service verify who's calling it — mTLS, a signed/short-lived service token, a shared
+  secret, or nothing at all because it's assumed to be "internal"? "Inside the network" is not a
+  substitute for verification here any more than it is at the request layer.
+- **Non-HTTP entry points.** Background jobs, queue consumers, and scheduled tasks touch the same
+  tenant-scoped data without going through the request-layer chain at all — check how (or whether)
+  they re-derive and verify tenant/caller identity before this skill's principles get applied there.
 
 ## Core principles
 
@@ -65,13 +72,19 @@ stack and don't guess at file locations:
 See the reference doc for each layer — read the one(s) relevant to what you're touching:
 
 - **`references/authz-guard-chain.md`** — an ordered request-layer authorization chain, why the
-  order is load-bearing, and object-level (BOLA) checks inside handlers specifically.
+  order is load-bearing, object-level (BOLA) checks inside handlers, applying the same chain to
+  non-HTTP entry points (background jobs/queue consumers), and treating a public route as a
+  deliberate exception rather than a gap.
 - **`references/tenant-isolation-backstop.md`** — a database-layer isolation mechanism as the
   backstop that still holds if the layers above it fail, and why an explicit scoping filter stays
   even when that backstop is enabled.
 - **`references/client-token-handling.md`** — how a frontend should hold and forward a session
-  token: a single seam behind an interface, why reading it should be async-aware, and an honest look
-  at the localStorage-vs-httpOnly-cookie tradeoff rather than a one-line "just fix it."
+  token: a single seam behind an interface, why reading it should be async-aware, revoking a session
+  on logout or detecting a revoked token, and an honest look at the localStorage-vs-httpOnly-cookie
+  tradeoff rather than a one-line "just fix it."
+- **`references/service-to-service-trust.md`** — why "inside the network" confers no trust between
+  services either, and how a downstream service should verify a caller (mTLS, signed/short-lived
+  service tokens) rather than assume the request is legitimate because it arrived internally.
 
 ## Common mistakes to avoid
 
@@ -88,3 +101,8 @@ See the reference doc for each layer — read the one(s) relevant to what you're
 - Reinventing a tenant-isolation or auth-chain helper under a different name instead of using the
   one this repo already has — two helpers doing the same job under different names is its own source
   of drift.
+- Trusting a `tenantId`/`orgId`/`userId` embedded in a background job or queue payload instead of
+  re-verifying it — a payload is just as much unverified input as a request body once it's outside
+  the request-layer chain that originally checked it.
+- Assuming a call is legitimate because it came from inside the network/cluster instead of verifying
+  it the way the service would verify an external caller.

@@ -88,6 +88,37 @@ Skipping this and trusting "the chain already checked" is exactly the IDOR/BOLA 
 exists to close — a check verifying *general* tenant membership says nothing about *this specific*
 resource unless something explicitly checks it.
 
+## The same chain applies to non-HTTP entry points
+
+A background job, queue consumer, or scheduled task that touches tenant-scoped data runs the same
+risk as a handler, but without an HTTP request to hang a guard chain off of. There's no bearer token
+to verify on a cron trigger, and a queue message often carries a `tenantId`/`userId` field that looks
+exactly like a verified identity but isn't one — it's just data someone (possibly an earlier,
+compromised, or buggy step) put there.
+
+The fix is the same shape as the HTTP chain, adapted to whatever entry point this is:
+
+- **Re-derive or re-verify identity at the point the job starts acting on data**, don't just trust a
+  field on the message. If the job was enqueued *by* an already-authenticated request, carry a
+  verified claim (e.g. a short-lived signed token minted at enqueue time) rather than a plain field —
+  the same "a client can put anything there" reasoning applies to "a queue producer can put anything
+  there."
+- **Still do the object-level ownership check** before the job acts on a specific resource, exactly
+  as in a handler — a job that fans out over many tenants' data especially needs this, since a bug in
+  the fan-out logic is precisely the kind of thing this check catches.
+- If a job is triggered by an external event (a webhook, an inbound message from another service),
+  that's the service-to-service trust question — see `references/service-to-service-trust.md`.
+
+## Public routes are an explicit exception, not an oversight
+
+"Denied by default" implies some routes are legitimately public — a health check, a login/signup
+endpoint, a public webhook receiver. The point isn't that every route needs the full chain; it's that
+skipping the chain should be a **visible, deliberate opt-out** (an explicit `@Public()`-style
+decorator, a named allowlist, a route registered outside the authenticated router group) rather than
+a route that simply never got a guard attached. A reviewer — human or agent — should be able to tell
+"this route is public on purpose" apart from "this route was missed" at a glance, without having to
+reconstruct intent from the absence of a check.
+
 ## Common mistakes to avoid
 
 - Reading a tenant/user id out of the request body or query string anywhere in authorization logic —
@@ -98,3 +129,8 @@ resource unless something explicitly checks it.
 - Reading a role from a raw token claim instead of what the membership-resolution step resolved and
   attached — if role changes need to take effect immediately (rather than waiting for a token to
   refresh), a token claim can't do that; a fresh lookup can.
+- Trusting a tenant/user id embedded in a job or message payload as if it were a verified identity —
+  it's the same unverified-input problem as a request body field, just carried by a queue instead of
+  an HTTP request.
+- Leaving a route unauthenticated with no explicit marker of intent — an agent or reviewer can't
+  distinguish "deliberately public" from "the guard was forgotten" without one.

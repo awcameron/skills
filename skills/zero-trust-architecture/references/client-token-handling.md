@@ -97,6 +97,26 @@ Never add a raw `fetch`/`axios` call in a new feature that skips this shared cli
 silently sends the request with no `Authorization` header, which typically doesn't surface until a
 401 in production, well after the component "worked" against a still-signed-in session.
 
+## Revoking a session: logout and a token the server has since rejected
+
+`SessionSource` covers *reading* a token; a complete seam also needs a way to end one. Two related
+but distinct cases:
+
+- **Logout should clear the session at its source**, not just stop calling `getToken()`. Call the
+  auth library's own sign-out (which typically also invalidates the underlying refresh token
+  server-side, not just the in-memory copy), then clear anything this app layered on top of it. A
+  logout that only stops the frontend from *using* the token, without invalidating it, leaves a
+  still-valid token that a captured copy (e.g. via the XSS vector above) could keep using.
+- **A token the server has since rejected** — revoked mid-session, expired past what the client
+  expected, or invalidated by an admin action elsewhere — surfaces as a 401 on a request the client
+  believed was authenticated. The API client's per-request path (above) is the one place to catch
+  this centrally: on a 401, clear the local session and route to a signed-out state, rather than
+  leaving each call site to notice and handle it inconsistently (or not at all).
+
+Don't build a separate "is this token still valid" pre-check before each request — that's the same
+second-source-of-truth mistake as caching the token itself, just phrased as a boolean instead of a
+string. The 401 *is* the check; react to it, don't try to predict it.
+
 ## Never trust a client-supplied identity claim, on either side
 
 The frontend should never need to tell the backend who the caller is beyond the token itself — no
@@ -122,3 +142,7 @@ runtime, is what makes the mistake hard to reintroduce later.
   the per-request path "to avoid an await" — see the stale-token regression above.
 - Adding a `userId`/`orgId` field to a request payload "so the backend doesn't have to look it up" —
   the backend deriving it from the verified session is the entire point.
+- Implementing logout as "stop sending the token" instead of actually invalidating it at the auth
+  library — a captured copy of the old token can keep working.
+- Building a separate pre-flight validity check for the token instead of reacting to a 401 from the
+  server that actually holds the answer.
