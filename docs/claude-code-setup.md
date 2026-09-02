@@ -7,6 +7,13 @@ declares the `skills/` and `.claude/commands/` directories, so Claude Code disco
 automatically:
 
 ```
+claude plugin marketplace add awcameron/skills
+claude plugin install awcameron-skills
+```
+
+Or, from inside a session:
+
+```
 /plugin marketplace add awcameron/skills
 /plugin install awcameron-skills
 ```
