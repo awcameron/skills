@@ -9,8 +9,8 @@ A linter and a formatter already handle whitespace, semicolons, quote style, and
 What they can't tell you is whether a function is doing too much, whether a cast is hiding a real
 bug, whether a comment is explaining something worth explaining, or whether a class exists because
 the domain needed one or because reaching for `class` felt like the "proper" way to organize code.
-This skill is about that second layer -- the judgment calls a senior reviewer makes that no tool
-config catches.
+This skill is about that second layer -- the judgment calls a staff-level reviewer makes that no
+tool config catches.
 
 ## How to use this
 
