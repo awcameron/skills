@@ -8,8 +8,9 @@ it what to actually do.
 As of 2026, Claude Code, Cursor, OpenCode, Codex CLI, and Gemini CLI have all converged on the
 same shape for this — a `SKILL.md` file with YAML frontmatter, discovered from a `skills/`-style
 directory. That means this repo needs **no per-tool format conversion**: one canonical `skills/`
-directory, exposed through each tool's own discovery path, plus a thin slash-command wrapper per
-tool for explicit invocation.
+directory, exposed through each tool's own discovery path, plus a thin slash-command wrapper for
+the tools that support one (Claude Code, Gemini CLI) — the rest use each tool's own native
+explicit-invocation syntax (`/` in Cursor, `$skill-name` in Codex CLI, and so on).
 
 **Design principle: discover, don't dictate.** No imposed spec→plan→build→ship pipeline, no fixed
 set of gates every change must pass — every skill here *discovers* a repo's own conventions (its
