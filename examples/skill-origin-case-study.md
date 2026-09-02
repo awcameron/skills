@@ -1,7 +1,7 @@
 # Case study: where these skills actually came from
 
 The skills in this repo weren't drafted speculatively — they were built for, and iterated on
-inside, a real, actively-developed production codebase. Each one went through the same loop:
+inside, a real, actively-developed application. Each one went through the same loop:
 something went wrong or got noticed in a real session, the skill got a rule added to catch it
 next time, and — for this repo — the rule got rewritten to drop the original project's specific
 facts in favor of a "go find out what *this* repo does" step in the same place.
@@ -49,7 +49,7 @@ up the same shape of waste.
 ## `diagnose-bug`: checked out before the fix, not read after it
 
 Rather than write the diagnosis loop from a description of how debugging usually goes, it was
-tested blind against a real, already-fixed bug: a production app's Rooms page had a re-entrancy
+tested blind against a real, already-fixed bug: the app's Rooms page had a re-entrancy
 guard (`useRef(false)`) meant to stop one cell's Enter-then-blur from double-committing, but the
 guard was scoped to the whole page, not the specific room being edited. Committing a second room's
 cell while a first room's save was still in flight hit the same guard and silently no-op'd — no
@@ -78,7 +78,7 @@ to `write-tests`) and the same missing-build-tooling gap `diagnose-bug` had alre
 
 ## `upgrade-dependency`: a real major-version bump, read blind
 
-Tested against a real `zod` 3→4 dedup already merged in the same production repo, checked out
+Tested against a real `zod` 3→4 dedup already merged in the same repo, checked out
 before that commit. Given only the task ("apps/web already has zod 4 transitively, the rest of the
 repo is still on zod 3, dedupe onto one version"), an agent read zod's actual migration guide,
 correctly identified the one breaking change that mattered here (v4's stricter `.uuid()`

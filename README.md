@@ -1,9 +1,9 @@
 # Agent Skills
 
 A portable library of **12 agent skills** — genericized from real workflows built and iterated on
-in a substantial, real-world production codebase, not written speculatively. Each skill is a
-plain `SKILL.md`: a description that tells an agent when to reach for it, and a body that tells
-it what to actually do.
+while building a real application, not written speculatively. Each skill is a plain `SKILL.md`: a
+description that tells an agent when to reach for it, and a body that tells it what to actually
+do.
 
 As of 2026, Claude Code, Cursor, OpenCode, Codex CLI, and Gemini CLI have all converged on the
 same shape for this — a `SKILL.md` file with YAML frontmatter, discovered from a `skills/`-style
@@ -89,7 +89,7 @@ feature/review requests instead.
 
 ## Where this came from
 
-Every skill here started as something built for a real, actively-developed production codebase —
+Every skill here started as something built for a real, actively-developed application —
 not a toy or a demo — and was rewritten to drop that project's specific facts (its stack, its file
 layout, its branch-naming precedent) in favor of a "discover this repo's own conventions first"
 step in the same place. See [`examples/skill-origin-case-study.md`](examples/skill-origin-case-study.md)
