@@ -26,9 +26,12 @@ emit() {
   else
     # Hand-escaping only covers backslash/quote/newline -- it's a fallback for when jq is
     # missing, not a general JSON encoder. Fine here since the content is our own catalog
-    # text, not arbitrary user input.
+    # text, not arbitrary user input. Newlines are escaped to a literal "\n" (via awk, not
+    # `tr '\n' ' '`) so the one-line-per-skill catalog formatting survives -- collapsing every
+    # newline to a space would flatten the whole multi-skill catalog into one run-on line.
     local escaped
-    escaped=$(printf '%s' "$context" | sed 's/\\/\\\\/g; s/"/\\"/g' | tr '\n' ' ')
+    escaped=$(printf '%s' "$context" | sed 's/\\/\\\\/g; s/"/\\"/g' | awk 'BEGIN{ORS="\\n"} {print}')
+    escaped="${escaped%\\n}"
     printf '{"hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": "%s"}}\n' "$escaped"
   fi
 }
