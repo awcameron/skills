@@ -76,6 +76,8 @@ reference files opened on demand (`ts-best-practices`). What every skill here do
 
 ## Contributing a skill
 
+Requires Node >=20 + npm (for the commands in steps 3-4 below).
+
 1. Write it for a repo you actually have in front of you -- against a real convention, a real
    failure mode, a real workflow -- then generalize by replacing that repo's specific facts with
    a "discover this repo's own version of that fact" step in the same place. A skill written in
