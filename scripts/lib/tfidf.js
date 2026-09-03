@@ -12,7 +12,11 @@ const STOPWORDS = new Set(
     "when use uses using used it its as by from not but at into than then do does did if so " +
     "no yes you your i we our he she they their them has have had will would can could should " +
     "may might also any other some more most such only own same both each few all just once " +
-    "here there out up down off over under again further the will don't doesn't isn't the's"
+    "here there out up down off over under again further the " +
+    // tokenize() strips apostrophes into whitespace before this filter runs, so a contraction
+    // like "isn't" arrives here already split into "isn" + "t" -- these are the post-split forms,
+    // not the literal apostrophe'd word, which could never match.
+    "isn doesn don aren wasn weren didn hasn haven hadn won wouldn couldn shouldn mustn"
   )
     .split(/\s+/)
     .filter(Boolean),
