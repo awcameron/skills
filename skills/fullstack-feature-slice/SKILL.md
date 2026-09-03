@@ -79,7 +79,12 @@ a package name, or a directory layout:
    way through before writing the new one.
 2. **Is this Ask-First?** A new cross-package dependency, a database schema change, or a deviation
    from a documented convention typically needs confirmation before proceeding -- check this repo's
-   own contributor doc (`AGENTS.md`/`CONTRIBUTING.md`-style) for what it calls out explicitly.
+   own contributor doc (`AGENTS.md`/`CONTRIBUTING.md`-style) for what it calls out explicitly. When
+   something in the feature depends on an Ask-First item, don't write the file that item would
+   produce (a migration, a schema change) even in draft form -- describe what it would be and why
+   it needs confirmation, and build everything else that doesn't depend on it. A file on disk reads
+   as decided even with a comment saying otherwise; a description in your response can't be mistaken
+   for something already applied.
 
 ## Core principles
 
