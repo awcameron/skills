@@ -25,7 +25,7 @@ skills/
 - `evals/evals.json` -- a per-skill eval-case file for `claude plugin eval`, distinct from this
   repo's own top-level `evals/cases/<skill>.json` trigger-routing evals (see
   [`evals/README.md`](../evals/README.md)); present on `doc-fact-check`, `format-docs`,
-  `review-code`, `ts-best-practices`, and `write-tests` so far.
+  `fullstack-feature-slice`, `review-code`, `ts-best-practices`, and `write-tests` so far.
 - `scripts/` -- only when a skill's body benefits from mechanizing a repeatable step instead of
   re-deriving it one Read/Grep at a time (see `format-docs/scripts/detect_formatter.sh`).
 
