@@ -31,6 +31,13 @@ story behind a few of these skills, including a real skill-drift bug this repo's
 ## Table of contents
 
 - [What's here](#whats-here)
+  - [Code-quality lenses](#code-quality-lenses)
+  - [The bug lifecycle](#the-bug-lifecycle)
+  - [Test authoring](#test-authoring)
+  - [Dependency maintenance](#dependency-maintenance)
+  - [Shipping workflow](#shipping-workflow)
+  - [Documentation integrity](#documentation-integrity)
+  - [Agent meta-behavior](#agent-meta-behavior)
 - [Using this with your tool](#using-this-with-your-tool)
   - [Quick install (compat-path tools)](#quick-install-compat-path-tools)
   - [Claude Code, as an installable plugin](#claude-code-as-an-installable-plugin)
