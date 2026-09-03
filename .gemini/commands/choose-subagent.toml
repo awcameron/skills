@@ -3,7 +3,7 @@ description = "Decide which subagent type/model fits a task before spawning an A
 prompt = """
 Invoke the awcameron-skills:choose-subagent skill before spawning a subagent for: {{args}}
 
-Classify by what the task actually does (does it write anything?), not by its topic. Read-only
+Classify by what the task actually *does* (does it write anything?), not by its topic. Read-only
 tasks (review, audit, investigate) belong on a read-only/exploration agent or a cheaper model;
 write tasks (implement, commit, open a PR) belong on the default write-capable agent, escalated to
 a stronger model only when the task is unusually hard or high-stakes.

@@ -7,5 +7,5 @@ First discover whether this repo already enforces Markdown formatting automatica
 script, a pre-commit hook, a CI job). Apply mechanical formatting (whitespace, list indentation,
 table alignment) directly using the repo's own formatter and show the diff. Report -- but do not
 apply -- any structural inconsistency (heading hierarchy, code-fence tags, prose-wrap style) as a
-proposed edit awaiting confirmation.
+proposed edit awaiting my confirmation.
 """
