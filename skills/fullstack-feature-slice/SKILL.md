@@ -34,17 +34,24 @@ a package name, or a directory layout:
   `packages/shared-types`-style package is common, but the mechanism matters more than the location:
   Zod/io-ts schema with an inferred type, a `.proto`/OpenAPI/GraphQL schema with codegen, or a
   hand-shared `.d.ts` -- whichever it is, every consumer should derive its type from that one place,
-  not redeclare it. Check whether that package is consumed as built output (`dist/`) or as source --
-  if built, a new export can be invisible to a typechecker or test runner until it's rebuilt, which
-  is worth knowing before chasing a phantom "not exported" error.
+  not redeclare it. Check whether that package is consumed as built output or as source -- a
+  Node-style package built to `dist/`, a Gradle/Maven multi-module reactor where a sibling module
+  needs a build before it sees a new class, an OpenAPI/protobuf-generated client that needs
+  regenerating -- if it's built, a new export/class can be invisible to a typechecker, IDE, or test
+  runner until that build step runs, which is worth knowing before chasing a phantom
+  "not found"/"cannot resolve symbol" error.
 - **The backend's feature-organization convention.** Vertical slices (one folder per
   feature/action, holding its handler, DTO, and test together) versus a layered convention (global
-  `controllers/`, `services/`, `dto/` folders). Match whichever this repo already does -- don't
-  introduce the other one for a single new feature.
-- **The frontend's feature-organization convention**, similarly -- a `features/<name>/` folder
-  colocating a data hook and its view versus a layered `components/`/`hooks/`/`pages/` split. Also
-  check whether there's already a single shared API-client module frontend code is expected to go
-  through, versus calling `fetch`/`axios` directly per call site.
+  `controllers/`, `services/`, `dto/` folders, or Spring's package-by-layer default). Match whichever
+  this repo already does -- don't introduce the other one for a single new feature.
+- **The frontend (or downstream-consumer) feature-organization convention**, similarly -- a
+  `features/<name>/` folder colocating a data-fetching unit and its view versus a layered
+  `components/`/`hooks-or-viewmodels/`/`pages/` split. "Frontend" here means whatever actually
+  consumes the contract on the other end -- a browser SPA, a server-rendered view layer, or a mobile
+  client sharing models via Kotlin Multiplatform or generated code. Also check whether there's
+  already a single shared API-client module that consumer is expected to go through (a JS
+  `api-client.ts`, a generated OpenAPI/Retrofit/Feign client, a typed RPC stub), versus calling the
+  network directly per call site.
 - **The tenant/security boundary, if this is multi-tenant or multi-user data.** If this repo has
   (or should have) `[[zero-trust-architecture]]`'s layers -- a request-layer guard chain, a
   database-level isolation backstop, explicit ownership checks in the handler -- a new feature
@@ -58,10 +65,11 @@ a package name, or a directory layout:
 - **The test colocation and cross-layer-authorization test convention.** Where do backend and
   frontend tests for a feature live relative to its code, and is there an existing pattern for a
   cross-tenant/cross-user e2e test that a unit test with a faked repository can't prove?
-- **Anything generated.** A frontend router or an API client is sometimes generated from route
-  files or the shared schema (e.g. `routeTree.gen.ts`-style output) -- know what regenerates it
-  (usually running the dev server or a specific build script) before treating a stale generated
-  file as something to hand-edit.
+- **Anything generated.** A frontend router, an API client, or a set of DTO/model classes is
+  sometimes generated from route files or the shared schema -- a TanStack-Router-style route tree,
+  an OpenAPI-Generator or protoc output, a JAXB/gRPC stub. Know what regenerates it (usually running
+  the dev server or a specific build/codegen script) before treating a stale generated file as
+  something to hand-edit.
 
 ## Two things to check before writing code
 
@@ -80,10 +88,11 @@ a package name, or a directory layout:
   from it -- never a second, hand-written declaration of the same shape in the backend or frontend.
   Two packages hand-syncing the same shape *will* drift with no compiler error to catch it.
 - **Vertical, not layered -- if that's this repo's convention.** Where the discovery step above
-  found a per-feature folder pattern, a new feature's DTO/handler/test (or hook/view/test) live
-  together in one folder, not spread across a global `dto/`/`queries/`/`hooks/` folder. If this
-  repo's actual convention is layered instead, match that -- the point is consistency with what's
-  already there, not a preference for vertical slices in the abstract.
+  found a per-feature folder pattern, a new feature's DTO/handler/test (or data-fetching-unit/
+  view/test) live together in one folder, not spread across a global
+  `dto/`/`queries/`/`hooks-or-viewmodels/` folder. If this repo's actual convention is layered
+  instead, match that -- the point is consistency with what's already there, not a preference for
+  vertical slices in the abstract.
 - **The security invariants are correctness, not style.** Identity and tenant/org scope come from
   whatever the guard chain already verified and attached to the request, never from a client-supplied
   param or body field. If there's a database-level isolation backstop, every new query still keeps
@@ -95,37 +104,37 @@ a package name, or a directory layout:
 ## Workflow for one feature
 
 1. **Define or extend the shared contract first** (in whatever package/mechanism discovery found).
-   Both the backend handler and the frontend hook depend on it, so it has to exist before either
-   does. If this repo's shared package uses barrel exports, add the new export at every level the
-   existing pattern uses -- a barrel that isn't updated at every level is a common way for "it
-   compiles but nothing imports it" to happen silently.
+   Both the backend handler and the consuming side depend on it, so it has to exist before either
+   does. If this repo's shared package uses barrel exports (or a Java/Kotlin module's public API
+   surface), add the new export at every level the existing pattern uses -- a level that isn't
+   updated is a common way for "it compiles but nothing imports it" to happen silently.
 2. **Rebuild/regenerate the shared package if it's consumed as built output.** Skipping this is a
-   classic false negative: the dev server's own restart hook may rebuild it automatically, making
-   the problem look fixed in one context (running the app) while `typecheck` or the test runner
-   still sees the stale build.
+   classic false negative: a dev server's own restart hook, or an IDE's incremental compiler, may
+   rebuild it automatically, making the problem look fixed in one context while `typecheck`/a clean
+   `gradlew build`/the test runner still sees the stale build.
 3. **Backend**: add the feature following the layout discovered above, wire it into the routing
-   layer with whatever guards/middleware this repo's authorization chain uses, and register the
-   module/route if this framework requires an explicit registration step. An unregistered route is
-   often a silent 404, not an error -- check the startup log or route list for confirmation it's
-   actually mounted.
-4. **Frontend**: add the feature following its discovered layout, going through the shared API
-   client if one exists rather than calling the network directly. Regenerate any generated router
-   file if this repo has one.
+   layer with whatever guards/middleware/interceptors this repo's authorization chain uses, and
+   register the module/route/bean if this framework requires an explicit registration step. An
+   unregistered route is often a silent 404, not an error -- check the startup log or route list
+   (or, for Spring, the request-mapping log line) for confirmation it's actually mounted.
+4. **Frontend (or downstream consumer)**: add the feature following its discovered layout, going
+   through the shared API client if one exists rather than calling the network directly. Regenerate
+   any generated router/client file if this repo has one.
 5. **Test both sides, colocated per this repo's convention.** If the feature touches authorization
    or cross-tenant data access, add or extend a real cross-tenant/cross-user test -- a unit test
    against a faked repository or mocked client can't prove isolation actually holds.
 6. **Report which layers you touched and which shared contract they depend on.** Multiple packages
    moving together is easy to lose track of; naming the contract, the handler path, and the
-   hook/view path in the summary is worth more here than in a single-package change.
+   consumer-side path in the summary is worth more here than in a single-package change.
 
 ## Common mistakes to avoid
 
 - **Duplicating a shape by hand** on either side "just to unblock" instead of importing the shared
   contract's derived type. This is the exact drift the shared package exists to prevent.
-- **Calling the network directly** from a frontend component or hook when this repo already has a
-  shared API-client module -- bypassing it commonly means it silently drops something the shared
-  client adds (an auth header, a base URL, error normalization), which fails much later and less
-  obviously than at the call site.
+- **Calling the network directly** from consumer-side code when this repo already has a shared
+  API-client module -- bypassing it commonly means it silently drops something the shared client
+  adds (an auth header, a base URL, error normalization), which fails much later and less obviously
+  than at the call site.
 - **Dropping an explicit tenant/ownership filter** because a database-level backstop is enabled
   anyway. Defense in depth means the explicit filter stays even when a backstop exists.
 - **Taking a tenant/user id from the request body or query string** instead of from what the guard
