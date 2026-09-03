@@ -18,9 +18,9 @@ allowed-tools: [Read, Grep, Glob, Bash(git status:*), Bash(git branch:*), Bash(g
 # Create PR
 
 This skill carries a set of local changes through a repo's real git/GitHub workflow: figure out
-the ticket, name the branch, commit, push, and open a PR — grounded in the repo's own documented
+the ticket, name the branch, commit, push, and open a PR -- grounded in the repo's own documented
 conventions plus its actual branch/PR/commit history (discovered fresh each time, not assumed
-from another repo's habits). It does not judge code quality or standards compliance — that's
+from another repo's habits). It does not judge code quality or standards compliance -- that's
 `review-code`'s job; run that first if there's any doubt about the change itself.
 
 ```
@@ -65,13 +65,13 @@ Step 7 Merge and clean up
   Show the plan, stop, wait for an explicit yes at each checkpoint below. Silence or a vague "ok
   continue with the rest of the task" is not confirmation of a specific commit/push/PR/delete
   action.
-- Never invent a ticket number. If one can't be determined, ask — see Step 1.
+- Never invent a ticket number. If one can't be determined, ask -- see Step 1.
 - Never push directly to the default branch, and never target anything but the repo's actual
   default branch as the PR base unless the user explicitly says otherwise.
 - Stay inside this skill's job. Don't fix lint/type errors, don't restructure code, don't add
-  dependencies to satisfy a check — flag issues and let the user or `review-code` handle them.
+  dependencies to satisfy a check -- flag issues and let the user or `review-code` handle them.
 - Respect whatever the repo's own conventions doc marks off-limits for an agent (never commit
-  `.env` files or secrets — double-check `git status`/`git diff` output before staging — and never
+  `.env` files or secrets -- double-check `git status`/`git diff` output before staging -- and never
   bypass a documented security boundary or a directory the repo marks as deprecated/off-limits).
   If staged changes touch any of these, stop and flag it instead of proceeding.
 
@@ -85,16 +85,16 @@ git log --oneline -5
 
 Confirm what's actually changed (staged, unstaged, untracked) and what branch we're starting
 from. If the working tree is clean and there's nothing to commit, there's nothing for this skill
-to do — say so rather than fabricating a change.
+to do -- say so rather than fabricating a change.
 
 ## Step 1: Determine the ticket/issue number
 
 Not every change is tied to a ticket. Figure out which case this is, in this order:
 
-1. **User said it directly** — "this is for #35" / "closes issue 12" — use that.
+1. **User said it directly** -- "this is for #35" / "closes issue 12" -- use that.
 2. **Infer from the current branch**, if it's already checked out and named
    `<type>/<ticket-id>-<description>` (e.g. `feature/6-shared-audit-log` → ticket `6`).
-3. **Ambiguous or absent** — ask the user rather than guessing. Don't silently decide there's no
+3. **Ambiguous or absent** -- ask the user rather than guessing. Don't silently decide there's no
    ticket just because none was mentioned, and don't silently invent one either.
 
 If the user confirms there's genuinely no ticket for this change, proceed without one (Step 3
@@ -102,7 +102,7 @@ covers the branch-naming fallback).
 
 ## Step 2: Discover this repo's actual conventions
 
-Don't assume a convention from another project — read this repo's own documented rules and its
+Don't assume a convention from another project -- read this repo's own documented rules and its
 real history before constructing anything:
 
 1. **Read the repo's conventions doc** (`AGENTS.md`, `CONTRIBUTING.md`, or equivalent) for a
@@ -116,10 +116,10 @@ real history before constructing anything:
    gh pr list --state all --limit 50 --json title,headRefName
    ```
 
-   Look for the actual prefix/type vocabulary used by *merged* PRs specifically — a branch or PR
+   Look for the actual prefix/type vocabulary used by *merged* PRs specifically -- a branch or PR
    that never merged isn't real precedent for what ships, just a naming choice that didn't stick.
 3. **Note if the branch-prefix vocabulary and the PR-title vocabulary are different sets of
-   words** — this is common (e.g. a branch prefixed `feature/` landing as a PR titled with the
+   words** -- this is common (e.g. a branch prefixed `feature/` landing as a PR titled with the
    abbreviated `feat:`) and worth confirming explicitly rather than assuming they match.
 4. If nothing is documented and history is too sparse or inconsistent to infer a convention, ask
    the user what format they want rather than inventing one.
@@ -130,12 +130,12 @@ vocabulary for each artifact below.
 
 ## Step 3: Construct the branch name
 
-Using whatever format Step 2 discovered — commonly `<type>/<ticket-id>-<short-description>` in
+Using whatever format Step 2 discovered -- commonly `<type>/<ticket-id>-<short-description>` in
 kebab-case. Construct the short description from the actual change (a few kebab-case words, not
 the full sentence). If Step 1 concluded there's no ticket, drop that segment entirely rather than
 inventing a placeholder.
 
-**Checkpoint 1 — before creating the branch:** show the user the exact branch name you're about
+**Checkpoint 1 -- before creating the branch:** show the user the exact branch name you're about
 to create and get a yes. Then:
 
 ```bash
@@ -144,7 +144,7 @@ git checkout -b <type>/<ticket-id>-<short-description>
 
 ## Step 4: Stage and construct the commit
 
-Stage deliberately — review `git status` after staging, not just before, in case something
+Stage deliberately -- review `git status` after staging, not just before, in case something
 unintended got swept in by a broad `git add -A`:
 
 ```bash
@@ -155,10 +155,10 @@ git status   # confirm only the intended files are staged
 **Commit message**: use whatever subject-line format Step 2's history search actually showed
 (commonly `<type>(<ticket-id>): <short summary>`, body wrapped at ~72-80 cols explaining what
 changed and why, a `Closes #<ticket-id>` trailer). Match the vocabulary the repo's real commits
-use for `<type>` — it may differ from the branch-prefix vocabulary (see Step 2). Omit the
+use for `<type>` -- it may differ from the branch-prefix vocabulary (see Step 2). Omit the
 `Closes #<ticket-id>` line entirely if Step 1 concluded there's no ticket.
 
-**Checkpoint 2 — before committing:** show the user the exact commit subject + body you're about
+**Checkpoint 2 -- before committing:** show the user the exact commit subject + body you're about
 to use and get a yes. Then:
 
 ```bash
@@ -175,13 +175,13 @@ Do this now, before the next checkpoint, so both are shown together.
 ### PR title
 
 Use whatever format Step 2 discovered from the repo's documented convention and real merged PR
-titles — commonly `<type>(<scope>): <description>` or `<type>: <description>`, with `<scope>`
+titles -- commonly `<type>(<scope>): <description>` or `<type>: <description>`, with `<scope>`
 included when it adds clarity (a ticket number is a safe default when one exists) and omitted
 when the change doesn't map to one thing.
 
 ### PR body
 
-Check whether the repo has a PR template (`.github/pull_request_template.md` or similar) first —
+Check whether the repo has a PR template (`.github/pull_request_template.md` or similar) first --
 if one exists, use it. If not, read a few real recent merged PR bodies (`gh pr view <n>`) to infer
 the de facto convention before improvising a generic one. A reasonable fallback shape, absent
 either:
@@ -212,16 +212,16 @@ Notes on real usage:
 
 - **A PR that legitimately closes more than one issue needs one `Closes #N` line per issue, not
   one sentence naming both.** GitHub's closing-keyword parser only links the issue number
-  immediately following the keyword — "Closes #394 (F2) and #395 (F3)" auto-closes only #394 and
+  immediately following the keyword -- "Closes #394 (F2) and #395 (F3)" auto-closes only #394 and
   silently leaves #395 open despite the work being done. Write `Closes #394` and `Closes #395` as
   separate lines instead.
-- Every `Test plan` box should reflect something actually run in this environment — never mark
+- Every `Test plan` box should reflect something actually run in this environment -- never mark
   something verified that wasn't; leave a box unchecked rather than fake a check.
 - Keep Summary bullets concrete (file names, behavior, not "improved the code").
 
 ## Step 6: Push and open the PR
 
-**Checkpoint 3 (the "before pushing or opening the PR" gate) — before running either command
+**Checkpoint 3 (the "before pushing or opening the PR" gate) -- before running either command
 below:** show the user the exact PR title and full PR body from Step 5, alongside a reminder of
 the branch name and commit from Checkpoints 1–2, and get an explicit yes. This is the last chance
 to stop before anything becomes visible to anyone else.
@@ -238,7 +238,7 @@ EOF
 ```
 
 Report the resulting PR URL back to the user once created. `gh pr create` sometimes prints a
-warning about uncommitted changes when unrelated stray files sit in the working tree — don't add
+warning about uncommitted changes when unrelated stray files sit in the working tree -- don't add
 a follow-up sentence explaining or dismissing that warning; just report the PR normally.
 
 ## Step 7: Merge and clean up
@@ -246,15 +246,15 @@ a follow-up sentence explaining or dismissing that warning; just report the PR n
 There are two ways this step gets reached, and they converge on the same cleanup tail:
 
 - **This skill does the merge itself** (see "Merging" below), or
-- **The user reports an external merge** — "it's merged", "pr merged", "all merged now" — because
+- **The user reports an external merge** -- "it's merged", "pr merged", "all merged now" -- because
   they merged it themselves in the GitHub UI, or something else did. This is a first-class trigger
   for this skill, not an afterthought: don't assume the branch is already cleaned up just because
-  nobody asked explicitly, and don't skip verification just because the user said so — confirm it
+  nobody asked explicitly, and don't skip verification just because the user said so -- confirm it
   actually merged (see below) before touching branches.
 
 ### Merging (only when this skill is doing it)
 
-Don't assume a standing authorization to merge without asking — confirm with the user (once, up
+Don't assume a standing authorization to merge without asking -- confirm with the user (once, up
 front, or per-PR) whether they want you to merge automatically once CI is green, and which method
 their repo actually allows/prefers (squash, merge commit, or rebase-merge; check the repo's
 settings or ask if unclear). Once that's established:
@@ -279,7 +279,7 @@ call, not merge mechanics:
 gh pr view <n> --json state,mergedAt
 ```
 
-Don't skip this even when the user just told you it's merged — confirming which PR and that it's
+Don't skip this even when the user just told you it's merged -- confirming which PR and that it's
 actually `MERGED` (not just `CLOSED`) takes one call and avoids syncing/deleting branches based on
 a mistaken assumption. If the user says "all merged" for several PRs at once, run this for each one
 before touching any branches.
@@ -289,17 +289,17 @@ git checkout <default-branch>
 git pull --ff-only
 ```
 
-This part is safe to do without asking — it's read-only with respect to the branch itself, just
+This part is safe to do without asking -- it's read-only with respect to the branch itself, just
 catching the local default branch up to what's already public.
 
-### Checkpoint 4 — before deleting anything
+### Checkpoint 4 -- before deleting anything
 
 Deleting a branch is exactly the kind of visible, hard-to-undo-casually action the guardrail at
-the top of this skill has in mind — show the user exactly what's about to be deleted (branch name,
+the top of this skill has in mind -- show the user exactly what's about to be deleted (branch name,
 local and/or remote) and get an explicit yes before running either command below. Don't chain
 straight from "it's merged" to deleted branches just because the merge itself is confirmed; those
 are two different questions. For a batch of several merged PRs, one combined confirmation listing
-every branch is fine — it doesn't need to be one prompt per branch.
+every branch is fine -- it doesn't need to be one prompt per branch.
 
 Once confirmed:
 
@@ -307,15 +307,15 @@ Once confirmed:
 git branch -d <branch-name>
 ```
 
-`git branch -d` (lowercase) is deliberate here, not `-D` — it refuses to delete a branch that
+`git branch -d` (lowercase) is deliberate here, not `-D` -- it refuses to delete a branch that
 genuinely isn't merged, which is a useful safety check on top of the `gh pr view` confirmation
 above. Expect it to print a `"has been merged to 'refs/remotes/origin/<branch>' but not yet merged
-to HEAD"` warning and still succeed — that's normal for a squash-merged branch (the squash commit
+to HEAD"` warning and still succeed -- that's normal for a squash-merged branch (the squash commit
 on the default branch has a different SHA than the branch tip, so git can't verify the merge by
 ancestry alone, but its remote-tracking check confirms it anyway). Treat that warning as expected,
 not a sign something went wrong; only investigate if the delete actually fails.
 
-Then the remote branch, if it still exists — GitHub does not always delete it automatically:
+Then the remote branch, if it still exists -- GitHub does not always delete it automatically:
 
 ```bash
 gh repo view --json deleteBranchOnMerge -q .deleteBranchOnMerge
@@ -327,10 +327,10 @@ If that's `false` (or the repo's setting is unknown), delete it explicitly:
 git push origin --delete <branch-name>
 ```
 
-If it's `true`, GitHub already deleted the remote branch on merge — skip this and don't try to
+If it's `true`, GitHub already deleted the remote branch on merge -- skip this and don't try to
 delete something that's already gone. Either way, this check (and reporting its result) is fine to
 do without asking again; the confirmation already covered deleting this branch, local and remote
-both — this is just figuring out whether the remote half is already done.
+both -- this is just figuring out whether the remote half is already done.
 
 ## Edge cases
 
@@ -339,9 +339,9 @@ both — this is just figuring out whether the remote half is already done.
   rename), and proceed from Step 4.
 - **Nothing to push (branch already up to date with remote)**: skip the push in Step 6, go
   straight to `gh pr create` (still gated by Checkpoint 3).
-- **A PR already exists for this branch**: don't open a duplicate — check with `gh pr view
+- **A PR already exists for this branch**: don't open a duplicate -- check with `gh pr view
   <branch>` first, and if one exists, tell the user instead of creating a second one.
 - **"All merged" for multiple PRs at once**: run the verify-and-clean-up sequence in Step 7 once
-  per PR/branch rather than assuming they're identical — a batch report can still include one that
+  per PR/branch rather than assuming they're identical -- a batch report can still include one that
   didn't actually merge, or a branch created by something other than this skill (e.g. an
   automation's own PR) that never got tracked as "in flight" in this conversation.

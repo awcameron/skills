@@ -91,23 +91,23 @@ base branch's version.
 
 Using what Step 0 found, look for the repo's actual patterns in categories like:
 
-**Dependency injection / composition** — how are collaborators wired up in this codebase
+**Dependency injection / composition** -- how are collaborators wired up in this codebase
 (constructor injection, a DI container, plain factory functions)? Is new code consistent with
 what's already there, cited with a real example file from the repo, not assumed from a framework's
 generic docs?
 
-**Function/module design** — does the repo have a documented or de facto size/complexity
+**Function/module design** -- does the repo have a documented or de facto size/complexity
 preference? Is it enforced by a lint rule, or just a stated preference (see Step 0's distinction)?
 
-**Error handling** — does the repo have a documented error-handling shape (a `Result<T,E>`
+**Error handling** -- does the repo have a documented error-handling shape (a `Result<T,E>`
 pattern, framework exception classes at boundaries, a specific tuple-return convention)? Cite a
 real file that demonstrates the convention in use.
 
-**Naming and organization** — filename casing convention, import ordering (and whether it's
+**Naming and organization** -- filename casing convention, import ordering (and whether it's
 lint-enforced, in which case tell the author to run the autofixer rather than itemizing every
 reordering by hand), unused-variable handling.
 
-**Style** — only flag deviations from what's actually enforced or actually consistent across the
+**Style** -- only flag deviations from what's actually enforced or actually consistent across the
 existing codebase; don't import a preference from elsewhere.
 
 ## Step 3: Check for correctness bugs, independent of any documented convention
@@ -138,11 +138,11 @@ careful reader assume this code does that it doesn't" before moving on.
 
 ## Step 4: Check observability, where applicable
 
-**Logging** — does the repo have a documented logging standard (structured logging via a specific
+**Logging** -- does the repo have a documented logging standard (structured logging via a specific
 library, required context fields)? Flag `console.*`/raw prints only if the repo has moved past
 that convention elsewhere.
 
-**Security** — never let a review miss: hardcoded credentials or secrets, logging of an
+**Security** -- never let a review miss: hardcoded credentials or secrets, logging of an
 `Authorization` header or auth token, logging of other sensitive-by-convention fields the repo
 already treats as PII/sensitive elsewhere.
 
