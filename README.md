@@ -14,10 +14,11 @@ Cursor, Gemini CLI, Codex CLI, and OpenCode each have their own quick install; s
 
 As of 2026, Claude Code, Cursor, Gemini CLI, Codex CLI, and OpenCode have all converged on the
 same shape for this: a `SKILL.md` file with YAML frontmatter, discovered from a `skills/`-style
-directory. That means this repo needs **no per-tool format conversion**. One canonical `skills/`
-directory gets exposed through each tool's own discovery path, plus a thin slash-command wrapper
-for the tools that support one (Claude Code, Gemini CLI). The rest use each tool's own native
-explicit-invocation syntax, like `/` in Cursor or `$skill-name` in Codex CLI.
+directory. That means this repo needs **no per-tool format conversion** — one canonical `skills/`
+directory, exposed through each tool's own discovery path. Claude Code and Gemini CLI additionally
+get a thin, pre-generated slash-command file per skill for explicit invocation; Cursor and Codex
+CLI have their own built-in explicit-invocation UI instead (`/` search, `$skill-name`). OpenCode
+currently relies on auto-discovery alone.
 
 **Design principle: discover, don't dictate.** There's no imposed spec→plan→build→ship pipeline
 and no fixed set of gates every change must pass. Every skill here *discovers* a repo's own
