@@ -143,9 +143,9 @@ ln -s ../skills/skills .agents/skills
 ### Claude Code, as an installable plugin
 
 This repo is also a self-contained Claude Code plugin. `.claude-plugin/plugin.json` at its root
-declares `skills/`, `.claude/commands/`, and `hooks/`, so Claude Code discovers everything
-automatically, including a `SessionStart` hook that injects a one-line-per-skill catalog into
-every new session:
+declares `skills/` and `.claude/commands/`, so Claude Code discovers both automatically. It also
+auto-loads `hooks/hooks.json` from its standard path (no `plugin.json` declaration needed),
+injecting a one-line-per-skill catalog into every new session via a `SessionStart` hook:
 
 ```
 claude plugin marketplace add awcameron/skills
