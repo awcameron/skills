@@ -9,8 +9,8 @@ claude plugin marketplace add awcameron/skills
 claude plugin install awcameron-skills
 ```
 
-It works the same way with Cursor, Codex CLI, Gemini CLI, and OpenCode; see
-[Using this with your tool](#using-this-with-your-tool) for each.
+Cursor, Codex CLI, Gemini CLI, and OpenCode each have their own quick install; see
+[Using this with your tool](#using-this-with-your-tool) for all five.
 
 As of 2026, Claude Code, Cursor, OpenCode, Codex CLI, and Gemini CLI have all converged on the
 same shape for this: a `SKILL.md` file with YAML frontmatter, discovered from a `skills/`-style
