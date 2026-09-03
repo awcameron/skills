@@ -64,10 +64,13 @@ for skill_md in "$SKILLS_DIR"/*/SKILL.md; do
   ' "$skill_md")
 
   # Catalog entries are meant to be a compact one-liner per skill, not the full
-  # multi-sentence description -- cut at the first sentence boundary (". ") rather
-  # than an arbitrary character count, so an entry never ends mid-clause. Fall back to
-  # a hard cap only for the rare description with no early sentence break.
-  description="${full_description%%. *}"
+  # multi-sentence description -- cut at the first sentence boundary (". " followed by
+  # an uppercase letter) rather than an arbitrary character count, so an entry never ends
+  # mid-clause. The uppercase-letter requirement matters: a plain ". " match false-triggers
+  # on a mid-sentence abbreviation like "e.g. " (see fix-bug's description), truncating the
+  # entry mid-parenthetical instead of at the real sentence end. Fall back to a hard cap
+  # only for the rare description with no early sentence break.
+  description="${full_description%%. [A-Z]*}"
   if [ "$description" = "$full_description" ] && [ ${#description} -gt 160 ]; then
     description="${description:0:157}..."
   else
