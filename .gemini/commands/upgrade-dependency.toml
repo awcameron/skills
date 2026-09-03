@@ -1,7 +1,7 @@
 description = "Safely bump a dependency -- real changelog, real usage check, real test results"
 
 prompt = """
-Invoke the skills:upgrade-dependency skill against: {{args}}
+Invoke the awcameron-skills:upgrade-dependency skill against: {{args}}
 
 Discover the repo's own package manager, read the actual changelog/migration guide across the
 whole version range being crossed, grep the repo for real usage of anything flagged as breaking,
