@@ -75,9 +75,10 @@ node scripts/run-evals.js                  # full report: routing, collisions, s
 node scripts/run-evals.js --min-rank1 80    # exits 1 if positive-case rank-1 rate is below 80%
 ```
 
-Any positive case outside its `top_k`, any negative case not correctly out-ranked, or any unknown
-`skill_name` in a case file also fails the run outright, independent of `--min-rank1` (which only
-gates the softer rank-1-exactly metric, not top-k pass/fail or negative-case correctness).
+Any positive case outside its `top_k`, any negative case not correctly out-ranked, any unknown
+`skill_name` in a case file, or any skill with no case file at all also fails the run outright,
+independent of `--min-rank1` (which only gates the softer rank-1-exactly metric, not top-k
+pass/fail, negative-case correctness, or coverage).
 
 ## Adding a case for a new skill
 
