@@ -83,6 +83,13 @@ a package name, or a directory layout:
   an OpenAPI-Generator or protoc output, a JAXB/gRPC stub. Know what regenerates it (usually running
   the dev server or a specific build/codegen script) before treating a stale generated file as
   something to hand-edit.
+- **Whether this repo's layers deploy independently.** If the shared contract, backend, and frontend
+  ship together in one atomic release with no rolling window, this doesn't apply. If they deploy on
+  separate schedules (a mobile client, a rolling/blue-green backend deploy, a consumer service on its
+  own pipeline), a schema change or a change to an existing endpoint/event this feature touches needs
+  `[[rollout-compatibility]]`'s additive-first discipline, not just `fullstack-feature-slice`'s own
+  shape -- most load-bearing for the "add a migration"/"add a table or column" case this skill
+  already covers, and for modifying an endpoint or event an existing consumer depends on.
 
 ## Two things to check before writing code
 
