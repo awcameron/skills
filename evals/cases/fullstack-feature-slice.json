@@ -1,0 +1,21 @@
+{
+  "skill_name": "fullstack-feature-slice",
+  "trigger": {
+    "positive": [
+      { "prompt": "add an endpoint for exporting a room's roster, with the frontend page to view it", "top_k": 2 },
+      { "prompt": "add a new feature slice for inviting a participant, backend and frontend", "top_k": 2 },
+      { "prompt": "extend the shared types package with a new contract for camp sessions", "top_k": 2 },
+      { "prompt": "add a migration for a new table and wire it up through the API and the UI", "top_k": 2 },
+      { "prompt": "build a vertical slice for archiving an organization", "top_k": 1 },
+      { "prompt": "add a table/column for tracking key check-outs and use it end to end", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "review this handler for authorization gaps, can a user reach another tenant's records", "owner": "zero-trust-architecture" },
+      { "prompt": "review my changes before I open a PR", "owner": "review-code" },
+      { "prompt": "add test coverage for this bug fix", "owner": "write-tests" },
+      { "prompt": "open a PR for this branch", "owner": "create-pr" },
+      { "prompt": "diagnose why this endpoint is throwing a 500", "owner": "diagnose-bug" },
+      { "prompt": "clean up this one function, it's messy", "owner": "ts-best-practices" }
+    ]
+  }
+}

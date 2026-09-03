@@ -32,6 +32,7 @@ story behind a few of these skills, including a real skill-drift bug this repo's
 ## Table of contents
 
 - [What's here](#whats-here)
+  - [Feature building](#feature-building)
   - [Code-quality lenses](#code-quality-lenses)
   - [The bug lifecycle](#the-bug-lifecycle)
   - [Test authoring](#test-authoring)
@@ -52,6 +53,12 @@ story behind a few of these skills, including a real skill-drift bug this repo's
 Grouped by what stage of work each skill acts on — see
 [`docs/skill-categories.md`](docs/skill-categories.md) for the reasoning behind the grouping and
 how the skills in each one hand off to each other.
+
+### Feature building
+
+- **[`fullstack-feature-slice`](skills/fullstack-feature-slice/SKILL.md)** — builds one feature
+  across a monorepo's layers (shared contract, backend, frontend), discovering each layer's own
+  convention rather than assuming a stack.
 
 ### Code-quality lenses
 
@@ -113,10 +120,10 @@ Governs how the agent itself operates, not the target codebase.
 - **[`terse-reports`](skills/terse-reports/SKILL.md)** — reports status/summaries in terse,
   fact-dense language, without touching code, commit, or PR-body grammar.
 
-Every skill except `zero-trust-architecture` also ships a matching slash command
-(`.claude/commands/<name>.md`, `.gemini/commands/<name>.toml`) for explicit invocation instead of
-waiting on auto-discovery. `zero-trust-architecture` is the exception: it's meant to auto-trigger
-on ordinary feature/review requests instead.
+Every skill except `zero-trust-architecture` and `fullstack-feature-slice` also ships a matching
+slash command (`.claude/commands/<name>.md`, `.gemini/commands/<name>.toml`) for explicit
+invocation instead of waiting on auto-discovery. Both are the exception: they're meant to
+auto-trigger on ordinary feature/review requests instead.
 
 ## Using this with your tool
 

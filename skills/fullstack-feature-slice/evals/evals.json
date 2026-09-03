@@ -1,0 +1,48 @@
+{
+  "skill_name": "fullstack-feature-slice",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "This repo is at ./repo (an Express + Zod + React monorepo). Add a feature for listing an org's participants: a backend endpoint and a frontend page to view them. There's no participants module yet, but there's a working rooms module you can use as a reference for how this repo does things.",
+      "expected_output": "A new participants feature that matches the rooms module's conventions: a Zod schema in packages/shared-types (barrel-exported), a vertical-slice handler under apps/api/src/modules/participants/features/..., using Result<T,E> and req.membership.orgId (not a param/body id), plus a apps/web/src/features/participants/ hook+page going through the existing api-client.ts. Ask-First items (new deps) flagged, not silently added.",
+      "files": [],
+      "expectations": [
+        "Reads the existing rooms module (schema, handler, repository, hook, page) before writing the participants feature",
+        "Adds a Participant Zod schema under packages/shared-types with a barrel export reachable from the root index.ts",
+        "Backend handler derives orgId from req.membership, not from a route param or request body",
+        "Backend handler returns a Result<T,E>-shaped value rather than throwing for expected failures",
+        "New backend feature lives under apps/api/src/modules/participants/features/... (vertical-slice), not a global controllers/dto/ folder",
+        "Frontend goes through apps/web/src/lib/api-client.ts rather than calling fetch directly",
+        "Frontend feature lives under apps/web/src/features/participants/ colocating a hook and a page",
+        "Does not introduce a new npm dependency without flagging it as Ask-First"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "This repo is at ./repo (a Spring Boot backend + OpenAPI-generated shared client + TS frontend). Add an endpoint to fetch a single key's detail by id, and wire it into the frontend so KeysPage can show it. There's a working list-keys feature you can use as a reference.",
+      "expected_output": "A new endpoint added to api/openapi.yaml, a matching Controller/Service/Repository trio in backend following the existing layered (not vertical-slice) convention, using the Authentication principal for org scoping (not a path param), with the generated client regenerated/rebuilt before frontend consumes it through the existing api-client.ts wrapper -- not a raw fetch or a direct import of the generated client from a component.",
+      "files": [],
+      "expectations": [
+        "Reads the existing list-keys Controller/Service/Repository trio before adding the new endpoint",
+        "Adds the new path to api/openapi.yaml as the source of truth for the contract",
+        "New backend code follows the layered convention (separate Controller/Service/Repository classes), not a vertical-slice folder",
+        "Controller derives orgId from the Authentication principal, not a path/query parameter",
+        "Frontend consumes the new endpoint through the existing api-client.ts wrapper, not a raw fetch or a direct import of the generated client into KeysPage",
+        "Notes that the shared client needs regenerating/rebuilding before the frontend sees the new method, rather than silently assuming it just works",
+        "Adds a colocated test under src/test/java mirroring the new class's package path"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "This repo is at ./repo (an Express + Zod + React monorepo). We need a waitlist feature: add a new `waitlist` table and an endpoint + page listing an org's waitlist entries.",
+      "expected_output": "Confirms with the user before generating a schema/migration change (per AGENTS.md's Ask-First list) rather than silently creating one -- describing the proposed table/change in prose, not as a draft file on disk -- then follows the same shared-contract-first, vertical-slice, Result<T,E>, req.membership.orgId pattern as the rooms module for everything else.",
+      "files": [],
+      "expectations": [
+        "Explicitly flags the schema/migration change as needing human confirmation before generating it, per AGENTS.md's Ask-First list, rather than silently creating the migration",
+        "Still makes visible progress on the non-blocked parts of the task (or clearly explains why it's not proceeding) rather than treating the whole task as blocked",
+        "Does not create a migration/schema file at all, even in draft form -- describes the proposed change in prose instead",
+        "Any endpoint/page work follows the same shared-contract-first, vertical-slice, Result<T,E>, req.membership.orgId pattern as the rooms module"
+      ]
+    }
+  ]
+}

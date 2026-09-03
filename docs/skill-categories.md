@@ -7,6 +7,19 @@ target codebase at all. This doc explains the grouping used in the README's
 ["What's here"](../README.md#whats-here) table and how the skills within a group relate to each
 other.
 
+## Feature building
+
+`fullstack-feature-slice`
+
+Its own category, and the earliest-stage one -- writing new feature code, as opposed to judging
+code already written (the next group) or fixing/testing/shipping it (the pipeline after that). It
+carries a fixed, portable *shape* (shared contract first, then backend, then frontend, then tests,
+then a cross-layer summary) the way `ts-best-practices` and `zero-trust-architecture` carry a fixed
+body of judgment calls, but the specifics inside that shape -- what the shared-contract mechanism
+actually is, whether the backend is vertical-slice or layered, what the error-handling convention
+is -- are entirely discovered per repo rather than assumed. It leans on `zero-trust-architecture`
+by name for the security-boundary piece rather than re-deriving that layer itself.
+
 ## Code-quality lenses
 
 `review-code`, `ts-best-practices`, `zero-trust-architecture`
@@ -99,7 +112,8 @@ someone else to read keeps normal grammar).
 
 ## The coarse view
 
-Collapsed further, there are really three tiers: the **code-quality lenses** feed into the
-**build/fix/test/ship pipeline** (bug lifecycle → test authoring → dependency maintenance →
-shipping), while **documentation integrity** and **agent meta-behavior** sit orthogonal to both --
-they apply regardless of where in the pipeline a given task currently is.
+Collapsed further, there are really three tiers: **feature building** writes the code the
+**code-quality lenses** then read, which feeds into the **build/fix/test/ship pipeline** (bug
+lifecycle → test authoring → dependency maintenance → shipping), while **documentation integrity**
+and **agent meta-behavior** sit orthogonal to all of it -- they apply regardless of where in the
+pipeline a given task currently is.
