@@ -1,7 +1,7 @@
 description = "Carry local changes through this repo's real branch/commit/push/PR workflow"
 
 prompt = """
-Invoke the skills:create-pr skill.
+Invoke the awcameron-skills:create-pr skill.
 
 Take the current local changes through this repo's actual git/GitHub workflow: figure out the
 ticket, name the branch, commit, push, and open a PR -- discovering this repo's own naming and
