@@ -33,12 +33,21 @@ skills/
 
 ### Frontmatter (required)
 
+This repo targets the [agentskills.io specification](https://agentskills.io/specification) for
+`SKILL.md` frontmatter. It defines five recognized fields; this repo's skills use `name`,
+`description`, and `allowed-tools` today, and don't yet use `license`, `compatibility`, or
+`metadata` (see below for when each is actually worth adding).
+
 ```yaml
 ---
 name: skill-name-with-hyphens
 description: >-
   What the skill does, then one or more "Use when ..." trigger conditions.
 allowed-tools: [Read, Grep, Glob]   # optional -- Claude Code-specific, ignored by other tools
+license: MIT                        # optional -- see "license" below
+compatibility: ...                  # optional, rarely needed -- see "compatibility" below
+metadata:                           # optional -- see "metadata" below
+  key: value
 ---
 ```
 
@@ -55,7 +64,33 @@ allowed-tools: [Read, Grep, Glob]   # optional -- Claude Code-specific, ignored 
   actually reads (`scripts/lib/parse-skill.js`, and the `SessionStart` hook -- see
   [`hooks/README.md`](../hooks/README.md)); anything else won't parse.
 - `allowed-tools`: optional, Claude Code-only. Other tools ignore it; don't rely on it to
-  actually restrict behavior outside Claude Code.
+  actually restrict behavior outside Claude Code. The spec documents this field as a
+  **space-separated string** (e.g. `allowed-tools: Read Bash(git:*)`); every skill in this repo
+  instead uses a YAML **list** (e.g. `allowed-tools: [Read, Grep, Glob]`), which is Claude Code's
+  own convention, not the spec's documented syntax. That's a deliberate divergence, not an
+  oversight: the spec itself marks `allowed-tools` "Experimental, support varies between agent
+  implementations," and Claude Code is the only consumer of it today (other supported tools ignore
+  the field entirely) -- so there's no cross-tool compatibility to lose by keeping the list form
+  Claude Code actually expects. Revisit if a second consumer starts reading this field.
+- `license`: optional. Only add it if a skill's license genuinely differs from the repo's own --
+  every skill here currently shares the root [`LICENSE`](../LICENSE) (MIT), so this repo doesn't
+  set the field per-skill; if you do need it, `license: MIT` (a license name) or a path to a
+  bundled license file are both valid per the spec.
+- `compatibility`: optional, and per the spec itself "most skills do not need this field." Add it
+  only for a genuine non-discoverable hard dependency a skill can't detect and route around at run
+  time (e.g. requires a specific OS or a tool version too specific to sensibly probe for) -- not
+  for anything a skill could instead discover by reading the repo it's operating in (that's the
+  "discover, don't dictate" principle from [README.md](../README.md), and it applies here too).
+  Keep it under the spec's 500-character limit.
+- `metadata`: optional, a freeform string-to-string map for client-specific extensions. Only add a
+  key when there's an actual known consumer that reads it -- an untargeted `metadata` block is
+  just noise, since nothing in this repo's own tooling (`scripts/lib/parse-skill.js`,
+  `scripts/validate-skills.js`, the `SessionStart` hook) reads it today.
+
+This repo's own validation (`scripts/validate-skills.js`) checks `name` and `description` against
+the rules above; it doesn't yet run the spec's own reference validator
+([`skills-ref validate`](https://github.com/agentskills/agentskills/tree/main/skills-ref)) as a
+second check. Worth adding to CI later, but not wired up yet -- track before relying on it.
 
 ### Body
 
