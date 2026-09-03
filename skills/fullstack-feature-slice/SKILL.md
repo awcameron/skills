@@ -58,6 +58,19 @@ a package name, or a directory layout:
   touching user- or org-owned data needs to plug into whatever already exists there, not invent its
   own scoping check. If this repo doesn't have `zero-trust-architecture`'s skill file, apply its
   principles directly: never derive identity/tenant from a client-supplied field.
+- **Role/permission checks, separate from tenant scoping.** Belonging to a tenant/org and being
+  allowed to use *this* feature within it are two different facts -- a guard chain proving org
+  membership says nothing about whether this caller specifically is an admin, has a paid plan, or
+  holds whatever role the feature actually requires. Does this repo have a role/permission
+  mechanism (a `@RequireRole`-style decorator, a permissions table, a policy/ability class)? If the
+  feature is gated to a subset of members, that check has to come from there, not be invented as a
+  one-off `if (user.role === "admin")` in the new handler.
+- **The observability/logging convention.** How does this repo log a request as it moves through a
+  handler -- a shared structured logger, a request-scoped correlation id threaded from an
+  interceptor/middleware down into the repository layer, or nothing beyond what a central error
+  handler already logs on failure? A new handler should log through whatever's already there
+  (including threading the same request-scoped context) rather than reaching for its own
+  `console.log`/`print`/ad hoc logging shape.
 - **The error-handling convention.** Does this backend return a typed `Result<T, E>`/`Either` for
   expected failures and throw only for broken invariants, or does it throw a typed exception for
   every failure path and rely on a global handler to map it to a response? A new handler should
@@ -103,8 +116,16 @@ a package name, or a directory layout:
   param or body field. If there's a database-level isolation backstop, every new query still keeps
   its own explicit scoping predicate -- both failing open (silently returning more than intended) is
   a correctness bug, not a nit. See `[[zero-trust-architecture]]`.
+- **Tenant scope and role/permission are two different checks.** Passing the tenant/org guard
+  proves the caller belongs to the org; it doesn't prove this specific feature is open to them
+  within it. If the feature is role- or plan-gated, that's a separate, explicit check through
+  whatever role/permission mechanism this repo already has -- not folded into, or assumed to be
+  covered by, the tenant check.
 - **Match the discovered error-handling convention**, not a personal default. Consistency across
   handlers matters more here than which style is "better" in the abstract.
+- **Log through the discovered convention, not a new shape.** A new handler doesn't invent its own
+  logging approach; it uses whatever structured logger, log level convention, and request-scoped
+  context this repo's observability layer already provides.
 
 ## Workflow for one feature
 
@@ -118,8 +139,10 @@ a package name, or a directory layout:
    rebuild it automatically, making the problem look fixed in one context while `typecheck`/a clean
    `gradlew build`/the test runner still sees the stale build.
 3. **Backend**: add the feature following the layout discovered above, wire it into the routing
-   layer with whatever guards/middleware/interceptors this repo's authorization chain uses, and
-   register the module/route/bean if this framework requires an explicit registration step. An
+   layer with whatever guards/middleware/interceptors this repo's authorization chain uses (plus a
+   role/permission check if the feature is gated beyond tenant membership), and register the
+   module/route/bean if this framework requires an explicit registration step. Log through this
+   repo's existing observability convention rather than adding a one-off logging shape. An
    unregistered route is often a silent 404, not an error -- check the startup log or route list
    (or, for Spring, the request-mapping log line) for confirmation it's actually mounted.
 4. **Frontend (or downstream consumer)**: add the feature following its discovered layout, going
@@ -144,6 +167,12 @@ a package name, or a directory layout:
   anyway. Defense in depth means the explicit filter stays even when a backstop exists.
 - **Taking a tenant/user id from the request body or query string** instead of from what the guard
   chain already verified and attached -- a caller who can name their own id can name someone else's.
+- **Checking tenant membership but not role/permission** for a feature that's actually gated
+  further within the org (admin-only, a specific plan tier). Passing the tenant guard proves
+  membership, not that this particular action is authorized for this particular caller.
+- **Adding a bespoke logging statement** for the new handler -- an ad hoc `console.log`/`print`
+  sitting next to everywhere else that goes through a shared structured logger is exactly the kind
+  of drift a later cleanup has to go hunt down.
 - **Hand-editing a generated file** (a generated router, a generated client, a generated schema)
   instead of regenerating it from its source -- it's typically checked against its generator in CI
   and will be flagged as stale even if the hand-edit was correct.
