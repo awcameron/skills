@@ -47,6 +47,10 @@ function main() {
   );
 
   const cases = loadCases();
+  const coveredSkillNames = new Set(cases.map((testCase) => testCase.skill_name));
+  const uncoveredSkillNames = skills
+    .map((skill) => skill.name)
+    .filter((name) => !coveredSkillNames.has(name));
 
   let positiveTotal = 0;
   let positivePassed = 0;
@@ -54,6 +58,14 @@ function main() {
   let negativeTotal = 0;
   let negativePassed = 0;
   let hadUnknownSkillRef = false;
+
+  if (uncoveredSkillNames.length > 0) {
+    console.log("=== Missing coverage ===\n");
+    for (const name of uncoveredSkillNames) {
+      console.log(`FAIL  ${name}: no evals/cases/${name}.json -- this skill has zero trigger-routing coverage`);
+    }
+    console.log("");
+  }
 
   console.log("=== Trigger routing ===\n");
 
@@ -124,9 +136,11 @@ function main() {
   console.log(`rank-1 rate:     ${rank1Count}/${positiveTotal} (${rank1Rate}%)`);
   console.log(`negative cases:  ${negativePassed}/${negativeTotal} correctly out-ranked`);
   console.log(`collisions:      ${collisions}`);
+  console.log(`uncovered:       ${uncoveredSkillNames.length}/${skills.length} skills`);
 
   const failed =
     hadUnknownSkillRef ||
+    uncoveredSkillNames.length > 0 ||
     positivePassed < positiveTotal ||
     negativePassed < negativeTotal ||
     (minRank1 !== null && rank1Rate < minRank1);
