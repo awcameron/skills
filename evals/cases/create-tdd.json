@@ -1,0 +1,53 @@
+{
+  "skill_name": "create-tdd",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Can you draft a technical design document for our new microservice using docs/templates/tdd-template.md as the reference?",
+        "top_k": 2
+      },
+      {
+        "prompt": "Write an architectural design spec based on the reference markdown file provided here.",
+        "top_k": 2
+      },
+      {
+        "prompt": "Analyze our existing auth-service codebase at ./services/auth-service and use references/technical-design-doc.md to retroactively generate a comprehensive TDD reflecting its current architecture.",
+        "top_k": 3
+      },
+      {
+        "prompt": "Please generate a TDD for the payment processing pipeline following our standard design doc template.",
+        "top_k": 2
+      },
+      {
+        "prompt": "We need an engineering proposal and architecture specification for the upcoming caching layer. Create a design document for it.",
+        "top_k": 3
+      },
+      {
+        "prompt": "Can you reverse-engineer a technical design document from our legacy user-service directory using our standard TDD template?",
+        "top_k": 3
+      },
+      {
+        "prompt": "Draft an RFC style design doc for the new event-driven messaging queue architecture.",
+        "top_k": 2
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "What are the best practices for structuring a TypeScript monorepo?",
+        "owner": "fullstack-feature-slice"
+      },
+      {
+        "prompt": "Can you open a pull request for these changes?",
+        "owner": "create-pr"
+      },
+      {
+        "prompt": "Add a new participants feature endpoint and frontend page to view them.",
+        "owner": "fullstack-feature-slice"
+      },
+      {
+        "prompt": "Fix the null pointer exception crashing the authentication middleware.",
+        "owner": "fix-bug"
+      }
+    ]
+  }
+}
