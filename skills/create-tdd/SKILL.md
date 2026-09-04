@@ -1,6 +1,12 @@
 ---
 name: create-tdd
-description: Generate a comprehensive Technical Design Document (TDD) based on a reference markdown template or document structure, supporting both greenfield design and retroactive documentation of existing codebases. Use this skill when a user asks to draft, write, or generate a technical design document, architecture spec, or engineering proposal referencing an existing template.
+description: >-
+   Generate a comprehensive Technical Design Document (TDD) based on a reference markdown
+   template or document structure, supporting both greenfield design and retroactive
+   documentation of existing codebases. Use this skill when a user asks to draft, write,
+   or generate a technical design document, architecture spec, or engineering proposal
+   referencing an existing template.
+allowed-tools: [Read, Grep, Glob, Write, Bash(git status:*), Bash(git log:*)]
 ---
 
 # Create Technical Design Document (create-tdd)
@@ -10,14 +16,21 @@ This skill guides the agent in analyzing the bundled reference template (`refere
 
 ## Workflow
 
-1. **Locate and Read Reference**: Read `references/technical-design-doc.md`[cite: 8] to extract the required heading hierarchy, metadata blocks, and architectural style guidelines.
+1. **Locate and Read Reference**: Read `references/technical-design-doc.md` to extract the required heading hierarchy, metadata blocks, and architectural style guidelines. If the file is missing, default to standard engineering TDD headings.
 2. **Determine Mode & Scope**:
-    - **Greenfield Mode**: If the user is proposing a new feature or service, capture prospective design constraints, goals, and architectural plans.
-    - **Reverse-Engineering Mode**: If the user points to an existing codebase or service directory, explore the repository structure, configuration files, and key modules to document the *actual implemented state* and any existing technical debt.
+   - **Greenfield Mode**: If the user is proposing a new feature or service, capture prospective design constraints, goals, and architectural plans.
+   - **Reverse-Engineering Mode**: If the user points to an existing codebase or service directory, explore the repository structure, configuration files, and key modules to document the *actual implemented state* and any existing technical debt.
 3. **Determine Sections**: Enforce core technical sections (Overview, System Architecture, Data Models, Security, Testing Strategy) while selectively omitting optional supplementary sections (e.g., Cost Analysis, Resilience) if the feature scope is lightweight.
 4. **Gather & Clarify Requirements**:
-    - Identify core features, component boundaries, and non-functional requirements.
-    - **Ask-First Rule**: If critical architectural dependencies (e.g., database choices, upstream services) are ambiguous, prompt the user for clarification rather than making unverified assumptions.
+   - Identify core features, component boundaries, and non-functional requirements.
+   - **Ask-First Rule**: If critical architectural dependencies (e.g., database choices, upstream services) are ambiguous, prompt the user for clarification rather than making unverified assumptions.
 5. **Draft the Document**: Populate each chosen section with precise, implementation-level details, ensuring a clean separation between problem statement, design, and deployment planning.
-6. **Review and Validate**: Verify that all design choices align with existing system constraints, engineering standards, and the formatting rules of the reference template.
-7. **Output Generation**: Save the final output to a structured path (e.g., `docs/tdd/[project-name]-tdd.md`) rather than just rendering it in chat prose.
+6. **Incorporate Visual Architecture (Mermaid Only)**:
+   - **Exclusive Format**: Use **only** Mermaid for all visual diagrams. Do not use ASCII art, PlantUML, or binary images.
+   - **Diagram Selection Matrix**: Select the optimal diagram type based on the architectural topic:
+      - **System Architecture / Component Breakdown:** Use a `flowchart` (TD or LR) to map out infrastructure boundaries, service-to-service communication, and ingress/egress points.
+      - **Data Flow / Request Lifecycles / API Interactions:** Use a `sequenceDiagram` to illustrate step-by-step actor interactions, synchronous/asynchronous messaging, and time-ordered request flows.
+      - **State Transitions / Job Lifecycles (if applicable):** Use a `stateDiagram-v2` to depict object or job states.
+   - Ensure all Mermaid syntax blocks are enclosed in valid ```mermaid code fences with clean, descriptive node identifiers and labels.
+7. **Review and Validate**: Verify that all design choices align with existing system constraints, engineering standards, and the formatting rules of the reference template.
+8. **Output Generation**: Save the final output to a structured path (`docs/tdd/[project-name-kebab-case]-tdd.md`) rather than just rendering it in chat prose.
