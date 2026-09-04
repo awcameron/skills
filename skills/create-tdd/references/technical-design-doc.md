@@ -1,5 +1,3 @@
-#### **[!] TEMPLATE USAGE:** Do not edit this document directly. Go to **File > Make a copy** to create a unique Technical Design Doc for your project. Once copied, **rename the file, the document title, and the tab name** to reflect your project (e.g., "[Project Name] TDD"). Note that not all sections are applicable for every project; please only include the sections necessary to clearly communicate your specific design.
-
 # **TDD: Technical Design Doc Template**
 
 **Author:** [Full Name]
