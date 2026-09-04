@@ -1,17 +1,18 @@
 ---
 name: rollout-compatibility
 description: >-
-  Backward/forward-compatible change discipline for a repo whose pieces deploy independently or
-  roll out gradually -- a database migration, an API/event schema change, or a change spanning a
-  shared contract and its consumers, where old and new versions of something coexist even
-  momentarily. Use when creating or modifying a database column/table, an API request/response
-  shape, an event/message schema (Kafka, SQS, webhooks), or any change to an existing contract
-  between services or between a backend and frontend that don't deploy atomically together. Also
-  reach for this when the request is a migration ("add a column", "rename a field", "add a
-  migration"), a rolling/blue-green/canary deploy is mentioned, or an existing endpoint/event is
-  being changed rather than a new one added. Not needed for a genuinely new, unreleased contract
-  with no existing consumers, or a repo that ships everything in one atomic release with no
-  rolling window.
+  Use when adding, renaming, or dropping a database column/table; changing the shape of an
+  existing API request/response; versioning or deprecating a field that callers already depend on;
+  or evolving an event/message schema (Kafka, SQS, webhooks) -- any change to a contract that
+  already has a consumer. Triggers on everyday phrasing like "add a column", "add a migration",
+  "rename this field", "is it safe to drop this column", "should I version this or change it in
+  place", not just requests that explicitly mention deploys. Also triggers whenever a rolling,
+  blue-green, or canary deploy is mentioned (Kubernetes, ECS, or otherwise), or when the repo's
+  pieces -- services, a backend and frontend, a database and its readers -- deploy on separate
+  schedules, since old and new versions then coexist even momentarily. Covers a single service
+  mid-rollout, not just separate services calling each other. Not for a brand-new column, event,
+  or route with no existing consumer, or a repo that ships everything in one atomic release with
+  no rolling window.
 allowed-tools: [Read, Grep, Glob, Edit, Write]
 ---
 
