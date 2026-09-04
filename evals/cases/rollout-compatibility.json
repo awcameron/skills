@@ -1,0 +1,23 @@
+{
+  "skill_name": "rollout-compatibility",
+  "trigger": {
+    "positive": [
+      { "prompt": "add a migration to rename this column", "top_k": 2 },
+      { "prompt": "how should I add a new required field to this database table safely", "top_k": 2 },
+      { "prompt": "we deploy with a rolling update, will this schema change break the old pods", "top_k": 2 },
+      { "prompt": "is it safe to remove this field from the API response", "top_k": 2 },
+      { "prompt": "we're changing the shape of this Kafka event, what do downstream consumers need", "top_k": 2 },
+      { "prompt": "add a column to this table and backfill existing rows", "top_k": 2 },
+      { "prompt": "this mobile client can't force-update, how do I change the response shape without breaking old versions", "top_k": 2 },
+      { "prompt": "we're doing a blue-green deploy, does this change need a compatibility window", "top_k": 2 },
+      { "prompt": "should this API change be versioned or can I just update the endpoint in place", "top_k": 2 },
+      { "prompt": "add consumer-driven contract tests for this event schema", "top_k": 3 }
+    ],
+    "negative": [
+      { "prompt": "build a new feature end to end across the shared types package, backend, and frontend", "owner": "fullstack-feature-slice" },
+      { "prompt": "add an endpoint to delete a room", "owner": "zero-trust-architecture" },
+      { "prompt": "review my changes before I open a PR", "owner": "review-code" },
+      { "prompt": "add test coverage for this bug fix", "owner": "write-tests" }
+    ]
+  }
+}

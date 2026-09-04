@@ -22,23 +22,27 @@ by name for the security-boundary piece rather than re-deriving that layer itsel
 
 ## Code-quality lenses
 
-`review-code`, `ts-best-practices`, `zero-trust-architecture`
+`review-code`, `ts-best-practices`, `zero-trust-architecture`, `rollout-compatibility`
 
-The three "read code, judge it against a body of standards" skills. They share a purpose, not
+The "read code, judge it against a body of standards" skills. They share a purpose, not
 necessarily a structure -- they differ in where that body of standards comes from, and that
 difference shows up in how each one is laid out on disk:
 
 - `review-code` *discovers* a repo's own standards (its documented conventions, its lint config,
   its real git history) -- it has no fixed opinions of its own, so there's nothing fixed to split
   into `references/`.
-- `ts-best-practices` and `zero-trust-architecture` each carry a fixed, portable body of judgment
-  calls -- TypeScript/JavaScript idiom, and Zero Trust authorization architecture, respectively --
-  that apply across repos, with an explicit step to check whether a given repo's own documented
-  convention should win over the general default when the two conflict. Both split that detail
-  into `references/` files opened on demand rather than loaded all at once.
+- `ts-best-practices`, `zero-trust-architecture`, and `rollout-compatibility` each carry a fixed,
+  portable body of judgment calls -- TypeScript/JavaScript idiom, Zero Trust authorization
+  architecture, and backward/forward-compatible change discipline, respectively -- that apply
+  across repos, with an explicit step to check whether a given repo's own documented convention (or
+  deployment model) should win over the general default. All three split that detail into
+  `references/` files opened on demand rather than loaded all at once.
 
-All three apply equally while *writing* new code and while *reviewing* existing code -- none of
-them is review-only.
+All four apply equally while *writing* new code and while *reviewing* existing code -- none of
+them is review-only. `rollout-compatibility` is the newest of the four and the one most likely to
+be a no-op for a given repo -- its own discovery step says so plainly when a repo ships everything
+in one atomic release with no rolling window, the same way `zero-trust-architecture`'s
+tenant-isolation layer says so plainly for a single-tenant app.
 
 ## The bug lifecycle
 

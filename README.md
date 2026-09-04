@@ -72,6 +72,9 @@ Read code against a body of standards, whether writing or reviewing.
 - **[`zero-trust-architecture`](skills/zero-trust-architecture/SKILL.md)** — never trusts a caller
   based on what layer already checked it; verifies identity and ownership explicitly across the
   whole request chain, discovered against a repo's own stack.
+- **[`rollout-compatibility`](skills/rollout-compatibility/SKILL.md)** — backward/forward-compatible
+  change discipline (expand-contract migrations, additive API/event changes, N/N-1 rolling-deploy
+  tolerance) for a repo whose pieces deploy independently or gradually.
 
 ### The bug lifecycle
 
@@ -120,10 +123,11 @@ Governs how the agent itself operates, not the target codebase.
 - **[`terse-reports`](skills/terse-reports/SKILL.md)** — reports status/summaries in terse,
   fact-dense language, without touching code, commit, or PR-body grammar.
 
-Every skill except `zero-trust-architecture` and `fullstack-feature-slice` also ships a matching
-slash command (`.claude/commands/<name>.md`, `.gemini/commands/<name>.toml`) for explicit
-invocation instead of waiting on auto-discovery. Both are the exception: they're meant to
-auto-trigger on ordinary feature/review requests instead.
+Every skill except `zero-trust-architecture`, `fullstack-feature-slice`, and
+`rollout-compatibility` also ships a matching slash command (`.claude/commands/<name>.md`,
+`.gemini/commands/<name>.toml`) for explicit invocation instead of waiting on auto-discovery. These
+three are the exception: they're meant to auto-trigger on ordinary feature/review/migration requests
+instead.
 
 ## Using this with your tool
 
