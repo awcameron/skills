@@ -19,8 +19,10 @@ This skill guides the agent in analyzing the bundled reference template (`refere
 1. **Locate and Read Reference**: Read `references/technical-design-doc.md` to extract the required heading hierarchy, metadata blocks, and architectural style guidelines. If the file is missing, default to standard engineering TDD headings.
 2. **Determine Mode & Scope**:
    - **Greenfield Mode**: If the user is proposing a new feature or service, capture prospective design constraints, goals, and architectural plans.
-   - **Reverse-Engineering Mode**: If the user points to an existing codebase or service directory, explore the repository structure, configuration files, and key modules to document the *actual implemented state* and any existing technical debt.
+   - **Reverse-Engineering Mode**: If the user points to an existing codebase or service directory, explore the repository structure, configuration files, and key modules to document the *actual implemented state* and any existing technical debt. See `references/reverse-engineering-checklist.md` for which concrete artifacts (manifests, IaC, CI config, schema files, ...) answer which TDD section.
 3. **Determine Sections**: Enforce core technical sections (Overview, System Architecture, Data Models, Security, Testing Strategy) while selectively omitting optional supplementary sections (e.g., Cost Analysis, Resilience) if the feature scope is lightweight.
+   - **Security section**: don't re-derive authorization/identity judgment calls from scratch -- if this repo has `[[zero-trust-architecture]]`, apply its layers (request-layer guard chain, service-to-service auth, tenant-isolation backstop, session-token handling) to structure this section; otherwise apply the same principles directly.
+   - **Data Models / Deployment Plan, when the design changes a schema, API, or event contract an existing consumer depends on**: lean on `[[rollout-compatibility]]` for the compatibility discipline (expand-contract migrations, additive changes, N/N-1 rolling-deploy tolerance) rather than inventing a migration plan ad hoc. Not relevant for a brand-new contract with no existing consumer.
 4. **Gather & Clarify Requirements**:
    - Identify core features, component boundaries, and non-functional requirements.
    - **Ask-First Rule**: If critical architectural dependencies (e.g., database choices, upstream services) are ambiguous, prompt the user for clarification rather than making unverified assumptions.
@@ -32,6 +34,6 @@ This skill guides the agent in analyzing the bundled reference template (`refere
       - **Data Flow / Request Lifecycles / API Interactions:** Use a `sequenceDiagram` to illustrate step-by-step actor interactions, synchronous/asynchronous messaging, and time-ordered request flows.
       - **State Transitions / Job Lifecycles (if applicable):** Use a `stateDiagram-v2` to depict object or job states.
       - **Data Models / Entity Relationships:** Use an `erDiagram` to depict database tables, fields, and their relationships.
-   - Ensure all Mermaid syntax blocks are enclosed in valid ```mermaid code fences with clean, descriptive node identifiers and labels.
+   - Ensure all Mermaid syntax blocks are enclosed in valid ```mermaid code fences with clean, descriptive node identifiers and labels. See `references/mermaid-examples.md` for a minimal valid snippet of each type.
 7. **Review and Validate**: Verify that all design choices align with existing system constraints, engineering standards, and the formatting rules of the reference template.
 8. **Determine Output Path**: Check the repo for an existing design-doc convention (e.g. an existing `docs/tdd/`, `docs/design/`, or `docs/rfcs/` directory, or a documented convention in its own `AGENTS.md`/`CONTRIBUTING.md`/README) and save there. Default to `docs/tdd/[project-name-kebab-case]-tdd.md` only if the repo has no existing convention. Save to that path rather than just rendering the document in chat prose.

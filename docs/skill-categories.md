@@ -29,7 +29,11 @@ gets built from, rather than the feature code itself. Carries a fixed, portable 
 structure (the bundled `references/technical-design-doc.md` template) the way `ts-best-practices`
 carries a fixed body of judgment calls, but discovers per repo which sections apply, whether it's
 running greenfield or retroactively against an existing codebase, and where a repo already keeps
-its design docs before defaulting to its own `docs/tdd/` path.
+its design docs before defaulting to its own `docs/tdd/` path. It leans on `zero-trust-architecture`
+by name for the Security section and, when a design changes a contract an existing consumer
+depends on, `rollout-compatibility` for the Data Models/Deployment Plan sections -- the same
+by-name pattern `fullstack-feature-slice` uses, rather than re-deriving either body of judgment
+calls itself.
 
 ## Code-quality lenses
 
