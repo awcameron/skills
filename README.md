@@ -60,6 +60,12 @@ how the skills in each one hand off to each other.
   across a monorepo's layers (shared contract, backend, frontend), discovering each layer's own
   convention rather than assuming a stack.
 
+### Design documentation
+
+- **[`create-tdd`](skills/create-tdd/SKILL.md)** — generates a Technical Design Document from a
+  bundled reference template, either for a new (greenfield) design or as a retroactive writeup of
+  an existing codebase.
+
 ### Code-quality lenses
 
 Read code against a body of standards, whether writing or reviewing.

@@ -21,11 +21,12 @@ skills/
 - `references/` -- only when a skill genuinely needs supporting material split out (see
   `ts-best-practices/references/` for an example: eleven short files, one per judgment-call
   category, so an agent opens only the one that applies instead of loading all eleven; also used
-  by `zero-trust-architecture`).
+  by `zero-trust-architecture` and `create-tdd`).
 - `evals/evals.json` -- a per-skill eval-case file for `claude plugin eval`, distinct from this
   repo's own top-level `evals/cases/<skill>.json` trigger-routing evals (see
-  [`evals/README.md`](../evals/README.md)); present on `doc-fact-check`, `format-docs`,
-  `fullstack-feature-slice`, `review-code`, `ts-best-practices`, and `write-tests` so far.
+  [`evals/README.md`](../evals/README.md)); present on `create-tdd`, `doc-fact-check`,
+  `format-docs`, `fullstack-feature-slice`, `review-code`, `ts-best-practices`, and `write-tests`
+  so far.
 - `scripts/` -- only when a skill's body benefits from mechanizing a repeatable step instead of
   re-deriving it one Read/Grep at a time (see `format-docs/scripts/detect_formatter.sh`).
 

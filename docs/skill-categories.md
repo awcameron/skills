@@ -20,6 +20,21 @@ actually is, whether the backend is vertical-slice or layered, what the error-ha
 is -- are entirely discovered per repo rather than assumed. It leans on `zero-trust-architecture`
 by name for the security-boundary piece rather than re-deriving that layer itself.
 
+## Design documentation
+
+`create-tdd`
+
+Its own category, upstream of `fullstack-feature-slice` -- writes the design document a feature
+gets built from, rather than the feature code itself. Carries a fixed, portable document
+structure (the bundled `references/technical-design-doc.md` template) the way `ts-best-practices`
+carries a fixed body of judgment calls, but discovers per repo which sections apply, whether it's
+running greenfield or retroactively against an existing codebase, and where a repo already keeps
+its design docs before defaulting to its own `docs/tdd/` path. It leans on `zero-trust-architecture`
+by name for the Security section and, when a design changes a contract an existing consumer
+depends on, `rollout-compatibility` for the Data Models/Deployment Plan sections -- the same
+by-name pattern `fullstack-feature-slice` uses, rather than re-deriving either body of judgment
+calls itself.
+
 ## Code-quality lenses
 
 `review-code`, `ts-best-practices`, `zero-trust-architecture`, `rollout-compatibility`
@@ -116,8 +131,8 @@ someone else to read keeps normal grammar).
 
 ## The coarse view
 
-Collapsed further, there are really three tiers: **feature building** writes the code the
-**code-quality lenses** then read, which feeds into the **build/fix/test/ship pipeline** (bug
-lifecycle → test authoring → dependency maintenance → shipping), while **documentation integrity**
-and **agent meta-behavior** sit orthogonal to all of it -- they apply regardless of where in the
-pipeline a given task currently is.
+Collapsed further, there are really three tiers: **design documentation** writes the plan that
+**feature building** turns into the code the **code-quality lenses** then read, which feeds into
+the **build/fix/test/ship pipeline** (bug lifecycle → test authoring → dependency maintenance →
+shipping), while **documentation integrity** and **agent meta-behavior** sit orthogonal to all of
+it -- they apply regardless of where in the pipeline a given task currently is.
