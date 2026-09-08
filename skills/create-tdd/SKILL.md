@@ -31,6 +31,7 @@ This skill guides the agent in analyzing the bundled reference template (`refere
       - **System Architecture / Component Breakdown:** Use a `flowchart` (TD or LR) to map out infrastructure boundaries, service-to-service communication, and ingress/egress points.
       - **Data Flow / Request Lifecycles / API Interactions:** Use a `sequenceDiagram` to illustrate step-by-step actor interactions, synchronous/asynchronous messaging, and time-ordered request flows.
       - **State Transitions / Job Lifecycles (if applicable):** Use a `stateDiagram-v2` to depict object or job states.
+      - **Data Models / Entity Relationships:** Use an `erDiagram` to depict database tables, fields, and their relationships.
    - Ensure all Mermaid syntax blocks are enclosed in valid ```mermaid code fences with clean, descriptive node identifiers and labels.
 7. **Review and Validate**: Verify that all design choices align with existing system constraints, engineering standards, and the formatting rules of the reference template.
-8. **Output Generation**: Save the final output to a structured path (`docs/tdd/[project-name-kebab-case]-tdd.md`) rather than just rendering it in chat prose.
+8. **Determine Output Path**: Check the repo for an existing design-doc convention (e.g. an existing `docs/tdd/`, `docs/design/`, or `docs/rfcs/` directory, or a documented convention in its own `AGENTS.md`/`CONTRIBUTING.md`/README) and save there. Default to `docs/tdd/[project-name-kebab-case]-tdd.md` only if the repo has no existing convention. Save to that path rather than just rendering the document in chat prose.
