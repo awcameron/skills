@@ -7,6 +7,8 @@
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
+import { load as loadYaml } from "js-yaml";
+
 /** Pulls out the YAML frontmatter block between the first pair of `---` lines. */
 function extractFrontmatter(content) {
   const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
@@ -51,6 +53,22 @@ export function parseSkillFile(skillMdPath) {
     name: readField(frontmatter, "name"),
     description: readField(frontmatter, "description"),
   };
+}
+
+/**
+ * Reads the full frontmatter block of one skills/<name>/SKILL.md as a plain object, for schema
+ * validation (scripts/lib/schema-validate.js) -- unlike parseSkillFile() above, this isn't limited
+ * to the two shapes that reader hand-parses; it's real YAML via js-yaml, so it also picks up
+ * `allowed-tools`, `license`, `compatibility`, and `metadata`. Throws if there's no frontmatter
+ * block or it isn't valid YAML.
+ */
+export function parseSkillFrontmatterObject(skillMdPath) {
+  const content = readFileSync(skillMdPath, "utf8");
+  const frontmatter = extractFrontmatter(content);
+  if (!frontmatter) {
+    throw new Error(`${skillMdPath}: no frontmatter block found`);
+  }
+  return loadYaml(frontmatter) ?? {};
 }
 
 /** Returns [{name, description, path}] for every skills/<name>/SKILL.md under skillsDir. */

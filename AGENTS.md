@@ -19,7 +19,10 @@ consumers; see [README.md](README.md) for what this repo is and how it's consume
   hold new and existing skills to it.
 - Before opening a PR, run:
   ```bash
-  npm run validate   # skill frontmatter is well-formed
+  npm ci              # once per clone/dependency change -- validate depends on ajv + js-yaml
+  npm run validate    # skill frontmatter (incl. schemas/skill-frontmatter.schema.json) and the
+                       # .claude-plugin manifests (schemas/plugin-manifest.schema.json,
+                       # schemas/marketplace-registry.schema.json) are well-formed
   npm run eval        # trigger-routing hasn't regressed -- see evals/README.md
   ```
 
