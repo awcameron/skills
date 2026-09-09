@@ -9,15 +9,16 @@ claude plugin marketplace add awcameron/skills
 claude plugin install awcameron-skills
 ```
 
-Cursor, Gemini CLI, Codex CLI, and OpenCode each have their own quick install; see
+Cursor, Antigravity CLI, Codex CLI, and OpenCode each have their own quick install; see
 [Using this with your tool](#using-this-with-your-tool) for all five.
 
-As of 2026, Claude Code, Cursor, Gemini CLI, Codex CLI, and OpenCode have all converged on the
-same shape for this: a `SKILL.md` file with YAML frontmatter, discovered from a `skills/`-style
+As of 2026, Claude Code, Cursor, Antigravity CLI, Codex CLI, and OpenCode have all converged on
+the same shape for this: a `SKILL.md` file with YAML frontmatter, discovered from a `skills/`-style
 directory. That means this repo needs **no per-tool format conversion** — one canonical `skills/`
-directory, exposed through each tool's own discovery path. Claude Code and Gemini CLI additionally
-get a thin, pre-generated slash-command file per skill for explicit invocation; Cursor and Codex
-CLI have their own built-in explicit-invocation UI instead (`/` search, `$skill-name`). OpenCode
+directory, exposed through each tool's own discovery path. Claude Code additionally gets a thin,
+pre-generated slash-command file per skill for explicit invocation; Antigravity CLI generates a
+slash command per skill automatically, no file needed; Cursor and Codex CLI have their own
+built-in explicit-invocation UI instead (`/` search, `$skill-name`). OpenCode
 currently relies on auto-discovery alone.
 
 **Design principle: discover, don't dictate.** There's no imposed spec→plan→build→ship pipeline
@@ -130,8 +131,10 @@ Governs how the agent itself operates, not the target codebase.
   fact-dense language, without touching code, commit, or PR-body grammar.
 
 Every skill except `zero-trust-architecture`, `fullstack-feature-slice`, and
-`rollout-compatibility` also ships a matching slash command (`.claude/commands/<name>.md`,
-`.gemini/commands/<name>.toml`) for explicit invocation instead of waiting on auto-discovery. These
+`rollout-compatibility` also ships a matching slash command for explicit invocation instead of
+waiting on auto-discovery -- a `.claude/commands/<name>.md` file for Claude Code, and (for
+organizations still on the legacy, pre-Antigravity Gemini CLI) a `.gemini/commands/<name>.toml`
+file. Antigravity CLI needs neither: it generates a slash command per skill automatically. These
 three are the exception: they're meant to auto-trigger on ordinary feature/review/migration requests
 instead.
 
@@ -143,14 +146,15 @@ including its slash commands and any tool-specific quirks, is documented separat
 
 - [`docs/claude-code-setup.md`](docs/claude-code-setup.md) — plugin install or symlink, plus `.claude/commands/`
 - [`docs/cursor-setup.md`](docs/cursor-setup.md)
-- [`docs/gemini-cli-setup.md`](docs/gemini-cli-setup.md) — native skill discovery, plus `.gemini/commands/`
+- [`docs/antigravity-cli-setup.md`](docs/antigravity-cli-setup.md) — native skill discovery,
+  automatic slash commands, and the legacy Gemini CLI (Enterprise) path
 - [`docs/codex-setup.md`](docs/codex-setup.md)
 - [`docs/opencode-setup.md`](docs/opencode-setup.md)
 
 ### Quick install (compat-path tools)
 
-If your tool reads `.agents/skills/` (Codex CLI, Gemini CLI, OpenCode) or an equivalent compat
-path (`.claude/skills/`, `.cursor/skills/`):
+If your tool reads `.agents/skills/` (Codex CLI, Antigravity CLI, OpenCode) or an equivalent
+compat path (`.claude/skills/`, `.cursor/skills/`):
 
 ```bash
 git clone https://github.com/awcameron/skills.git
