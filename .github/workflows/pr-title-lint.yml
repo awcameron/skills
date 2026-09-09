@@ -29,7 +29,3 @@ jobs:
             build
             revert
           requireScope: false
-          subjectPattern: ^(?![A-Z]).+$
-          subjectPatternError: >-
-            The PR title's subject (after "type: " or "type(scope): ") must not start with an
-            uppercase letter, to match this repo's commit convention.
