@@ -1,8 +1,13 @@
 # Agent Skills
 
-A portable library of agent skills. Each one started as something built and iterated on while
-working on a real application, then got rewritten into a plain `SKILL.md`: a description that
-tells an agent when to reach for it, and a body that tells it what to actually do.
+> [Agent Skills](https://agentskills.io/home) are a lightweight, open format for extending AI
+> agent capabilities with specialized knowledge and workflows.
+
+This is a portable library of them for Claude Code, Cursor, Antigravity CLI, Codex CLI, and
+OpenCode users who want their agent to discover a repo's own conventions rather than have a skill
+dictate new ones. Each one started as something built and iterated on while working on a real
+application, then got rewritten into a plain `SKILL.md`: a description that tells an agent when to
+reach for it, and a body that tells it what to actually do.
 
 ```
 claude plugin marketplace add awcameron/skills
@@ -11,24 +16,6 @@ claude plugin install awcameron-skills
 
 Cursor, Antigravity CLI, Codex CLI, and OpenCode each have their own quick install; see
 [Using this with your tool](#using-this-with-your-tool) for all five.
-
-As of 2026, Claude Code, Cursor, Antigravity CLI, Codex CLI, and OpenCode have all converged on
-the same shape for this: a `SKILL.md` file with YAML frontmatter, discovered from a `skills/`-style
-directory. That means this repo needs **no per-tool format conversion** — one canonical `skills/`
-directory, exposed through each tool's own discovery path. Claude Code additionally gets a thin,
-pre-generated slash-command file per skill for explicit invocation; Antigravity CLI generates a
-slash command per skill automatically, no file needed; Cursor and Codex CLI have their own
-built-in explicit-invocation UI instead (`/` search, `$skill-name`). OpenCode
-currently relies on auto-discovery alone.
-
-**Design principle: discover, don't dictate.** There's no imposed spec→plan→build→ship pipeline
-and no fixed set of gates every change must pass. Every skill here *discovers* a repo's own
-conventions — its stack, file layout, naming precedent, test setup — rather than assuming or
-imposing them. Larger, more opinionated skill packs bring their own process and vocabulary; this
-one is meant to disappear into whatever repo it's dropped into. See
-[`examples/skill-origin-case-study.md`](examples/skill-origin-case-study.md) for the concrete
-story behind a few of these skills, including a real skill-drift bug this repo's own
-`doc-fact-check` skill was built to catch.
 
 ## Table of contents
 
@@ -41,6 +28,7 @@ story behind a few of these skills, including a real skill-drift bug this repo's
   - [Shipping workflow](#shipping-workflow)
   - [Documentation integrity](#documentation-integrity)
   - [Agent meta-behavior](#agent-meta-behavior)
+- [Philosophy](#philosophy)
 - [Using this with your tool](#using-this-with-your-tool)
   - [Quick install (compat-path tools)](#quick-install-compat-path-tools)
   - [Claude Code, as an installable plugin](#claude-code-as-an-installable-plugin)
@@ -137,6 +125,30 @@ organizations still on the legacy, pre-Antigravity Gemini CLI) a `.gemini/comman
 file. Antigravity CLI needs neither: it generates a slash command per skill automatically. These
 three are the exception: they're meant to auto-trigger on ordinary feature/review/migration requests
 instead.
+
+## Philosophy
+
+As of 2026, Claude Code, Cursor, Antigravity CLI, Codex CLI, and OpenCode have all converged on
+the same shape for a skill: a `SKILL.md` file with YAML frontmatter, discovered from a
+`skills/`-style directory. That means this repo needs **no per-tool format conversion** — one
+canonical `skills/` directory, exposed through each tool's own discovery path:
+
+- **Claude Code** — a plugin install, plus a thin, pre-generated slash-command file per skill for
+  explicit invocation.
+- **Antigravity CLI** — native skill discovery, and it generates a slash command per skill
+  automatically, no file needed.
+- **Cursor and Codex CLI** — their own built-in explicit-invocation UI instead (`/` search,
+  `$skill-name`).
+- **OpenCode** — currently relies on auto-discovery alone.
+
+**Design principle: discover, don't dictate.** There's no imposed spec→plan→build→ship pipeline
+and no fixed set of gates every change must pass. Every skill here *discovers* a repo's own
+conventions — its stack, file layout, naming precedent, test setup — rather than assuming or
+imposing them. Larger, more opinionated skill packs bring their own process and vocabulary; this
+one is meant to disappear into whatever repo it's dropped into. See
+[`examples/skill-origin-case-study.md`](examples/skill-origin-case-study.md) for the concrete
+story behind a few of these skills, including a real skill-drift bug this repo's own
+`doc-fact-check` skill was built to catch.
 
 ## Using this with your tool
 
