@@ -198,6 +198,12 @@ convention. If you find one that's drifted from that, that's worth an issue or a
 See [`docs/releasing.md`](docs/releasing.md) for how to bump the version and cut a GitHub Release.
 It's a manual `workflow_dispatch` step, not something that happens automatically on merge.
 
+## Security and conduct
+
+See [SECURITY.md](SECURITY.md) for reporting a vulnerability or a skill whose instructions look
+designed to make an agent behave harmfully, and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for
+community standards.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).

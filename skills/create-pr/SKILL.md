@@ -182,9 +182,9 @@ when the change doesn't map to one thing.
 ### PR body
 
 Check whether the repo has a PR template (`.github/pull_request_template.md` or similar) first --
-if one exists, use it. If not, read a few real recent merged PR bodies (`gh pr view <n>`) to infer
-the de facto convention before improvising a generic one. A reasonable fallback shape, absent
-either:
+if one exists, use it directly rather than inferring the shape from history. Only fall back to
+reading a few real recent merged PR bodies (`gh pr view <n>`) to infer the de facto convention
+when no template exists. A reasonable fallback shape, absent either:
 
 ```markdown
 ## Summary
