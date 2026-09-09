@@ -15,6 +15,16 @@ function extractFrontmatter(content) {
   return match ? match[1] : null;
 }
 
+/** Reads a SKILL.md file and returns its raw frontmatter block, or throws if it has none. */
+function readFrontmatterBlock(skillMdPath) {
+  const content = readFileSync(skillMdPath, "utf8");
+  const frontmatter = extractFrontmatter(content);
+  if (!frontmatter) {
+    throw new Error(`${skillMdPath}: no frontmatter block found`);
+  }
+  return frontmatter;
+}
+
 /**
  * Reads a single frontmatter field. Handles `key: value` on one line, and `key: >-` folded
  * scalars spanning indented lines below it, joined into one string.
@@ -44,11 +54,7 @@ function readField(frontmatter, key) {
 
 /** Reads {name, description} from one skills/<name>/SKILL.md, or throws if it's unreadable. */
 export function parseSkillFile(skillMdPath) {
-  const content = readFileSync(skillMdPath, "utf8");
-  const frontmatter = extractFrontmatter(content);
-  if (!frontmatter) {
-    throw new Error(`${skillMdPath}: no frontmatter block found`);
-  }
+  const frontmatter = readFrontmatterBlock(skillMdPath);
   return {
     name: readField(frontmatter, "name"),
     description: readField(frontmatter, "description"),
@@ -63,11 +69,7 @@ export function parseSkillFile(skillMdPath) {
  * block or it isn't valid YAML.
  */
 export function parseSkillFrontmatterObject(skillMdPath) {
-  const content = readFileSync(skillMdPath, "utf8");
-  const frontmatter = extractFrontmatter(content);
-  if (!frontmatter) {
-    throw new Error(`${skillMdPath}: no frontmatter block found`);
-  }
+  const frontmatter = readFrontmatterBlock(skillMdPath);
   return loadYaml(frontmatter) ?? {};
 }
 

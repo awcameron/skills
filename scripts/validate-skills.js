@@ -36,6 +36,17 @@ function validateManifest(manifestPath, validator) {
   return formatAjvErrors(validator.errors);
 }
 
+/** Prints one `ok`/`FAIL` result line (plus any error bullets). Returns whether it failed. */
+function report(label, errors) {
+  if (errors.length === 0) {
+    console.log(`ok    ${label}`);
+    return false;
+  }
+  console.log(`FAIL  ${label}`);
+  for (const error of errors) console.log(`        - ${error}`);
+  return true;
+}
+
 export function validateSkill(dirName, skillsDirPath = skillsDir) {
   let name;
   let description;
@@ -99,37 +110,26 @@ function main() {
     process.exit(1);
   }
 
-  let manifestFailures = 0;
-
   const manifestChecks = [
-    ["plugin.json", join(repoRoot, ".claude-plugin", "plugin.json"), validatePluginManifest],
-    [
-      "marketplace.json",
-      join(repoRoot, ".claude-plugin", "marketplace.json"),
-      validateMarketplaceRegistry,
-    ],
+    {
+      label: "plugin.json",
+      path: join(repoRoot, ".claude-plugin", "plugin.json"),
+      validator: validatePluginManifest,
+    },
+    {
+      label: "marketplace.json",
+      path: join(repoRoot, ".claude-plugin", "marketplace.json"),
+      validator: validateMarketplaceRegistry,
+    },
   ];
-  for (const [label, manifestPath, validator] of manifestChecks) {
-    const manifestErrors = validateManifest(manifestPath, validator);
-    if (manifestErrors.length === 0) {
-      console.log(`ok    ${label}`);
-    } else {
-      manifestFailures++;
-      console.log(`FAIL  ${label}`);
-      for (const error of manifestErrors) console.log(`        - ${error}`);
-    }
+  let manifestFailures = 0;
+  for (const { label, path, validator } of manifestChecks) {
+    if (report(label, validateManifest(path, validator))) manifestFailures++;
   }
 
   let failures = 0;
   for (const dirName of dirNames.sort()) {
-    const errors = validateSkill(dirName);
-    if (errors.length === 0) {
-      console.log(`ok    ${dirName}`);
-    } else {
-      failures++;
-      console.log(`FAIL  ${dirName}`);
-      for (const error of errors) console.log(`        - ${error}`);
-    }
+    if (report(dirName, validateSkill(dirName))) failures++;
   }
 
   console.log(`\n${manifestChecks.length - manifestFailures}/${manifestChecks.length} manifests passed`);
