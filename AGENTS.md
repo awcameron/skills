@@ -39,7 +39,7 @@ Nothing is pushed directly to `main` -- every change, including a one-line doc f
 
 **PR title / commit format**: Conventional Commits, enforced by
 [`.github/workflows/pr-title-lint.yml`](.github/workflows/pr-title-lint.yml) --
-`<type>(<scope>): <subject>`, subject not capitalized.
+`<type>(<scope>): <subject>`. Subject casing isn't restricted.
 
 Valid types:
 * `feat`: New features

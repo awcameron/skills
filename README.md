@@ -1,8 +1,13 @@
 # Agent Skills
 
-A portable library of agent skills. Each one started as something built and iterated on while
-working on a real application, then got rewritten into a plain `SKILL.md`: a description that
-tells an agent when to reach for it, and a body that tells it what to actually do.
+> [Agent Skills](https://agentskills.io/home) are a lightweight, open format for extending AI
+> agent capabilities with specialized knowledge and workflows.
+
+This is a portable library of them for Claude Code, Cursor, Antigravity CLI, Codex CLI, and
+OpenCode users who want their agent to discover a repo's own conventions rather than have a skill
+dictate new ones. Each one started as something built and iterated on while working on a real
+application, then got rewritten into a plain `SKILL.md`: a description that tells an agent when to
+reach for it, and a body that tells it what to actually do.
 
 ```
 claude plugin marketplace add awcameron/skills
@@ -12,28 +17,11 @@ claude plugin install awcameron-skills
 Cursor, Antigravity CLI, Codex CLI, and OpenCode each have their own quick install; see
 [Using this with your tool](#using-this-with-your-tool) for all five.
 
-As of 2026, Claude Code, Cursor, Antigravity CLI, Codex CLI, and OpenCode have all converged on
-the same shape for this: a `SKILL.md` file with YAML frontmatter, discovered from a `skills/`-style
-directory. That means this repo needs **no per-tool format conversion** — one canonical `skills/`
-directory, exposed through each tool's own discovery path. Claude Code additionally gets a thin,
-pre-generated slash-command file per skill for explicit invocation; Antigravity CLI generates a
-slash command per skill automatically, no file needed; Cursor and Codex CLI have their own
-built-in explicit-invocation UI instead (`/` search, `$skill-name`). OpenCode
-currently relies on auto-discovery alone.
-
-**Design principle: discover, don't dictate.** There's no imposed spec→plan→build→ship pipeline
-and no fixed set of gates every change must pass. Every skill here *discovers* a repo's own
-conventions — its stack, file layout, naming precedent, test setup — rather than assuming or
-imposing them. Larger, more opinionated skill packs bring their own process and vocabulary; this
-one is meant to disappear into whatever repo it's dropped into. See
-[`examples/skill-origin-case-study.md`](examples/skill-origin-case-study.md) for the concrete
-story behind a few of these skills, including a real skill-drift bug this repo's own
-`doc-fact-check` skill was built to catch.
-
 ## Table of contents
 
 - [What's here](#whats-here)
   - [Feature building](#feature-building)
+  - [Design documentation](#design-documentation)
   - [Code-quality lenses](#code-quality-lenses)
   - [The bug lifecycle](#the-bug-lifecycle)
   - [Test authoring](#test-authoring)
@@ -41,12 +29,14 @@ story behind a few of these skills, including a real skill-drift bug this repo's
   - [Shipping workflow](#shipping-workflow)
   - [Documentation integrity](#documentation-integrity)
   - [Agent meta-behavior](#agent-meta-behavior)
+- [Philosophy](#philosophy)
 - [Using this with your tool](#using-this-with-your-tool)
   - [Quick install (compat-path tools)](#quick-install-compat-path-tools)
   - [Claude Code, as an installable plugin](#claude-code-as-an-installable-plugin)
   - [Global install (any tool)](#global-install-any-tool)
 - [Contributing / adapting a skill](#contributing--adapting-a-skill)
 - [Releasing](#releasing)
+- [Security and conduct](#security-and-conduct)
 - [License](#license)
 
 ## What's here
@@ -130,26 +120,50 @@ Governs how the agent itself operates, not the target codebase.
 - **[`terse-reports`](skills/terse-reports/SKILL.md)** — reports status/summaries in terse,
   fact-dense language, without touching code, commit, or PR-body grammar.
 
-Every skill except `zero-trust-architecture`, `fullstack-feature-slice`, and
-`rollout-compatibility` also ships a matching slash command for explicit invocation instead of
-waiting on auto-discovery -- a `.claude/commands/<name>.md` file for Claude Code, and (for
-organizations still on the legacy, pre-Antigravity Gemini CLI) a `.gemini/commands/<name>.toml`
-file. Antigravity CLI needs neither: it generates a slash command per skill automatically. These
-three are the exception: they're meant to auto-trigger on ordinary feature/review/migration requests
-instead.
+Every skill ships a matching slash command for explicit invocation instead of waiting on
+auto-discovery -- except `zero-trust-architecture`, `fullstack-feature-slice`, and
+`rollout-compatibility`, which are meant to auto-trigger on ordinary feature/review/migration
+requests instead.
+
+- **Claude Code** -- a `.claude/commands/<name>.md` file per skill.
+- **Legacy, pre-Antigravity Gemini CLI** (organizations still on it) -- a
+  `.gemini/commands/<name>.toml` file per skill.
+- **Antigravity CLI** -- needs neither; it generates a slash command per skill automatically.
+
+## Philosophy
+
+There's no imposed spec→plan→build→ship pipeline and no fixed set of gates every change must
+pass. Every skill here *discovers* a repo's own conventions — its stack, file layout, naming
+precedent, test setup — rather than assuming or imposing them. Larger, more opinionated skill
+packs bring their own process and vocabulary; this one is meant to disappear into whatever repo
+it's dropped into. See
+[`examples/skill-origin-case-study.md`](examples/skill-origin-case-study.md) for the concrete
+story behind a few of these skills, including a real skill-drift bug this repo's own
+`doc-fact-check` skill was built to catch.
 
 ## Using this with your tool
 
-Clone it (or add it as a submodule) into a project, then point your tool at `skills/` through
-whichever path it already looks for. A symlink is enough; no copying needed. Setup for each tool,
-including its slash commands and any tool-specific quirks, is documented separately:
+As of 2026, Claude Code, Cursor, Antigravity CLI, Codex CLI, and OpenCode have all converged on
+the same shape for a skill: a `SKILL.md` file with YAML frontmatter, discovered from a
+`skills/`-style directory. That means this repo needs **no per-tool format conversion** — one
+canonical `skills/` directory, exposed through each tool's own discovery path. Setup for each
+tool, including its slash commands and any tool-specific quirks, is documented separately:
 
-- [`docs/claude-code-setup.md`](docs/claude-code-setup.md) — plugin install or symlink, plus `.claude/commands/`
-- [`docs/cursor-setup.md`](docs/cursor-setup.md)
-- [`docs/antigravity-cli-setup.md`](docs/antigravity-cli-setup.md) — native skill discovery,
-  automatic slash commands, and the legacy Gemini CLI (Enterprise) path
-- [`docs/codex-setup.md`](docs/codex-setup.md)
-- [`docs/opencode-setup.md`](docs/opencode-setup.md)
+- **Claude Code** — a plugin install, plus a thin, pre-generated slash-command file per skill for
+  explicit invocation. See [`docs/claude-code-setup.md`](docs/claude-code-setup.md).
+- **Cursor** — its own built-in explicit-invocation UI (`/` search). See
+  [`docs/cursor-setup.md`](docs/cursor-setup.md).
+- **Antigravity CLI** — native skill discovery, and it generates a slash command per skill
+  automatically, no file needed. See
+  [`docs/antigravity-cli-setup.md`](docs/antigravity-cli-setup.md), which also covers the legacy
+  Gemini CLI (Enterprise) path.
+- **Codex CLI** — its own built-in explicit-invocation UI (`$skill-name`). See
+  [`docs/codex-setup.md`](docs/codex-setup.md).
+- **OpenCode** — currently relies on auto-discovery alone. See
+  [`docs/opencode-setup.md`](docs/opencode-setup.md).
+
+Clone it (or add it as a submodule) into a project, then point your tool at `skills/` through
+whichever path it already looks for. A symlink is enough; no copying needed.
 
 ### Quick install (compat-path tools)
 
@@ -167,12 +181,8 @@ ln -s ../skills/skills .agents/skills
 This repo is also a self-contained Claude Code plugin. `.claude-plugin/plugin.json` at its root
 declares `skills/` and `.claude/commands/`, so Claude Code discovers both automatically. It also
 auto-loads `hooks/hooks.json` from its standard path (no `plugin.json` declaration needed),
-injecting a one-line-per-skill catalog into every new session via a `SessionStart` hook:
-
-```
-claude plugin marketplace add awcameron/skills
-claude plugin install awcameron-skills
-```
+injecting a one-line-per-skill catalog into every new session via a `SessionStart` hook — installed
+with the same `claude plugin marketplace add` / `claude plugin install` commands shown at the top.
 
 See [`docs/claude-code-setup.md`](docs/claude-code-setup.md) for the in-session slash-command
 form, and the symlink caveat if you install without the plugin system (the `SessionStart` catalog
