@@ -4,7 +4,7 @@
 //
 // Usage: node scripts/validate-skills.js
 
-import { readdirSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -15,11 +15,11 @@ const skillsDir = join(repoRoot, "skills");
 const MAX_DESCRIPTION_LENGTH = 1024;
 const NAME_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
-function validateSkill(dirName) {
+export function validateSkill(dirName, skillsDirPath = skillsDir) {
   let name;
   let description;
   try {
-    ({ name, description } = parseSkillFile(join(skillsDir, dirName, "SKILL.md")));
+    ({ name, description } = parseSkillFile(join(skillsDirPath, dirName, "SKILL.md")));
   } catch (error) {
     return [error.message];
   }
@@ -44,6 +44,15 @@ function validateSkill(dirName) {
     errors.push(
       "description doesn't appear to state a trigger condition (\"use when...\") -- agents discover skills by this field, so it should say both what the skill does and when to reach for it",
     );
+  }
+
+  const evalsPath = join(skillsDirPath, dirName, "evals", "evals.json");
+  if (existsSync(evalsPath)) {
+    try {
+      JSON.parse(readFileSync(evalsPath, "utf8"));
+    } catch (error) {
+      errors.push(`evals/evals.json is not valid JSON: ${error.message}`);
+    }
   }
 
   return errors;
@@ -75,4 +84,7 @@ function main() {
   process.exit(failures > 0 ? 1 : 0);
 }
 
-main();
+// Only run when invoked directly (`node scripts/validate-skills.js`), not when imported by tests.
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main();
+}

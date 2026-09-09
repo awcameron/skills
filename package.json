@@ -10,6 +10,7 @@
   },
   "scripts": {
     "validate": "node scripts/validate-skills.js",
+    "test": "node --test \"scripts/**/*.test.js\"",
     "eval": "node scripts/run-evals.js",
     "sync-plugin-version": "node scripts/sync-plugin-version.mjs"
   }
