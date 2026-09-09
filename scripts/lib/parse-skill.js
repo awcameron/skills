@@ -15,8 +15,13 @@ function extractFrontmatter(content) {
   return match ? match[1] : null;
 }
 
-/** Reads a SKILL.md file and returns its raw frontmatter block, or throws if it has none. */
-function readFrontmatterBlock(skillMdPath) {
+/**
+ * Reads a SKILL.md file and returns its raw frontmatter block, or throws if it has none. Exported
+ * so a caller that needs both parseFrontmatterFields() and parseFrontmatterYaml() (e.g.
+ * validate-skills.js's validateSkill()) can read + extract the block once and derive both from
+ * it, instead of each helper re-reading the same file from disk.
+ */
+export function readFrontmatterBlock(skillMdPath) {
   const content = readFileSync(skillMdPath, "utf8");
   const frontmatter = extractFrontmatter(content);
   if (!frontmatter) {
@@ -52,9 +57,8 @@ function readField(frontmatter, key) {
   return continuation.join(" ") || null;
 }
 
-/** Reads {name, description} from one skills/<name>/SKILL.md, or throws if it's unreadable. */
-export function parseSkillFile(skillMdPath) {
-  const frontmatter = readFrontmatterBlock(skillMdPath);
+/** Reads {name, description} from an already-extracted frontmatter block. */
+export function parseFrontmatterFields(frontmatter) {
   return {
     name: readField(frontmatter, "name"),
     description: readField(frontmatter, "description"),
@@ -62,15 +66,26 @@ export function parseSkillFile(skillMdPath) {
 }
 
 /**
- * Reads the full frontmatter block of one skills/<name>/SKILL.md as a plain object, for schema
- * validation (scripts/lib/schema-validate.js) -- unlike parseSkillFile() above, this isn't limited
- * to the two shapes that reader hand-parses; it's real YAML via js-yaml, so it also picks up
- * `allowed-tools`, `license`, `compatibility`, and `metadata`. Throws if there's no frontmatter
- * block or it isn't valid YAML.
+ * Parses an already-extracted frontmatter block as real YAML via js-yaml, for schema validation
+ * (scripts/lib/schema-validate.js) -- unlike parseFrontmatterFields() above, this isn't limited to
+ * the two shapes that hand-rolled reader understands, so it also picks up `allowed-tools`,
+ * `license`, `compatibility`, and `metadata`. Throws if the block isn't valid YAML.
+ */
+export function parseFrontmatterYaml(frontmatter) {
+  return loadYaml(frontmatter) ?? {};
+}
+
+/** Reads {name, description} from one skills/<name>/SKILL.md, or throws if it's unreadable. */
+export function parseSkillFile(skillMdPath) {
+  return parseFrontmatterFields(readFrontmatterBlock(skillMdPath));
+}
+
+/**
+ * Reads the full frontmatter block of one skills/<name>/SKILL.md as a plain object -- see
+ * parseFrontmatterYaml() above. Throws if there's no frontmatter block or it isn't valid YAML.
  */
 export function parseSkillFrontmatterObject(skillMdPath) {
-  const frontmatter = readFrontmatterBlock(skillMdPath);
-  return loadYaml(frontmatter) ?? {};
+  return parseFrontmatterYaml(readFrontmatterBlock(skillMdPath));
 }
 
 /** Returns [{name, description, path}] for every skills/<name>/SKILL.md under skillsDir. */

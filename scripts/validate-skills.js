@@ -9,7 +9,11 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { parseSkillFile, parseSkillFrontmatterObject } from "./lib/parse-skill.js";
+import {
+  parseFrontmatterFields,
+  parseFrontmatterYaml,
+  readFrontmatterBlock,
+} from "./lib/parse-skill.js";
 import { compileSchema, formatAjvErrors } from "./lib/schema-validate.js";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -48,14 +52,16 @@ function report(label, errors) {
 }
 
 export function validateSkill(dirName, skillsDirPath = skillsDir) {
-  let name;
-  let description;
+  // Read + extract the frontmatter block once, then derive both the hand-parsed fields and the
+  // full YAML object from that one string -- instead of each parser re-reading SKILL.md itself.
+  let frontmatterBlock;
   try {
-    ({ name, description } = parseSkillFile(join(skillsDirPath, dirName, "SKILL.md")));
+    frontmatterBlock = readFrontmatterBlock(join(skillsDirPath, dirName, "SKILL.md"));
   } catch (error) {
     return [error.message];
   }
 
+  const { name, description } = parseFrontmatterFields(frontmatterBlock);
   const errors = [];
 
   if (!name) {
@@ -88,7 +94,7 @@ export function validateSkill(dirName, skillsDirPath = skillsDir) {
   }
 
   try {
-    const frontmatter = parseSkillFrontmatterObject(join(skillsDirPath, dirName, "SKILL.md"));
+    const frontmatter = parseFrontmatterYaml(frontmatterBlock);
     validateFrontmatterSchema(frontmatter);
     for (const message of formatAjvErrors(validateFrontmatterSchema.errors)) {
       errors.push(`frontmatter ${message}`);
