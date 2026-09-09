@@ -118,13 +118,15 @@ Governs how the agent itself operates, not the target codebase.
 - **[`terse-reports`](skills/terse-reports/SKILL.md)** — reports status/summaries in terse,
   fact-dense language, without touching code, commit, or PR-body grammar.
 
-Every skill except `zero-trust-architecture`, `fullstack-feature-slice`, and
-`rollout-compatibility` also ships a matching slash command for explicit invocation instead of
-waiting on auto-discovery -- a `.claude/commands/<name>.md` file for Claude Code, and (for
-organizations still on the legacy, pre-Antigravity Gemini CLI) a `.gemini/commands/<name>.toml`
-file. Antigravity CLI needs neither: it generates a slash command per skill automatically. These
-three are the exception: they're meant to auto-trigger on ordinary feature/review/migration requests
-instead.
+Every skill ships a matching slash command for explicit invocation instead of waiting on
+auto-discovery -- except `zero-trust-architecture`, `fullstack-feature-slice`, and
+`rollout-compatibility`, which are meant to auto-trigger on ordinary feature/review/migration
+requests instead.
+
+- **Claude Code** -- a `.claude/commands/<name>.md` file per skill.
+- **Legacy, pre-Antigravity Gemini CLI** (organizations still on it) -- a
+  `.gemini/commands/<name>.toml` file per skill.
+- **Antigravity CLI** -- needs neither; it generates a slash command per skill automatically.
 
 ## Philosophy
 
