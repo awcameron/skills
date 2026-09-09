@@ -21,6 +21,7 @@ Cursor, Antigravity CLI, Codex CLI, and OpenCode each have their own quick insta
 
 - [What's here](#whats-here)
   - [Feature building](#feature-building)
+  - [Design documentation](#design-documentation)
   - [Code-quality lenses](#code-quality-lenses)
   - [The bug lifecycle](#the-bug-lifecycle)
   - [Test authoring](#test-authoring)
@@ -35,6 +36,7 @@ Cursor, Antigravity CLI, Codex CLI, and OpenCode each have their own quick insta
   - [Global install (any tool)](#global-install-any-tool)
 - [Contributing / adapting a skill](#contributing--adapting-a-skill)
 - [Releasing](#releasing)
+- [Security and conduct](#security-and-conduct)
 - [License](#license)
 
 ## What's here
