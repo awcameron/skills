@@ -146,26 +146,24 @@ story behind a few of these skills, including a real skill-drift bug this repo's
 As of 2026, Claude Code, Cursor, Antigravity CLI, Codex CLI, and OpenCode have all converged on
 the same shape for a skill: a `SKILL.md` file with YAML frontmatter, discovered from a
 `skills/`-style directory. That means this repo needs **no per-tool format conversion** — one
-canonical `skills/` directory, exposed through each tool's own discovery path:
+canonical `skills/` directory, exposed through each tool's own discovery path. Setup for each
+tool, including its slash commands and any tool-specific quirks, is documented separately:
 
 - **Claude Code** — a plugin install, plus a thin, pre-generated slash-command file per skill for
-  explicit invocation.
+  explicit invocation. See [`docs/claude-code-setup.md`](docs/claude-code-setup.md).
+- **Cursor** — its own built-in explicit-invocation UI (`/` search). See
+  [`docs/cursor-setup.md`](docs/cursor-setup.md).
 - **Antigravity CLI** — native skill discovery, and it generates a slash command per skill
-  automatically, no file needed.
-- **Cursor and Codex CLI** — their own built-in explicit-invocation UI instead (`/` search,
-  `$skill-name`).
-- **OpenCode** — currently relies on auto-discovery alone.
+  automatically, no file needed. See
+  [`docs/antigravity-cli-setup.md`](docs/antigravity-cli-setup.md), which also covers the legacy
+  Gemini CLI (Enterprise) path.
+- **Codex CLI** — its own built-in explicit-invocation UI (`$skill-name`). See
+  [`docs/codex-setup.md`](docs/codex-setup.md).
+- **OpenCode** — currently relies on auto-discovery alone. See
+  [`docs/opencode-setup.md`](docs/opencode-setup.md).
 
 Clone it (or add it as a submodule) into a project, then point your tool at `skills/` through
-whichever path it already looks for. A symlink is enough; no copying needed. Setup for each tool,
-including its slash commands and any tool-specific quirks, is documented separately:
-
-- [`docs/claude-code-setup.md`](docs/claude-code-setup.md) — plugin install or symlink, plus `.claude/commands/`
-- [`docs/cursor-setup.md`](docs/cursor-setup.md)
-- [`docs/antigravity-cli-setup.md`](docs/antigravity-cli-setup.md) — native skill discovery,
-  automatic slash commands, and the legacy Gemini CLI (Enterprise) path
-- [`docs/codex-setup.md`](docs/codex-setup.md)
-- [`docs/opencode-setup.md`](docs/opencode-setup.md)
+whichever path it already looks for. A symlink is enough; no copying needed.
 
 ### Quick install (compat-path tools)
 
