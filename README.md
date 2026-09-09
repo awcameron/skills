@@ -130,6 +130,17 @@ requests instead.
 
 ## Philosophy
 
+There's no imposed spec→plan→build→ship pipeline and no fixed set of gates every change must
+pass. Every skill here *discovers* a repo's own conventions — its stack, file layout, naming
+precedent, test setup — rather than assuming or imposing them. Larger, more opinionated skill
+packs bring their own process and vocabulary; this one is meant to disappear into whatever repo
+it's dropped into. See
+[`examples/skill-origin-case-study.md`](examples/skill-origin-case-study.md) for the concrete
+story behind a few of these skills, including a real skill-drift bug this repo's own
+`doc-fact-check` skill was built to catch.
+
+## Using this with your tool
+
 As of 2026, Claude Code, Cursor, Antigravity CLI, Codex CLI, and OpenCode have all converged on
 the same shape for a skill: a `SKILL.md` file with YAML frontmatter, discovered from a
 `skills/`-style directory. That means this repo needs **no per-tool format conversion** — one
@@ -142,17 +153,6 @@ canonical `skills/` directory, exposed through each tool's own discovery path:
 - **Cursor and Codex CLI** — their own built-in explicit-invocation UI instead (`/` search,
   `$skill-name`).
 - **OpenCode** — currently relies on auto-discovery alone.
-
-**Design principle: discover, don't dictate.** There's no imposed spec→plan→build→ship pipeline
-and no fixed set of gates every change must pass. Every skill here *discovers* a repo's own
-conventions — its stack, file layout, naming precedent, test setup — rather than assuming or
-imposing them. Larger, more opinionated skill packs bring their own process and vocabulary; this
-one is meant to disappear into whatever repo it's dropped into. See
-[`examples/skill-origin-case-study.md`](examples/skill-origin-case-study.md) for the concrete
-story behind a few of these skills, including a real skill-drift bug this repo's own
-`doc-fact-check` skill was built to catch.
-
-## Using this with your tool
 
 Clone it (or add it as a submodule) into a project, then point your tool at `skills/` through
 whichever path it already looks for. A symlink is enough; no copying needed. Setup for each tool,
