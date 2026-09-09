@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Syncs .claude-plugin/plugin.json's version field to match package.json's version.
 // No dependencies -- deliberately, so this runs with a bare `node` install.
+// (Unlike scripts/validate-skills.js, this script itself still needs nothing from node_modules.)
 //
 // Usage: node scripts/sync-plugin-version.mjs
 

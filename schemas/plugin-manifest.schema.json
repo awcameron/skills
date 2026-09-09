@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/awcameron/skills/schemas/plugin-manifest.schema.json",
+  "title": "Plugin manifest",
+  "description": "Shape of .claude-plugin/plugin.json. Checks structure only -- it doesn't verify that paths named in `skills`/`commands`/`hooks` actually exist, or that `version` matches package.json (see scripts/sync-plugin-version.mjs for that).",
+  "type": "object",
+  "required": ["name", "version", "description"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "author": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "email": { "type": "string" },
+        "url": { "type": "string" }
+      }
+    },
+    "homepage": { "type": "string" },
+    "repository": { "type": "string" },
+    "license": { "type": "string" },
+    "skills": { "type": "string" },
+    "commands": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "keywords": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "hooks": {
+      "type": "string",
+      "description": "Path to a hooks manifest (e.g. hooks/hooks.json). This repo's own plugin.json doesn't set this key -- hooks/hooks.json is auto-loaded from its standard path instead (see AGENTS.md, 'Where things live') -- but it's included here as a documented, conceptually valid key other plugin.json consumers may use."
+    }
+  }
+}

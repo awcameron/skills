@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/awcameron/skills/schemas/skill-frontmatter.schema.json",
+  "title": "Skill frontmatter",
+  "description": "Shape of the YAML frontmatter block in skills/<name>/SKILL.md, per docs/skill-anatomy.md. This is the machine-checked mirror of that doc's rules -- docs/skill-anatomy.md stays the authoritative explanation of *why* each field exists. Two rules this schema can't express and that scripts/validate-skills.js still checks by hand: `name` must match the containing directory name (cross-file, not expressible per-file), and `description` should contain a 'use when...'-style trigger phrase (a heuristic, not a hard shape rule).",
+  "type": "object",
+  "required": ["name", "description"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024
+    },
+    "allowed-tools": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "This repo's convention is a YAML list, a deliberate divergence from the agentskills.io spec's documented space-separated-string form -- see docs/skill-anatomy.md. Only the list form validates."
+    },
+    "license": {
+      "type": "string"
+    },
+    "compatibility": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    }
+  }
+}

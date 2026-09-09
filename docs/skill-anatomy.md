@@ -61,9 +61,11 @@ metadata:                           # optional -- see "metadata" below
   to activate the skill, so vague or purely categorical descriptions are the main reason a skill
   never triggers. A `>-` folded block (as above) is the common shape for a longer description, but
   a plain single-line scalar (`description: What the skill does...`) works too -- see
-  `ts-best-practices/SKILL.md` for a real example. These are the only two shapes the tooling
-  actually reads (`scripts/lib/parse-skill.js`, and the `SessionStart` hook -- see
-  [`hooks/README.md`](../hooks/README.md)); anything else won't parse.
+  `ts-best-practices/SKILL.md` for a real example. These are the only two shapes
+  `scripts/lib/parse-skill.js`'s `parseSkillFile()` reads (used by `scripts/run-evals.js` and the
+  `SessionStart` hook -- see [`hooks/README.md`](../hooks/README.md)); anything else won't parse
+  there. Full-frontmatter schema validation (below) parses real YAML instead, so it isn't limited
+  to those two shapes.
 - `allowed-tools`: optional, Claude Code-only. Other tools ignore it; don't rely on it to
   actually restrict behavior outside Claude Code. The spec documents this field as a
   **space-separated string** (e.g. `allowed-tools: Read Bash(git:*)`); every skill in this repo
@@ -88,8 +90,15 @@ metadata:                           # optional -- see "metadata" below
   just noise, since nothing in this repo's own tooling (`scripts/lib/parse-skill.js`,
   `scripts/validate-skills.js`, the `SessionStart` hook) reads it today.
 
-This repo's own validation (`scripts/validate-skills.js`) checks `name` and `description` against
-the rules above; it doesn't yet run the spec's own reference validator
+This repo's own validation (`scripts/validate-skills.js`) checks `name` and `description` by hand
+against the rules above, and separately validates the full frontmatter block's *shape* against
+[`schemas/skill-frontmatter.schema.json`](../schemas/skill-frontmatter.schema.json) -- this doc
+stays the authoritative explanation of *why* each field exists and how to use it; the schema is
+just its machine-checked mirror (types, required fields, patterns), so keep them in sync rather
+than letting one drift from the other. Two rules the schema can't express, which stay hand-written
+checks: `name` matching the containing directory name (cross-file, not visible to a single
+frontmatter block), and the "use when..." trigger-phrase heuristic (a heuristic, not a hard shape
+rule). This repo doesn't yet run the spec's own reference validator
 ([`skills-ref validate`](https://github.com/agentskills/agentskills/tree/main/skills-ref)) as a
 second check. Worth adding to CI later, but not wired up yet -- track before relying on it.
 
@@ -112,7 +121,8 @@ reference files opened on demand (`ts-best-practices`). What every skill here do
 
 ## Contributing a skill
 
-Requires Node >=20 + npm (for the commands in steps 3-4 below).
+Requires Node >=20 + npm (for the commands in steps 3-4 below) -- run `npm ci` once first, since
+`scripts/validate-skills.js` depends on packages in `node_modules` (`ajv`, `js-yaml`).
 
 1. Write it for a repo you actually have in front of you -- against a real convention, a real
    failure mode, a real workflow -- then generalize by replacing that repo's specific facts with

@@ -88,8 +88,100 @@ describe("validateSkill", () => {
 
     const errors = validateSkill("my-skill", skillsDir);
 
-    assert.equal(errors.length, 2);
+    // "missing description" is reported twice on purpose: once by the hand-written check above,
+    // once by schema validation (which also catches shape errors the hand-written check doesn't,
+    // e.g. an unknown key) -- see the "schema checks" describe block below.
+    assert.equal(errors.length, 3);
     assert.ok(errors.some((e) => e.includes("missing `description`")));
     assert.ok(errors.some((e) => e.includes("evals/evals.json is not valid JSON")));
+  });
+});
+
+describe("validateSkill -- schema checks", () => {
+  it("fails a skill with an unrecognized frontmatter key", () => {
+    writeSkill("my-skill", {
+      frontmatter: `---\nname: my-skill\ndescription: Does a thing. Use when the thing is needed.\nfoo: bar\n---\n`,
+    });
+
+    const errors = validateSkill("my-skill", skillsDir);
+
+    assert.ok(errors.some((e) => e.includes("additional properties")));
+  });
+
+  it("fails allowed-tools given as a space-separated string (the spec's form, not this repo's)", () => {
+    writeSkill("my-skill", {
+      frontmatter:
+        `---\nname: my-skill\ndescription: Does a thing. Use when the thing is needed.\n` +
+        `allowed-tools: Read Grep\n---\n`,
+    });
+
+    const errors = validateSkill("my-skill", skillsDir);
+
+    assert.ok(errors.some((e) => e.includes("frontmatter")));
+  });
+
+  it("passes allowed-tools given as a YAML list (this repo's convention)", () => {
+    writeSkill("my-skill", {
+      frontmatter:
+        `---\nname: my-skill\ndescription: Does a thing. Use when the thing is needed.\n` +
+        `allowed-tools: [Read, Grep]\n---\n`,
+    });
+
+    assert.deepEqual(validateSkill("my-skill", skillsDir), []);
+  });
+
+  it("fails a compatibility field over 500 characters", () => {
+    writeSkill("my-skill", {
+      frontmatter:
+        `---\nname: my-skill\ndescription: Does a thing. Use when the thing is needed.\n` +
+        `compatibility: ${"x".repeat(501)}\n---\n`,
+    });
+
+    const errors = validateSkill("my-skill", skillsDir);
+
+    assert.ok(errors.some((e) => e.includes("frontmatter")));
+  });
+
+  it("fails a description over 1024 characters", () => {
+    writeSkill("my-skill", {
+      frontmatter: `---\nname: my-skill\ndescription: "${"Use when needed. ".repeat(70)}"\n---\n`,
+    });
+
+    const errors = validateSkill("my-skill", skillsDir);
+
+    assert.ok(errors.some((e) => e.includes("over the 1024-char guideline")));
+    assert.ok(errors.some((e) => e.includes("frontmatter") && e.includes("more than 1024 characters")));
+  });
+
+  it("fails metadata with a non-string value", () => {
+    writeSkill("my-skill", {
+      frontmatter:
+        `---\nname: my-skill\ndescription: Does a thing. Use when the thing is needed.\n` +
+        `metadata:\n  count: 3\n---\n`,
+    });
+
+    const errors = validateSkill("my-skill", skillsDir);
+
+    assert.ok(errors.some((e) => e.includes("frontmatter")));
+  });
+
+  it("passes metadata with string values", () => {
+    writeSkill("my-skill", {
+      frontmatter:
+        `---\nname: my-skill\ndescription: Does a thing. Use when the thing is needed.\n` +
+        `metadata:\n  key: value\n---\n`,
+    });
+
+    assert.deepEqual(validateSkill("my-skill", skillsDir), []);
+  });
+
+  it("passes a license string", () => {
+    writeSkill("my-skill", {
+      frontmatter:
+        `---\nname: my-skill\ndescription: Does a thing. Use when the thing is needed.\n` +
+        `license: MIT\n---\n`,
+    });
+
+    assert.deepEqual(validateSkill("my-skill", skillsDir), []);
   });
 });

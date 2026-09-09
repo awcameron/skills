@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-// Sanity-checks every skills/<name>/SKILL.md against docs/skill-anatomy.md's frontmatter rules.
-// No dependencies -- deliberately, so this runs with a bare `node` install, nothing to npm install.
+// Sanity-checks every skills/<name>/SKILL.md against docs/skill-anatomy.md's frontmatter rules,
+// and .claude-plugin/plugin.json + .claude-plugin/marketplace.json against schemas/*.schema.json.
+// Uses ajv + js-yaml (see package.json) -- run `npm ci` first.
 //
 // Usage: node scripts/validate-skills.js
 
@@ -8,22 +9,59 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { parseSkillFile } from "./lib/parse-skill.js";
+import {
+  parseFrontmatterFields,
+  parseFrontmatterYaml,
+  readFrontmatterBlock,
+} from "./lib/parse-skill.js";
+import { compileSchema, formatAjvErrors } from "./lib/schema-validate.js";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const skillsDir = join(repoRoot, "skills");
+const schemasDir = join(repoRoot, "schemas");
 const MAX_DESCRIPTION_LENGTH = 1024;
 const NAME_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
-export function validateSkill(dirName, skillsDirPath = skillsDir) {
-  let name;
-  let description;
+const validateFrontmatterSchema = compileSchema(join(schemasDir, "skill-frontmatter.schema.json"));
+const validatePluginManifest = compileSchema(join(schemasDir, "plugin-manifest.schema.json"));
+const validateMarketplaceRegistry = compileSchema(
+  join(schemasDir, "marketplace-registry.schema.json"),
+);
+
+/** Validates a manifest JSON file against a compiled schema. Returns formatted error strings. */
+function validateManifest(manifestPath, validator) {
+  let data;
   try {
-    ({ name, description } = parseSkillFile(join(skillsDirPath, dirName, "SKILL.md")));
+    data = JSON.parse(readFileSync(manifestPath, "utf8"));
+  } catch (error) {
+    return [`could not read/parse ${manifestPath}: ${error.message}`];
+  }
+  validator(data);
+  return formatAjvErrors(validator.errors);
+}
+
+/** Prints one `ok`/`FAIL` result line (plus any error bullets). Returns whether it failed. */
+function report(label, errors) {
+  if (errors.length === 0) {
+    console.log(`ok    ${label}`);
+    return false;
+  }
+  console.log(`FAIL  ${label}`);
+  for (const error of errors) console.log(`        - ${error}`);
+  return true;
+}
+
+export function validateSkill(dirName, skillsDirPath = skillsDir) {
+  // Read + extract the frontmatter block once, then derive both the hand-parsed fields and the
+  // full YAML object from that one string -- instead of each parser re-reading SKILL.md itself.
+  let frontmatterBlock;
+  try {
+    frontmatterBlock = readFrontmatterBlock(join(skillsDirPath, dirName, "SKILL.md"));
   } catch (error) {
     return [error.message];
   }
 
+  const { name, description } = parseFrontmatterFields(frontmatterBlock);
   const errors = [];
 
   if (!name) {
@@ -55,6 +93,16 @@ export function validateSkill(dirName, skillsDirPath = skillsDir) {
     }
   }
 
+  try {
+    const frontmatter = parseFrontmatterYaml(frontmatterBlock);
+    validateFrontmatterSchema(frontmatter);
+    for (const message of formatAjvErrors(validateFrontmatterSchema.errors)) {
+      errors.push(`frontmatter ${message}`);
+    }
+  } catch (error) {
+    errors.push(`could not parse frontmatter as YAML: ${error.message}`);
+  }
+
   return errors;
 }
 
@@ -68,20 +116,31 @@ function main() {
     process.exit(1);
   }
 
-  let failures = 0;
-  for (const dirName of dirNames.sort()) {
-    const errors = validateSkill(dirName);
-    if (errors.length === 0) {
-      console.log(`ok    ${dirName}`);
-    } else {
-      failures++;
-      console.log(`FAIL  ${dirName}`);
-      for (const error of errors) console.log(`        - ${error}`);
-    }
+  const manifestChecks = [
+    {
+      label: "plugin.json",
+      path: join(repoRoot, ".claude-plugin", "plugin.json"),
+      validator: validatePluginManifest,
+    },
+    {
+      label: "marketplace.json",
+      path: join(repoRoot, ".claude-plugin", "marketplace.json"),
+      validator: validateMarketplaceRegistry,
+    },
+  ];
+  let manifestFailures = 0;
+  for (const { label, path, validator } of manifestChecks) {
+    if (report(label, validateManifest(path, validator))) manifestFailures++;
   }
 
-  console.log(`\n${dirNames.length - failures}/${dirNames.length} skills passed`);
-  process.exit(failures > 0 ? 1 : 0);
+  let failures = 0;
+  for (const dirName of dirNames.sort()) {
+    if (report(dirName, validateSkill(dirName))) failures++;
+  }
+
+  console.log(`\n${manifestChecks.length - manifestFailures}/${manifestChecks.length} manifests passed`);
+  console.log(`${dirNames.length - failures}/${dirNames.length} skills passed`);
+  process.exit(manifestFailures > 0 || failures > 0 ? 1 : 0);
 }
 
 // Only run when invoked directly (`node scripts/validate-skills.js`), not when imported by tests.
