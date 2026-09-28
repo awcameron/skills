@@ -6,19 +6,19 @@ the equivalent `~/.config/opencode/skills/`, `~/.claude/skills/`, `~/.agents/ski
 
 ## Project setup
 
-This repo already ships a `.claude/skills` symlink (and `.agents/skills`) to the canonical
-`skills/` directory -- either is enough for OpenCode to pick everything up:
+Clone this repo once, then symlink its canonical `skills/` directory into your project:
 
 ```bash
-git clone https://github.com/awcameron/skills.git
+git clone https://github.com/awcameron/skills.git ~/awcameron-skills
 cd your-project
-ln -s ../skills/skills .opencode/skills
+# .claude or .agents work in place of .opencode
+mkdir -p .opencode && ln -s ~/awcameron-skills/skills .opencode/skills
 ```
 
 ## Global setup
 
 ```bash
-ln -s /path/to/skills/skills ~/.config/opencode/skills
+ln -s ~/awcameron-skills/skills ~/.config/opencode/skills
 ```
 
 Available in every OpenCode session from then on, without a per-project symlink.

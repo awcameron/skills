@@ -39,8 +39,8 @@ they deem inappropriate, threatening, offensive, or harmful.
 
 ## Scope
 
-This Code of Conduct applies within all community spaces for this project — issues, pull
-requests, discussions, and any other project-related communication — and also applies when an
+This Code of Conduct applies within all community spaces for this project -- issues, pull
+requests, discussions, and any other project-related communication -- and also applies when an
 individual is officially representing the project in public spaces.
 
 ## Enforcement

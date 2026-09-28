@@ -1,7 +1,7 @@
 # Security Policy
 
 This repo has two distinct kinds of thing worth reporting a problem with: the usual
-dependency/code vulnerabilities, and something more specific to what this repo actually is — a
+dependency/code vulnerabilities, and something more specific to what this repo actually is -- a
 library of `SKILL.md` files whose instructions are read and *executed* by an AI agent, not just
 read by a human.
 
@@ -20,7 +20,7 @@ Please don't open a public issue or PR that includes exploit details before a fi
 
 ## Reporting a malicious or unsafe skill
 
-A `SKILL.md` file in this repo is not passive documentation — it's a set of instructions an agent
+A `SKILL.md` file in this repo is not passive documentation -- it's a set of instructions an agent
 follows, potentially including shell commands it's told to run. That makes "a submitted skill
 whose instructions look designed to make an agent behave harmfully" a real, distinct threat model
 here, separate from a conventional code vulnerability. Examples of what this covers:

@@ -28,10 +28,12 @@ consumers; see [README.md](README.md) for what this repo is and how it's consume
 
 ### For AI Agents (Subagent Delegation Rules)
 - Do NOT spawn subagents for single-file reads, minor edits, or standard terminal commands.
-- Reserve subagent spawning exclusively for multi-file research tasks or heavy parallel test execution.
+- Reserve subagent spawning exclusively for multi-file research tasks or heavy parallel test
+  execution.
 
 ### For Human Contributors
-- Route routine search/scan subagents to Haiku by setting your environment variable: `CLAUDE_CODE_SUBAGENT_MODEL="haiku"`.
+- Route routine search/scan subagents to Haiku by setting your environment variable:
+  `CLAUDE_CODE_SUBAGENT_MODEL="haiku"`.
 
 ## Branching, commits, and PRs
 
@@ -69,9 +71,12 @@ repo it's dropped into, but it is exactly the process this repo itself follows.
 
 ## CI coverage gap
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) (`npm run validate` + `npm run eval`) only runs if your PR touches the following allowlisted paths: `skills/**`, `evals/**`, `scripts/**`, `package.json`, or any `.md` file.
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) (`npm run validate` + `npm run eval`)
+only runs if your PR touches the following allowlisted paths: `skills/**`, `evals/**`,
+`scripts/**`, `package.json`, or any `.md` file.
 
-A change outside this allowlist gets no automated check at all -- review those by hand before merging. Two real cases:
+A change outside this allowlist gets no automated check at all -- review those by hand before
+merging. Two real cases:
 
 - A `.github/workflows/*.yml`-only PR (no accompanying doc/skill change).
 - A `hooks/*.sh` or `hooks/hooks.json` change -- `hooks/` isn't in the CI path allowlist either, so
@@ -97,16 +102,19 @@ Version lives in both `package.json` and `.claude-plugin/plugin.json`, kept in s
 
 - `skills/` -- canonical skill content.
 - `.claude-plugin/`
-  - Contains `plugin.json` (versioned metadata: `skills`/`commands` paths, kept in sync with `package.json`, see "Versioning and releases" above).
+  - Contains `plugin.json` (versioned metadata: `skills`/`commands` paths, kept in sync with
+    `package.json`, see "Versioning and releases" above).
   - Contains `marketplace.json` (what `/plugin marketplace add awcameron/skills` actually reads).
-  - *Note:* `hooks/hooks.json` is auto-loaded from its standard path and deliberately not declared here, see `hooks/README.md`.
+  - *Note:* `hooks/hooks.json` is auto-loaded from its standard path and deliberately not
+    declared here, see `hooks/README.md`.
 - `.claude/commands/`, `.gemini/commands/` -- thin per-tool slash-command wrappers.
 - `.agents/skills/`, `.claude/skills/` -- symlinks back to `skills/`, for tools that discover
   skills from those paths directly.
 - `.codex/skills/`
   - Same symlink target, kept for legacy/defensive coverage.
   - Codex CLI's own docs say it reads `.agents/skills`, not this path.
-  - No confirmed tool actually discovers skills from `.codex/skills/` (see `docs/codex-setup.md`, which never references it).
+  - No confirmed tool actually discovers skills from `.codex/skills/` (see
+    `docs/codex-setup.md`, which never references it).
 - `evals/` -- the trigger-routing eval system; see [`evals/README.md`](evals/README.md).
 - `hooks/` -- the SessionStart hook; see [`hooks/README.md`](hooks/README.md).
 - `docs/*-setup.md` -- per-tool consumer setup instructions (not relevant to developing this repo).

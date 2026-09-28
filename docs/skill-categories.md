@@ -4,7 +4,7 @@ This repo doesn't impose a lifecycle framework -- see the README's "discover, do
 principle -- so there's no fixed pipeline every skill slots into. But the skills here do fall into
 natural groups, along two axes: what stage of work a skill acts on, and whether it touches the
 target codebase at all. This doc explains the grouping used in the README's
-["What's here"](../README.md#whats-here) table and how the skills within a group relate to each
+["What's here"](../README.md#whats-here) list and how the skills within a group relate to each
 other.
 
 ## Feature building
@@ -133,6 +133,6 @@ someone else to read keeps normal grammar).
 
 Collapsed further, there are really three tiers: **design documentation** writes the plan that
 **feature building** turns into the code the **code-quality lenses** then read, which feeds into
-the **build/fix/test/ship pipeline** (bug lifecycle → test authoring → dependency maintenance →
-shipping), while **documentation integrity** and **agent meta-behavior** sit orthogonal to all of
-it -- they apply regardless of where in the pipeline a given task currently is.
+the **build/fix/test/ship pipeline** (bug lifecycle → test authoring → dependency maintenance
+→ shipping), while **documentation integrity** and **agent meta-behavior** sit orthogonal to all
+of it -- they apply regardless of where in the pipeline a given task currently is.
