@@ -9,8 +9,8 @@ together and publishing a GitHub Release -- this doc is how to actually use it.
 The bump is a manual, deliberate action (`workflow_dispatch`) -- nothing bumps the version
 automatically on merge, since that would fire on every doc/chore PR.
 
-**Via the GitHub UI:** Actions tab → **Bump version** (left sidebar) → **Run workflow** → choose
-`patch`/`minor`/`major` → **Run workflow**.
+**Via the GitHub UI:** Actions tab → **Bump version** (left sidebar) → **Run workflow** →
+choose `patch`/`minor`/`major` → **Run workflow**.
 
 **Via the `gh` CLI:**
 

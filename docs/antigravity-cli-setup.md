@@ -51,7 +51,7 @@ Rules:
 
 - Each `SKILL.md`'s `description` frontmatter is what Antigravity CLI uses for auto-discovery --
   it's written to state both *what* the skill does and *when* to use it, for exactly this reason.
-- Global install: symlink into `~/.gemini/antigravity-cli/skills/` (the path Google's own docs
+- Global setup: symlink into `~/.gemini/antigravity-cli/skills/` (the path Google's own docs
   document) -- or, per community testing, `~/.gemini/config/skills/` if you want one path
   recognized across the AGY, AGY IDE, and AGY CLI flavors.
 

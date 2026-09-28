@@ -11,13 +11,14 @@ Clone this repo once, then symlink its canonical `skills/` directory into your p
 ```bash
 git clone https://github.com/awcameron/skills.git ~/awcameron-skills
 cd your-project
-mkdir -p .opencode && ln -s ~/awcameron-skills/skills .opencode/skills    # or .claude / .agents -- any works
+# .claude or .agents work in place of .opencode
+mkdir -p .opencode && ln -s ~/awcameron-skills/skills .opencode/skills
 ```
 
 ## Global setup
 
 ```bash
-ln -s /path/to/skills/skills ~/.config/opencode/skills
+ln -s ~/awcameron-skills/skills ~/.config/opencode/skills
 ```
 
 Available in every OpenCode session from then on, without a per-project symlink.

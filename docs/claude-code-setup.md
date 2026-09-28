@@ -6,14 +6,14 @@ This repo is a self-contained Claude Code plugin -- `.claude-plugin/plugin.json`
 declares the `skills/` and `.claude/commands/` directories, so Claude Code discovers everything
 automatically:
 
-```
+```bash
 claude plugin marketplace add awcameron/skills
 claude plugin install awcameron-skills
 ```
 
 Or, from inside a session:
 
-```
+```text
 /plugin marketplace add awcameron/skills
 /plugin install awcameron-skills
 ```
@@ -42,7 +42,7 @@ through the plugin install in Option 1. To get it here, wire it into your projec
 ## Option 3: Global install
 
 ```bash
-ln -s /path/to/skills/skills/review-code ~/.claude/skills/review-code
+ln -s ~/awcameron-skills/skills/review-code ~/.claude/skills/review-code
 ```
 
 Symlink one skill (or the whole `skills/` directory) into `~/.claude/skills/` to make it

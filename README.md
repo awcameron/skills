@@ -19,7 +19,7 @@ reach for it, and a body that tells it what to actually do.
 
 ## Get started
 
-**Try it in a clone** — no install. The repo ships the symlinks each tool reads, so open your
+**Try it in a clone** -- no install. The repo ships the symlinks each tool reads, so open your
 tool in the clone and the skills are already there:
 
 ```bash
@@ -32,9 +32,9 @@ Ask for something a skill matches ("review my changes") and check that the agent
 skill, or run a slash command directly (`/review-code` in Claude Code, `$review-code` in Codex
 CLI).
 
-**Use it in your own project** — Claude Code: install the plugin.
+**Use it in your own project** -- Claude Code: install the plugin.
 
-```
+```bash
 claude plugin marketplace add awcameron/skills
 claude plugin install awcameron-skills
 ```
@@ -53,7 +53,7 @@ For global installs and tool-specific paths, see the per-tool guides:
 [Codex CLI](docs/codex-setup.md), [Antigravity CLI](docs/antigravity-cli-setup.md),
 [OpenCode](docs/opencode-setup.md).
 
-**Contribute** — needs Node ≥20:
+**Contribute** -- needs Node ≥20:
 
 ```bash
 npm ci
@@ -64,19 +64,19 @@ Branch, commit, and PR conventions are in [AGENTS.md](AGENTS.md).
 
 ## What's here
 
-Grouped by what stage of work each skill acts on — see
+Grouped by what stage of work each skill acts on -- see
 [`docs/skill-categories.md`](docs/skill-categories.md) for the reasoning behind the grouping and
 how the skills in each one hand off to each other.
 
 ### Feature building
 
-- **[`fullstack-feature-slice`](skills/fullstack-feature-slice/SKILL.md)** — builds one feature
+- **[`fullstack-feature-slice`](skills/fullstack-feature-slice/SKILL.md)** -- builds one feature
   across a monorepo's layers (shared contract, backend, frontend), discovering each layer's own
   convention rather than assuming a stack.
 
 ### Design documentation
 
-- **[`create-tdd`](skills/create-tdd/SKILL.md)** — generates a Technical Design Document from a
+- **[`create-tdd`](skills/create-tdd/SKILL.md)** -- generates a Technical Design Document from a
   bundled reference template, either for a new (greenfield) design or as a retroactive writeup of
   an existing codebase.
 
@@ -84,42 +84,43 @@ how the skills in each one hand off to each other.
 
 Read code against a body of standards, whether writing or reviewing.
 
-- **[`review-code`](skills/review-code/SKILL.md)** — discovers a repo's own coding/observability
+- **[`review-code`](skills/review-code/SKILL.md)** -- discovers a repo's own coding/observability
   standards, then reviews a diff or PR against them with findings only (no auto-fix).
-- **[`ts-best-practices`](skills/ts-best-practices/SKILL.md)** — staff-engineer-level
+- **[`ts-best-practices`](skills/ts-best-practices/SKILL.md)** -- staff-engineer-level
   TypeScript/JavaScript judgment calls a linter can't enforce, as short, example-driven reference
   files.
-- **[`zero-trust-architecture`](skills/zero-trust-architecture/SKILL.md)** — never trusts a caller
+- **[`zero-trust-architecture`](skills/zero-trust-architecture/SKILL.md)** -- never trusts a caller
   based on what layer already checked it; verifies identity and ownership explicitly across the
   whole request chain, discovered against a repo's own stack.
-- **[`rollout-compatibility`](skills/rollout-compatibility/SKILL.md)** — backward/forward-compatible
-  change discipline (expand-contract migrations, additive API/event changes, N/N-1 rolling-deploy
-  tolerance) for a repo whose pieces deploy independently or gradually.
+- **[`rollout-compatibility`](skills/rollout-compatibility/SKILL.md)** --
+  backward/forward-compatible change discipline (expand-contract migrations, additive API/event
+  changes, N/N-1 rolling-deploy tolerance) for a repo whose pieces deploy independently or
+  gradually.
 
 ### The bug lifecycle
 
 A two-step pipeline where diagnosis produces a confirmed root cause and fixing consumes it instead
 of re-guessing.
 
-- **[`diagnose-bug`](skills/diagnose-bug/SKILL.md)** — finds the confirmed root cause of a
+- **[`diagnose-bug`](skills/diagnose-bug/SKILL.md)** -- finds the confirmed root cause of a
   failing/crashing/flaky/slow bug, evidence-first, without implementing the fix.
-- **[`fix-bug`](skills/fix-bug/SKILL.md)** — implements a fix from an already-confirmed root
+- **[`fix-bug`](skills/fix-bug/SKILL.md)** -- implements a fix from an already-confirmed root
   cause, targeting the actual cause rather than the symptom.
 
 ### Test authoring
 
-- **[`write-tests`](skills/write-tests/SKILL.md)** — writes real, runnable tests grounded in a
+- **[`write-tests`](skills/write-tests/SKILL.md)** -- writes real, runnable tests grounded in a
   repo's actual test conventions; every new test must fail against the unfixed code first.
 
 ### Dependency maintenance
 
-- **[`upgrade-dependency`](skills/upgrade-dependency/SKILL.md)** — bumps a dependency grounded in
+- **[`upgrade-dependency`](skills/upgrade-dependency/SKILL.md)** -- bumps a dependency grounded in
   what the version jump actually changes: a real changelog read, a real usage check, real test
   results.
 
 ### Shipping workflow
 
-- **[`create-pr`](skills/create-pr/SKILL.md)** — carries local changes through a repo's real
+- **[`create-pr`](skills/create-pr/SKILL.md)** -- carries local changes through a repo's real
   branch → commit → push → PR workflow, discovering its naming/title conventions from its own
   history.
 
@@ -127,20 +128,20 @@ of re-guessing.
 
 Two orthogonal axes: factual accuracy and mechanical formatting.
 
-- **[`doc-fact-check`](skills/doc-fact-check/SKILL.md)** — cross-checks a doc's factual claims
+- **[`doc-fact-check`](skills/doc-fact-check/SKILL.md)** -- cross-checks a doc's factual claims
   (including skill files) against the codebase itself, since an agent *executes* a stale skill
   claim instead of just reading it.
-- **[`format-docs`](skills/format-docs/SKILL.md)** — applies a repo's own Markdown formatter
+- **[`format-docs`](skills/format-docs/SKILL.md)** -- applies a repo's own Markdown formatter
   mechanically, flagging (not silently resolving) structural inconsistencies.
 
 ### Agent meta-behavior
 
 Governs how the agent itself operates, not the target codebase.
 
-- **[`choose-subagent`](skills/choose-subagent/SKILL.md)** — a decision checklist for which
+- **[`choose-subagent`](skills/choose-subagent/SKILL.md)** -- a decision checklist for which
   subagent type/model to spawn a task on, based on whether the task writes anything, not what
   it's about.
-- **[`terse-reports`](skills/terse-reports/SKILL.md)** — reports status/summaries in terse,
+- **[`terse-reports`](skills/terse-reports/SKILL.md)** -- reports status/summaries in terse,
   fact-dense language, without touching code, commit, or PR-body grammar.
 
 ### Slash commands
@@ -154,8 +155,8 @@ requests instead. Claude Code uses `.claude/commands/<name>.md`, and the legacy 
 ## Philosophy
 
 There's no imposed spec→plan→build→ship pipeline and no fixed set of gates every change must
-pass. Every skill here *discovers* a repo's own conventions — its stack, file layout, naming
-precedent, test setup — rather than assuming or imposing them. Larger, more opinionated skill
+pass. Every skill here *discovers* a repo's own conventions -- its stack, file layout, naming
+precedent, test setup -- rather than assuming or imposing them. Larger, more opinionated skill
 packs bring their own process and vocabulary; this one is meant to disappear into whatever repo
 it's dropped into. See
 [`examples/skill-origin-case-study.md`](examples/skill-origin-case-study.md) for the concrete

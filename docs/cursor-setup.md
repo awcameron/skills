@@ -12,7 +12,8 @@ path you prefer in *your* project:
 ```bash
 git clone https://github.com/awcameron/skills.git ~/awcameron-skills
 cd your-project
-mkdir -p .cursor && ln -s ~/awcameron-skills/skills .cursor/skills    # or .claude / .agents -- any works
+# .claude or .agents work in place of .cursor
+mkdir -p .cursor && ln -s ~/awcameron-skills/skills .cursor/skills
 ```
 
 Cursor's Agent then has every skill available automatically -- it decides when a skill is
@@ -22,7 +23,7 @@ by typing `/` in Agent chat and searching for the skill name.
 ## Global setup
 
 ```bash
-ln -s /path/to/skills/skills ~/.cursor/skills
+ln -s ~/awcameron-skills/skills ~/.cursor/skills
 ```
 
 Makes every skill available in every Cursor project without repeating the symlink per-repo.

@@ -17,14 +17,14 @@ mkdir -p .agents && ln -s ~/awcameron-skills/skills .agents/skills
 ## Global setup
 
 ```bash
-ln -s /path/to/skills/skills ~/.agents/skills
+ln -s ~/awcameron-skills/skills ~/.agents/skills
 ```
 
 Available in every project Codex CLI runs in from then on.
 
 ## Invoking a skill explicitly
 
-```
+```text
 $review-code
 ```
 

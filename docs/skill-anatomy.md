@@ -7,7 +7,7 @@ when contributing a new skill or checking an existing one.
 
 Every skill lives in its own directory under `skills/`:
 
-```
+```text
 skills/
   skill-name/
     SKILL.md          # Required: the skill definition
