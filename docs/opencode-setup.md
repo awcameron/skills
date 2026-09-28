@@ -22,3 +22,9 @@ ln -s ~/awcameron-skills/skills ~/.config/opencode/skills
 ```
 
 Available in every OpenCode session from then on, without a per-project symlink.
+
+## Verify
+
+Ask OpenCode something that matches a skill's trigger phrasing (e.g. "review my changes") and
+confirm it names the skill it's using. OpenCode currently relies on auto-discovery alone, so
+there's no slash command to run instead.

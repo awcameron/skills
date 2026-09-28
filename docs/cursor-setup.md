@@ -27,3 +27,9 @@ ln -s ~/awcameron-skills/skills ~/.cursor/skills
 ```
 
 Makes every skill available in every Cursor project without repeating the symlink per-repo.
+
+## Verify
+
+Ask Cursor's Agent something that matches a skill's trigger phrasing (e.g. "review my changes")
+and confirm it names the skill it's using, or type `/` in Agent chat and search for
+`review-code`.
