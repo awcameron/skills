@@ -8,7 +8,7 @@ changes. If your organization is still on a Gemini Code Assist Standard/Enterpri
 Gemini Code Assist for GitHub), your access to the legacy Gemini CLI is unaffected; see
 [Legacy Gemini CLI (Enterprise)](#legacy-gemini-cli-enterprise) below.
 
-## Option 1: Native skill discovery (recommended)
+## Project setup
 
 Antigravity CLI auto-discovers `SKILL.md` files in a project's `.agents/skills/` directory. Clone
 this repo once, then symlink its canonical `skills/` directory into your project:
@@ -20,17 +20,29 @@ mkdir -p .agents && ln -s ~/awcameron-skills/skills .agents/skills
 ```
 
 Once discovered, each skill both informs Antigravity's own routing (via its `description`
-frontmatter) and is automatically exposed as a slash command -- see Option 2.
+frontmatter) and is automatically exposed as a slash command -- see
+[Slash commands](#slash-commands).
 
-## Option 2: Slash commands (automatic, no separate files needed)
+## Global setup
+
+Symlink into `~/.gemini/antigravity-cli/skills/` (the path Google's own docs document) -- or, per
+community testing, `~/.gemini/config/skills/` if you want one path recognized across the
+Antigravity, Antigravity IDE, and Antigravity CLI flavors.
+
+## Verify
+
+Ask Antigravity CLI something that matches a skill's trigger phrasing (e.g. "review my changes")
+and confirm it names the skill it's using, or run `/review-code` directly.
+
+## Slash commands
 
 Unlike Gemini CLI, Antigravity CLI does not need a separate per-skill command file: every skill
 under `.agents/skills/` converts automatically into a slash command (e.g. `/review-code`) the
-moment `agy` discovers it. There is nothing to install beyond Option 1 above -- **this repo does
-not ship a `.antigravity/commands/`-style directory because Antigravity generates the commands
-itself.**
+moment `agy` discovers it. There is nothing to install beyond Project setup above -- **this repo
+does not ship a `.antigravity/commands/`-style directory because Antigravity generates the
+commands itself.**
 
-## Option 3: AGENTS.md / GEMINI.md (persistent context)
+## AGENTS.md / GEMINI.md (persistent context)
 
 For a skill you want always loaded rather than activated on demand, add it to your project's
 `AGENTS.md` (the cross-tool standard, also read by Claude Code, Cursor, and others) or
@@ -51,18 +63,15 @@ Rules:
 
 - Each `SKILL.md`'s `description` frontmatter is what Antigravity CLI uses for auto-discovery --
   it's written to state both *what* the skill does and *when* to use it, for exactly this reason.
-- Global setup: symlink into `~/.gemini/antigravity-cli/skills/` (the path Google's own docs
-  document) -- or, per community testing, `~/.gemini/config/skills/` if you want one path
-  recognized across the Antigravity, Antigravity IDE, and Antigravity CLI flavors.
 
 ## Legacy Gemini CLI (Enterprise)
 
 If your organization's Gemini CLI access continues under a Gemini Code Assist
 Standard/Enterprise license, this repo still ships `.gemini/commands/*.toml` -- one thin wrapper
 per skill, unchanged from before the transition -- since Antigravity's auto-generated commands
-(Option 2) don't apply to the legacy CLI. Gemini CLI auto-discovers those `.toml` files when run
-from the project root, and still auto-discovers `SKILL.md` files under `.gemini/skills/` or
-`.agents/skills/` the same way described in Option 1 above.
+(see [Slash commands](#slash-commands)) don't apply to the legacy CLI. Gemini CLI auto-discovers
+those `.toml` files when run from the project root, and still auto-discovers `SKILL.md` files
+under `.gemini/skills/` or `.agents/skills/` the same way described in Project setup above.
 
 ## Sources
 

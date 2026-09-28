@@ -22,6 +22,11 @@ ln -s ~/awcameron-skills/skills ~/.agents/skills
 
 Available in every project Codex CLI runs in from then on.
 
+## Verify
+
+Ask Codex CLI something that matches a skill's trigger phrasing (e.g. "review my changes") and
+confirm it names the skill it's using, or run `$review-code` directly (see below).
+
 ## Invoking a skill explicitly
 
 ```text

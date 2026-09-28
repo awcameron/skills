@@ -48,6 +48,9 @@ cd your-project
 mkdir -p .agents && ln -s ~/awcameron-skills/skills .agents/skills
 ```
 
+Then open your tool in the project and ask for something a skill matches ("review my changes");
+the agent should name the skill. Each per-tool guide has a Verify section.
+
 For global installs and tool-specific paths, see the per-tool guides:
 [Claude Code](docs/claude-code-setup.md), [Cursor](docs/cursor-setup.md),
 [Codex CLI](docs/codex-setup.md), [Antigravity CLI](docs/antigravity-cli-setup.md),
