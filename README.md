@@ -9,35 +9,38 @@ dictate new ones. Each one started as something built and iterated on while work
 application, then got rewritten into a plain `SKILL.md`: a description that tells an agent when to
 reach for it, and a body that tells it what to actually do.
 
+## Table of contents
+
+- [Install](#install)
+- [What's here](#whats-here)
+- [Philosophy](#philosophy)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Install
+
+**Claude Code** — install as a plugin:
+
 ```
 claude plugin marketplace add awcameron/skills
 claude plugin install awcameron-skills
 ```
 
-Cursor, Antigravity CLI, Codex CLI, and OpenCode each have their own quick install; see
-[Using this with your tool](#using-this-with-your-tool) for all five.
+**Cursor, Codex CLI, Antigravity CLI, OpenCode** — clone once, then symlink `skills/` into a
+project:
 
-## Table of contents
+```bash
+git clone https://github.com/awcameron/skills.git ~/skills
+cd your-project
+mkdir -p .agents && ln -s ~/skills/skills .agents/skills
+```
 
-- [What's here](#whats-here)
-  - [Feature building](#feature-building)
-  - [Design documentation](#design-documentation)
-  - [Code-quality lenses](#code-quality-lenses)
-  - [The bug lifecycle](#the-bug-lifecycle)
-  - [Test authoring](#test-authoring)
-  - [Dependency maintenance](#dependency-maintenance)
-  - [Shipping workflow](#shipping-workflow)
-  - [Documentation integrity](#documentation-integrity)
-  - [Agent meta-behavior](#agent-meta-behavior)
-- [Philosophy](#philosophy)
-- [Using this with your tool](#using-this-with-your-tool)
-  - [Quick install (compat-path tools)](#quick-install-compat-path-tools)
-  - [Claude Code, as an installable plugin](#claude-code-as-an-installable-plugin)
-  - [Global install (any tool)](#global-install-any-tool)
-- [Contributing / adapting a skill](#contributing--adapting-a-skill)
-- [Releasing](#releasing)
-- [Security and conduct](#security-and-conduct)
-- [License](#license)
+All four tools read `.agents/skills`, so nothing else is needed. Skills activate automatically
+when your request matches their description. For a global install, tool-specific paths, and
+slash commands, see the per-tool guides:
+[Claude Code](docs/claude-code-setup.md), [Cursor](docs/cursor-setup.md),
+[Codex CLI](docs/codex-setup.md), [Antigravity CLI](docs/antigravity-cli-setup.md),
+[OpenCode](docs/opencode-setup.md).
 
 ## What's here
 
@@ -120,15 +123,13 @@ Governs how the agent itself operates, not the target codebase.
 - **[`terse-reports`](skills/terse-reports/SKILL.md)** — reports status/summaries in terse,
   fact-dense language, without touching code, commit, or PR-body grammar.
 
+### Slash commands
+
 Every skill ships a matching slash command for explicit invocation instead of waiting on
 auto-discovery -- except `zero-trust-architecture`, `fullstack-feature-slice`, and
 `rollout-compatibility`, which are meant to auto-trigger on ordinary feature/review/migration
-requests instead.
-
-- **Claude Code** -- a `.claude/commands/<name>.md` file per skill.
-- **Legacy, pre-Antigravity Gemini CLI** (organizations still on it) -- a
-  `.gemini/commands/<name>.toml` file per skill.
-- **Antigravity CLI** -- needs neither; it generates a slash command per skill automatically.
+requests instead. Claude Code uses `.claude/commands/<name>.md`, and the legacy Gemini CLI uses
+`.gemini/commands/<name>.toml`. Antigravity CLI generates its own.
 
 ## Philosophy
 
@@ -141,82 +142,18 @@ it's dropped into. See
 story behind a few of these skills, including a real skill-drift bug this repo's own
 `doc-fact-check` skill was built to catch.
 
-## Using this with your tool
+## Contributing
 
-As of 2026, Claude Code, Cursor, Antigravity CLI, Codex CLI, and OpenCode have all converged on
-the same shape for a skill: a `SKILL.md` file with YAML frontmatter, discovered from a
-`skills/`-style directory. That means this repo needs **no per-tool format conversion** — one
-canonical `skills/` directory, exposed through each tool's own discovery path. Setup for each
-tool, including its slash commands and any tool-specific quirks, is documented separately:
-
-- **Claude Code** — a plugin install, plus a thin, pre-generated slash-command file per skill for
-  explicit invocation. See [`docs/claude-code-setup.md`](docs/claude-code-setup.md).
-- **Cursor** — its own built-in explicit-invocation UI (`/` search). See
-  [`docs/cursor-setup.md`](docs/cursor-setup.md).
-- **Antigravity CLI** — native skill discovery, and it generates a slash command per skill
-  automatically, no file needed. See
-  [`docs/antigravity-cli-setup.md`](docs/antigravity-cli-setup.md), which also covers the legacy
-  Gemini CLI (Enterprise) path.
-- **Codex CLI** — its own built-in explicit-invocation UI (`$skill-name`). See
-  [`docs/codex-setup.md`](docs/codex-setup.md).
-- **OpenCode** — currently relies on auto-discovery alone. See
-  [`docs/opencode-setup.md`](docs/opencode-setup.md).
-
-Clone it (or add it as a submodule) into a project, then point your tool at `skills/` through
-whichever path it already looks for. A symlink is enough; no copying needed.
-
-### Quick install (compat-path tools)
-
-If your tool reads `.agents/skills/` (Codex CLI, Antigravity CLI, OpenCode) or an equivalent
-compat path (`.claude/skills/`, `.cursor/skills/`):
-
-```bash
-git clone https://github.com/awcameron/skills.git
-cd your-project
-ln -s ../skills/skills .agents/skills
-```
-
-### Claude Code, as an installable plugin
-
-This repo is also a self-contained Claude Code plugin. `.claude-plugin/plugin.json` at its root
-declares `skills/` and `.claude/commands/`, so Claude Code discovers both automatically. It also
-auto-loads `hooks/hooks.json` from its standard path (no `plugin.json` declaration needed),
-injecting a one-line-per-skill catalog into every new session via a `SessionStart` hook — installed
-with the same `claude plugin marketplace add` / `claude plugin install` commands shown at the top.
-
-See [`docs/claude-code-setup.md`](docs/claude-code-setup.md) for the in-session slash-command
-form, and the symlink caveat if you install without the plugin system (the `SessionStart` catalog
-hook needs manual wiring in that case; see [`hooks/README.md`](hooks/README.md)).
-
-### Global install (any tool)
-
-Symlink individual skills (or the whole directory) into your tool's global skills path instead of
-a per-project one, e.g. `~/.claude/skills/`, `~/.cursor/skills/`, `~/.agents/skills/`, to make them
-available in every project without repeating the setup above.
-
-## Contributing / adapting a skill
-
-For this repo's own branch/commit/PR/release conventions (as opposed to skill content itself),
-see [AGENTS.md](AGENTS.md) — it's the canonical contributor doc, for humans and agents alike.
-
-For adding or changing a skill itself, see [`docs/skill-anatomy.md`](docs/skill-anatomy.md) for
-the frontmatter/structure rules and the step-by-step contributing checklist.
-
-Hold new and existing skills to the "discover, don't dictate" principle above: a skill should read
-a repo's own conventions doc, check real git/GitHub history, and read a couple of existing files
-before writing more in the same style. Never hardcode a stack, a file layout, or a naming
-convention. If you find one that's drifted from that, that's worth an issue or a PR.
-
-## Releasing
-
-See [`docs/releasing.md`](docs/releasing.md) for how to bump the version and cut a GitHub Release.
-It's a manual `workflow_dispatch` step, not something that happens automatically on merge.
-
-## Security and conduct
-
-See [SECURITY.md](SECURITY.md) for reporting a vulnerability or a skill whose instructions look
-designed to make an agent behave harmfully, and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for
-community standards.
+- **Repo conventions** (branches, commits, PRs, releases): [AGENTS.md](AGENTS.md), the canonical
+  contributor doc for humans and agents alike. Release steps are in
+  [`docs/releasing.md`](docs/releasing.md).
+- **Adding or changing a skill**: [`docs/skill-anatomy.md`](docs/skill-anatomy.md) has the
+  frontmatter/structure rules and contributing checklist. Hold skills to the "discover, don't
+  dictate" principle from [Philosophy](#philosophy): read a repo's own conventions doc, check
+  real git/GitHub history, and never hardcode a stack, file layout, or naming convention.
+- **Security and conduct**: [SECURITY.md](SECURITY.md) covers reporting a vulnerability or a
+  skill whose instructions look designed to make an agent behave harmfully;
+  [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) covers community standards.
 
 ## License
 

@@ -26,9 +26,9 @@ invoke a specific skill explicitly, for when you don't want to wait for auto-dis
 ## Option 2: Symlink into a project
 
 ```bash
-git clone https://github.com/awcameron/skills.git
+git clone https://github.com/awcameron/skills.git ~/skills
 cd your-project
-ln -s ../skills/skills .claude/skills
+mkdir -p .claude && ln -s ~/skills/skills .claude/skills
 ```
 
 Claude Code discovers any `SKILL.md` under `.claude/skills/<name>/` without a plugin install

@@ -10,14 +10,13 @@ Gemini Code Assist for GitHub), your access to the legacy Gemini CLI is unaffect
 
 ## Option 1: Native skill discovery (recommended)
 
-Antigravity CLI auto-discovers `SKILL.md` files in a project's `.agents/skills/` directory. This
-repo already ships `.agents/skills` as a symlink to the canonical `skills/` directory, so cloning
-it into a project is enough -- no extra config:
+Antigravity CLI auto-discovers `SKILL.md` files in a project's `.agents/skills/` directory. Clone
+this repo once, then symlink its canonical `skills/` directory into your project:
 
 ```bash
-git clone https://github.com/awcameron/skills.git
+git clone https://github.com/awcameron/skills.git ~/skills
 cd your-project
-ln -s ../skills/skills .agents/skills
+mkdir -p .agents && ln -s ~/skills/skills .agents/skills
 ```
 
 Once discovered, each skill both informs Antigravity's own routing (via its `description`
@@ -54,8 +53,7 @@ Rules:
   it's written to state both *what* the skill does and *when* to use it, for exactly this reason.
 - Global install: symlink into `~/.gemini/antigravity-cli/skills/` (the path Google's own docs
   document) -- or, per community testing, `~/.gemini/config/skills/` if you want one path
-  recognized across the AGY, AGY IDE, and AGY CLI flavors. See
-  [Global install](../README.md#global-install-any-tool) in the README.
+  recognized across the AGY, AGY IDE, and AGY CLI flavors.
 
 ## Legacy Gemini CLI (Enterprise)
 
