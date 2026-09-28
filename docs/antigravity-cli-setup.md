@@ -14,9 +14,9 @@ Antigravity CLI auto-discovers `SKILL.md` files in a project's `.agents/skills/`
 this repo once, then symlink its canonical `skills/` directory into your project:
 
 ```bash
-git clone https://github.com/awcameron/skills.git ~/skills
+git clone https://github.com/awcameron/skills.git ~/awcameron-skills
 cd your-project
-mkdir -p .agents && ln -s ~/skills/skills .agents/skills
+mkdir -p .agents && ln -s ~/awcameron-skills/skills .agents/skills
 ```
 
 Once discovered, each skill both informs Antigravity's own routing (via its `description`

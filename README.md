@@ -11,36 +11,56 @@ reach for it, and a body that tells it what to actually do.
 
 ## Table of contents
 
-- [Install](#install)
+- [Get started](#get-started)
 - [What's here](#whats-here)
 - [Philosophy](#philosophy)
 - [Contributing](#contributing)
 - [License](#license)
 
-## Install
+## Get started
 
-**Claude Code** — install as a plugin:
+**Try it in a clone** — no install. The repo ships the symlinks each tool reads, so open your
+tool in the clone and the skills are already there:
+
+```bash
+git clone https://github.com/awcameron/skills.git
+cd skills
+# open Claude Code / Codex CLI / Antigravity CLI / OpenCode / Cursor here
+```
+
+Ask for something a skill matches ("review my changes") and check that the agent names the
+skill, or run a slash command directly (`/review-code` in Claude Code, `$review-code` in Codex
+CLI).
+
+**Use it in your own project** — Claude Code: install the plugin.
 
 ```
 claude plugin marketplace add awcameron/skills
 claude plugin install awcameron-skills
 ```
 
-**Cursor, Codex CLI, Antigravity CLI, OpenCode** — clone once, then symlink `skills/` into a
-project:
+Cursor, Codex CLI, Antigravity CLI, OpenCode: clone anywhere, then symlink `skills/` into your
+project (`~/awcameron-skills` is just an example path):
 
 ```bash
-git clone https://github.com/awcameron/skills.git ~/skills
+git clone https://github.com/awcameron/skills.git ~/awcameron-skills
 cd your-project
-mkdir -p .agents && ln -s ~/skills/skills .agents/skills
+mkdir -p .agents && ln -s ~/awcameron-skills/skills .agents/skills
 ```
 
-All four tools read `.agents/skills`, so nothing else is needed. Skills activate automatically
-when your request matches their description. For a global install, tool-specific paths, and
-slash commands, see the per-tool guides:
+For global installs and tool-specific paths, see the per-tool guides:
 [Claude Code](docs/claude-code-setup.md), [Cursor](docs/cursor-setup.md),
 [Codex CLI](docs/codex-setup.md), [Antigravity CLI](docs/antigravity-cli-setup.md),
 [OpenCode](docs/opencode-setup.md).
+
+**Contribute** — needs Node ≥20:
+
+```bash
+npm ci
+npm run validate && npm test && npm run eval
+```
+
+Branch, commit, and PR conventions are in [AGENTS.md](AGENTS.md).
 
 ## What's here
 

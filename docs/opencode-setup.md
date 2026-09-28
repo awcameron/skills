@@ -9,9 +9,9 @@ the equivalent `~/.config/opencode/skills/`, `~/.claude/skills/`, `~/.agents/ski
 Clone this repo once, then symlink its canonical `skills/` directory into your project:
 
 ```bash
-git clone https://github.com/awcameron/skills.git ~/skills
+git clone https://github.com/awcameron/skills.git ~/awcameron-skills
 cd your-project
-mkdir -p .opencode && ln -s ~/skills/skills .opencode/skills    # or .claude / .agents -- any works
+mkdir -p .opencode && ln -s ~/awcameron-skills/skills .opencode/skills    # or .claude / .agents -- any works
 ```
 
 ## Global setup

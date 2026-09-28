@@ -10,9 +10,9 @@ Clone this repo once, then symlink its canonical `skills/` directory into whiche
 path you prefer in *your* project:
 
 ```bash
-git clone https://github.com/awcameron/skills.git ~/skills
+git clone https://github.com/awcameron/skills.git ~/awcameron-skills
 cd your-project
-mkdir -p .cursor && ln -s ~/skills/skills .cursor/skills    # or .claude / .agents -- any works
+mkdir -p .cursor && ln -s ~/awcameron-skills/skills .cursor/skills    # or .claude / .agents -- any works
 ```
 
 Cursor's Agent then has every skill available automatically -- it decides when a skill is

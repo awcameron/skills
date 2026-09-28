@@ -9,9 +9,9 @@ description, or when you mention it explicitly with `$skill-name`.
 Clone this repo once, then symlink its canonical `skills/` directory into your project:
 
 ```bash
-git clone https://github.com/awcameron/skills.git ~/skills
+git clone https://github.com/awcameron/skills.git ~/awcameron-skills
 cd your-project
-mkdir -p .agents && ln -s ~/skills/skills .agents/skills
+mkdir -p .agents && ln -s ~/awcameron-skills/skills .agents/skills
 ```
 
 ## Global setup
