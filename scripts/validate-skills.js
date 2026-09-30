@@ -247,27 +247,30 @@ function main() {
     process.exit(1);
   }
 
-  const manifestChecks = [
+  // Checks on the repo as a whole, not one skill. Adding one is a new entry here -- the summary
+  // total comes from this list's length.
+  const repoChecks = [
     {
       label: "plugin.json",
-      path: join(repoRoot, ".claude-plugin", "plugin.json"),
-      validator: validatePluginManifest,
+      run: () =>
+        validateManifest(join(repoRoot, ".claude-plugin", "plugin.json"), validatePluginManifest),
     },
     {
       label: "marketplace.json",
-      path: join(repoRoot, ".claude-plugin", "marketplace.json"),
-      validator: validateMarketplaceRegistry,
+      run: () =>
+        validateManifest(
+          join(repoRoot, ".claude-plugin", "marketplace.json"),
+          validateMarketplaceRegistry,
+        ),
     },
+    { label: "version sync", run: () => validateVersionSync() },
+    { label: "shared skill scripts", run: () => validateSharedScripts() },
+    { label: "README skill catalog", run: () => validateReadmeCatalog(dirNames) },
   ];
-  let manifestFailures = 0;
-  for (const { label, path, validator } of manifestChecks) {
-    if (report(label, validateManifest(path, validator))) manifestFailures++;
+  let repoFailures = 0;
+  for (const { label, run } of repoChecks) {
+    if (report(label, run())) repoFailures++;
   }
-  // Not a schema check, but a manifest-level one: the three version fields must agree.
-  const versionSyncFailed = report("version sync", validateVersionSync());
-  if (versionSyncFailed) manifestFailures++;
-  if (report("shared skill scripts", validateSharedScripts())) manifestFailures++;
-  if (report("README skill catalog", validateReadmeCatalog(dirNames))) manifestFailures++;
 
   let failures = 0;
   let warnings = 0;
@@ -279,11 +282,10 @@ function main() {
     }
   }
 
-  const manifestTotal = manifestChecks.length + 3; // + version sync, shared scripts, README
-  console.log(`\n${manifestTotal - manifestFailures}/${manifestTotal} manifest checks passed`);
+  console.log(`\n${repoChecks.length - repoFailures}/${repoChecks.length} repo checks passed`);
   console.log(`${dirNames.length - failures}/${dirNames.length} skills passed`);
   if (warnings > 0) console.log(`${warnings} warning${warnings === 1 ? "" : "s"} (not failing)`);
-  process.exit(manifestFailures > 0 || failures > 0 ? 1 : 0);
+  process.exit(repoFailures > 0 || failures > 0 ? 1 : 0);
 }
 
 // Only run when invoked directly (`node scripts/validate-skills.js`), not when imported by tests.
