@@ -256,6 +256,17 @@ describe("skillWarnings", () => {
     assert.deepEqual(validateSkill("my-skill", skillsDir), []);
   });
 
+  it("warns, without failing validation, on a body command allowed-tools doesn't cover", () => {
+    writeSkill("my-skill", {
+      frontmatter: `---\nname: my-skill\ndescription: Does a thing. Use when asked.\nallowed-tools: [Read, Bash(git status:*)]\n---\n\nRun \`git status\`, then \`git stash\`.\n`,
+    });
+
+    const warnings = skillWarnings("my-skill", skillsDir);
+    assert.equal(warnings.length, 1);
+    assert.match(warnings[0], /line 7: `git stash` isn't covered by allowed-tools/);
+    assert.deepEqual(validateSkill("my-skill", skillsDir), []);
+  });
+
   it("returns no warnings for a missing SKILL.md (validateSkill reports that)", () => {
     assert.deepEqual(skillWarnings("does-not-exist", skillsDir), []);
   });

@@ -7,7 +7,7 @@ description: >-
   "diagnose this", "why is X happening", "I get an error when I do Y", "this test fails
   intermittently", "this got slow", or "debug this". Produces a root cause with evidence, not a fix
   (see `fix-bug`).
-allowed-tools: [Read, Grep, Glob, Edit, Write, Bash(git log:*), Bash(git blame:*), Bash(git show:*), Bash(git diff:*), Bash(git bisect:*), Bash(git stash:*), Bash(npm install:*), Bash(npm ci:*), Bash(npm run build:*), Bash(npm test:*), Bash(npm run test:*), Bash(npx playwright test:*), Bash(pytest:*), Bash(python -m pytest:*), Bash(go test:*), Bash(cargo test:*)]
+allowed-tools: [Read, Grep, Glob, Edit, Write, Bash(git status:*), Bash(git log:*), Bash(git blame:*), Bash(git show:*), Bash(git diff:*), Bash(git bisect:*), Bash(git stash:*), Bash(npm install:*), Bash(npm ci:*), Bash(npm run build:*), Bash(npm test:*), Bash(npm run test:*), Bash(pnpm test:*), Bash(pnpm run test:*), Bash(yarn test:*), Bash(yarn run test:*), Bash(npx vitest:*), Bash(npx jest:*), Bash(npx playwright test:*), Bash(pytest:*), Bash(python -m pytest:*), Bash(go test:*), Bash(cargo test:*)]
 ---
 
 # Diagnose Bug

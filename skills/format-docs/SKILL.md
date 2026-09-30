@@ -89,8 +89,8 @@ and running the wrong one can produce a confusing diff.
 If Markdown formatting is already enforced automatically, say so, and treat this skill's
 mechanical-formatting job as *running that same check manually* -- useful before committing, or
 against a file the automated path didn't reach (an out-of-scope file the user names explicitly, or
-a doc edited through a path that skipped the hook, e.g. `git commit --no-verify` or a web UI
-edit). A doc that's already been through a normal commit should already be clean; finding drift
+a doc edited through a path that skipped the hook, e.g. a commit made with `--no-verify`, or a
+web UI edit). A doc that's already been through a normal commit should already be clean; finding drift
 there is a signal something bypassed the hook, worth mentioning to the user, not just silently
 fixing.
 
