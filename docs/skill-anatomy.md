@@ -112,9 +112,11 @@ just its machine-checked mirror (types, required fields, patterns), so keep them
 than letting one drift from the other. Two rules the schema can't express, which stay hand-written
 checks: `name` matching the containing directory name (cross-file, not visible to a single
 frontmatter block), and the "use when..." trigger-phrase heuristic (a heuristic, not a hard shape
-rule). This repo doesn't yet run the spec's own reference validator
-([`skills-ref validate`](https://github.com/agentskills/agentskills/tree/main/skills-ref)) as a
-second check. Worth adding to CI later, but not wired up yet -- track before relying on it.
+rule). The spec's own reference validator
+([`skills-ref validate`](https://github.com/agentskills/agentskills/tree/main/skills-ref)) isn't
+run in CI on purpose: every rule it checks (allowed fields, `name` format and directory match,
+length limits) is already enforced here, and all 15 skills passed it (0.1.5, checked in #141). If
+the spec changes, rerun it by hand: `npx skills-ref validate skills/<name>`.
 
 ### Body
 
