@@ -21,6 +21,11 @@ describe("parseArgs", () => {
     assert.throws(() => parseArgs(["--min-rank1"]), /needs a percentage from 0 to 100/);
   });
 
+  it("throws on an empty or blank value, which Number() would read as 0", () => {
+    assert.throws(() => parseArgs(["--min-rank1", ""]), /got ""/);
+    assert.throws(() => parseArgs(["--min-rank1", "  "]), /got "  "/);
+  });
+
   it("throws on a value that isn't a percentage", () => {
     assert.throws(() => parseArgs(["--min-rank1", "abc"]), /got "abc"/);
     assert.throws(() => parseArgs(["--min-rank1", "150"]), /got "150"/);
