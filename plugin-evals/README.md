@@ -44,7 +44,9 @@ claude plugin eval . --scaffold \
   `--max-cost-usd` to cap it.
 - Results land in `plugin-evals/results/` (gitignored).
 
-Not run in CI: it needs a Claude credential and costs money per run. `npm test` does check that
+Not run in CI: it needs a Claude credential and costs money per run. Instead, run a skill's case
+when a PR changes that skill's instructions (see `AGENTS.md`), and the whole suite once before a
+version bump (see [`docs/releasing.md`](../docs/releasing.md)). `npm test` does check that
 every skill has a case (here, or a skill-creator `skills/<name>/evals/evals.json`) and that each
 case has a grader and an executable scaffold script.
 

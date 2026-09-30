@@ -9,6 +9,20 @@ together and publishing a GitHub Release -- this doc is how to actually use it.
 The bump is a manual, deliberate action (`workflow_dispatch`) -- nothing bumps the version
 automatically on merge, since that would fire on every doc/chore PR.
 
+**Before bumping, run the behavioral suite once.** CI doesn't run it (it needs a Claude credential
+and costs money per run), so this is the check that catches a skill whose behavior regressed
+before it ships. One run per case with the no-plugin baseline costs about $2.50:
+
+```bash
+claude plugin eval . --runs 1 --scaffold --max-cost-usd 5 \
+  --allow-tools Bash Edit Write \
+    "WebFetch(domain:github.com)" "WebFetch(domain:raw.githubusercontent.com)" \
+    "WebFetch(domain:registry.npmjs.org)"
+```
+
+A case below 1.00 with the plugin is worth a look before releasing; see
+[`plugin-evals/README.md`](../plugin-evals/README.md).
+
 **Via the GitHub UI:** Actions tab → **Bump version** (left sidebar) → **Run workflow** →
 choose `patch`/`minor`/`major` → **Run workflow**.
 
