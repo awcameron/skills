@@ -5,7 +5,8 @@
 # reading package.json, pyproject.toml, dotfiles, pre-commit hooks, and CI
 # workflows one Read/Grep at a time, run this once and reason from its output.
 #
-# Usage: scripts/detect_formatter.sh [repo-root]   (defaults to cwd)
+# Usage: <this skill's dir>/scripts/detect_formatter.sh [repo-root]   (defaults to cwd)
+#   In Claude Code: ${CLAUDE_SKILL_DIR}/scripts/detect_formatter.sh [repo-root]
 #
 # Exit code is always 0 -- this is a report, not a pass/fail check. Read the
 # output; don't script against it.
