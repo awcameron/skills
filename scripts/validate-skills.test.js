@@ -9,7 +9,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { after, beforeEach, describe, it } from "node:test";
 
-import { validateSkill } from "./validate-skills.js";
+import { validateSkill, validateVersionSync } from "./validate-skills.js";
 
 const VALID_FRONTMATTER = `---
 name: my-skill
@@ -183,5 +183,49 @@ describe("validateSkill -- schema checks", () => {
     });
 
     assert.deepEqual(validateSkill("my-skill", skillsDir), []);
+  });
+});
+
+describe("validateVersionSync", () => {
+  function writeVersionFiles({ pkg = "1.2.3", plugin = "1.2.3", lock = "1.2.3", lockRoot = "1.2.3" } = {}) {
+    mkdirSync(join(skillsDir, ".claude-plugin"), { recursive: true });
+    writeFileSync(join(skillsDir, "package.json"), JSON.stringify({ version: pkg }));
+    writeFileSync(join(skillsDir, ".claude-plugin", "plugin.json"), JSON.stringify({ version: plugin }));
+    writeFileSync(
+      join(skillsDir, "package-lock.json"),
+      JSON.stringify({ version: lock, packages: { "": { version: lockRoot } } }),
+    );
+  }
+
+  it("passes when package.json, plugin.json, and package-lock.json all agree", () => {
+    writeVersionFiles();
+
+    assert.deepEqual(validateVersionSync(skillsDir), []);
+  });
+
+  it("fails when package-lock.json lags package.json (the drift from PR #180)", () => {
+    writeVersionFiles({ pkg: "0.12.4", plugin: "0.12.4", lock: "0.12.3", lockRoot: "0.12.3" });
+
+    const errors = validateVersionSync(skillsDir);
+
+    assert.equal(errors.length, 2);
+    assert.match(errors[0], /package-lock\.json version is "0\.12\.3", expected "0\.12\.4"/);
+    assert.match(errors[1], /packages\[""\]/);
+  });
+
+  it("fails when plugin.json lags package.json", () => {
+    writeVersionFiles({ plugin: "1.2.2" });
+
+    const errors = validateVersionSync(skillsDir);
+
+    assert.equal(errors.length, 1);
+    assert.match(errors[0], /plugin\.json version is "1\.2\.2"/);
+  });
+
+  it("reports a single readable error when a version file is missing", () => {
+    const errors = validateVersionSync(skillsDir);
+
+    assert.equal(errors.length, 1);
+    assert.match(errors[0], /could not read version files/);
   });
 });
