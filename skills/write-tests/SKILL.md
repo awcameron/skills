@@ -8,7 +8,7 @@ description: >-
   untested here" as a lead-in to writing them. Covers unit tests, integration/e2e tests against
   real dependencies, and schema/contract tests, wherever a repo's own layout puts them. Does not
   review code quality or standards compliance outside of tests (see `review-code` for that).
-allowed-tools: [Read, Grep, Glob, Edit, Write, Bash(git diff:*), Bash(git log:*), Bash(git show:*), Bash(git status:*), Bash(git fetch:*), Bash(git merge-base:*), Bash(git symbolic-ref:*), Bash(gh repo view:*), Bash(git stash:*), Bash(npm run test:*), Bash(npm test:*), Bash(npx playwright test:*)]
+allowed-tools: [Read, Grep, Glob, Edit, Write, Bash(git diff:*), Bash(git log:*), Bash(git show:*), Bash(git status:*), Bash(git fetch:*), Bash(git merge-base:*), Bash(git symbolic-ref:*), Bash(gh repo view:*), Bash(git stash:*), Bash(git restore:*), Bash(npm run test:*), Bash(npm test:*), Bash(npx playwright test:*)]
 ---
 
 # Write Tests
@@ -100,9 +100,25 @@ memory of another project):
 place a real test should be, and no amount of CI can catch what the assertion itself cannot
 detect.
 
-**Before finishing, make the new test fail.** Revert the fix -- `git stash`, comment the line out,
-restore the old value -- run the spec, watch it go red, then restore. This takes about twenty
-seconds and it is the only direct evidence that a test tests anything.
+**Before finishing, make the new test fail.** Revert the fix, run the spec, watch it go red, then
+restore. This takes about twenty seconds and it is the only direct evidence that a test tests
+anything.
+
+Revert **only the source files, never the spec files** -- a bare `git stash` also stashes a test
+you added to an existing spec file, so the "red" run tests nothing:
+
+```bash
+# Fix is uncommitted:
+git stash push -- <source files>      # run the spec -> red
+git stash pop
+
+# Fix is already committed (and those source files have no uncommitted edits):
+git restore --source=<commit before the fix> -- <source files>   # run the spec -> red
+git restore -- <source files>
+```
+
+For a one-line fix, commenting the line out or restoring the old value by hand works too.
+Either way, confirm with `git status` afterwards that the source is back to the fixed version.
 
 If the change is a bug fix, prefer writing the test *first* and watching it fail, per the `tdd`
 skill's "red before green" (or the equivalent test-first workflow if this repo has one). A test
