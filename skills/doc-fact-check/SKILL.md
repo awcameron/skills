@@ -11,7 +11,7 @@ description: >-
   reality. Also covers agent-skill files -- a skill file is documentation an agent acts on
   directly, so drift there is executed, not just read. Does NOT do mechanical Markdown formatting
   (that's `format-docs`) and does NOT review code quality (a separate code-review skill's job).
-allowed-tools: [Read, Grep, Glob]
+allowed-tools: [Read, Grep, Glob, Bash(git log:*), Bash(git for-each-ref:*), Bash(git ls-files:*), Bash(gh issue list:*), Bash(gh pr list:*)]
 ---
 
 # Doc Drift Check
@@ -67,18 +67,18 @@ the code.
 **Most claims worth checking aren't covered by canonical docs at all**, and need the codebase
 itself as the source of truth instead:
 
-- **A referenced file/directory path** -- `find`/`ls`/`Read` it, don't assume the name in the doc
+- **A referenced file/directory path** -- `Glob`/`Read` it, don't assume the name in the doc
   still matches. A file gets renamed or consolidated without every doc that names it getting a
   matching edit.
-- **A branch/commit/PR-title naming convention** -- `git for-each-ref`/`git log --oneline` for
-  real recent examples, not the doc's own stated rule; a convention can drift in practice without
-  anyone updating the doc that states it.
+- **A branch/commit/PR-title naming convention** -- `git for-each-ref`/`git log --oneline`/
+  `gh pr list --state merged` for real recent examples, not the doc's own stated rule; a
+  convention can drift in practice without anyone updating the doc that states it.
 - **An issue-title/tracker convention** -- `gh issue list` for real recent titles, same reasoning.
 - **A specific object count, script assertion, or CI job name** -- read the actual script or
   workflow file a doc's prose claims to summarize, not the doc's last-written number. A change
   landing shifts a count; a doc summarizing "asserts N tables" doesn't update itself.
 - **An npm script or CLI command a doc tells the reader to run** -- check it actually exists
-  (e.g. `grep '"<script>"' package.json`) and does what the doc says.
+  (e.g. `Grep` for `"<script>"` in `package.json`) and does what the doc says.
 
 Treat these the same way as canonical docs: cite what you actually checked (the file path, the
 git command's real output, the script line) in the finding, not "seems outdated."
@@ -106,9 +106,9 @@ it could, treat it as exactly this kind of claim regardless of whether the sente
 happens to say so. Before treating such a count or flag as settled:
 
 - **Ask whether a second candidate exists before trusting the first.** Search the whole repo for
-  the general concept (`grep -ri` for the doc's actual keyword -- "migration", "row level
-  security", "feature flag" -- not just the specific path the first hit came from), since a
-  same-sounding fact can live in two differently-structured places (e.g. an ORM's numbered
+  the general concept (a case-insensitive `Grep` for the doc's actual keyword -- "migration",
+  "row level security", "feature flag" -- not just the specific path the first hit came from),
+  since a same-sounding fact can live in two differently-structured places (e.g. an ORM's numbered
   migrations next to a separately-versioned, timestamp-named directory the actual database
   provider applies).
 - **Look for what a deploy step actually pushes**, not what a local script rebuilds. A CI
@@ -134,13 +134,14 @@ happens to say so. Before treating such a count or flag as settled:
    to verify.
 
 3. **Cross-check each claim against the codebase itself whenever that's cheap**, even when the
-   claim also traces back to a canonical doc -- a cited path exists (`find`/`Read`), a named
+   claim also traces back to a canonical doc -- a cited path exists (`Glob`/`Read`), a named
    directory pattern actually appears, a named library is really a dependency
-   (`grep '"<pkg>"' */package.json`). Don't stop at "the doc says so" and call the claim confirmed:
-   that's exactly what a stale claim looks like right up until the one-command check. Only fall
-   back to citing the canonical doc's own text, without an independent tree check, for a claim
-   that's genuinely too broad or subjective to spot-check this way (an architectural rationale, a
-   design intent) -- most of what's worth checking isn't that kind of claim (see above).
+   (`Grep` for `"<pkg>"` across `*/package.json`). Don't stop at "the doc says so" and call the
+   claim confirmed: that's exactly what a stale claim looks like right up until the one-command
+   check. Only fall back to citing the canonical doc's own text, without an independent tree
+   check, for a claim that's genuinely too broad or subjective to spot-check this way (an
+   architectural rationale, a design intent) -- most of what's worth checking isn't that kind of
+   claim (see above).
 
 4. **Report findings**, one entry per contradiction found:
 
