@@ -1,12 +1,12 @@
 # Using skills with Antigravity CLI
 
-Google retired the standalone Gemini CLI for Google AI Pro/Ultra and free individual users on
-2026-06-18, replacing it with **Antigravity CLI** (`agy`) under the unified Antigravity brand.
-Antigravity CLI keeps Gemini CLI's Agent Skills, Hooks, Subagents, and Extensions -- now
-implemented as Antigravity plugins -- so this repo's `SKILL.md` files carry over with no format
-changes. If your organization is still on a Gemini Code Assist Standard/Enterprise license (or
-Gemini Code Assist for GitHub), your access to the legacy Gemini CLI is unaffected; see
-[Legacy Gemini CLI (Enterprise)](#legacy-gemini-cli-enterprise) below.
+On 2026-06-18, Gemini CLI and the Gemini Code Assist IDE extensions stopped serving requests for
+Google AI Pro/Ultra and free individual users, replaced by **Antigravity CLI** (`agy`) under the
+unified Antigravity brand. Antigravity CLI keeps Gemini CLI's Agent Skills, Hooks, and Subagents,
+and turns Extensions into Antigravity plugins, so this repo's `SKILL.md` files carry over with no
+format changes. If your organization uses a Gemini Code Assist Standard/Enterprise license, or
+Gemini Code Assist for GitHub through Google Cloud, your access to the legacy Gemini CLI is
+unaffected; see [Legacy Gemini CLI (Enterprise)](#legacy-gemini-cli-enterprise) below.
 
 ## Project setup
 
@@ -25,9 +25,9 @@ frontmatter) and is automatically exposed as a slash command -- see
 
 ## Global setup
 
-Symlink into `~/.gemini/antigravity-cli/skills/` (the path Google's own docs document) -- or, per
-community testing, `~/.gemini/config/skills/` if you want one path recognized across the
-Antigravity, Antigravity IDE, and Antigravity CLI flavors.
+Symlink into `~/.gemini/antigravity-cli/skills/` (the path Google's own docs document). Community
+reports say `~/.gemini/config/skills/` is recognized across the Antigravity, Antigravity IDE, and
+Antigravity CLI flavors, but Google's docs don't list it.
 
 ## Verify
 
@@ -56,8 +56,10 @@ Rules:
 ```
 
 > **Skills vs. AGENTS.md/GEMINI.md:** skills are on-demand and keep the context window clean;
-> Rules files are prepended to every prompt. Prefer skills unless a convention genuinely needs to
-> be always-on. Rules files are capped at 12,000 characters each.
+> Rules files are injected into the system prompt on every turn, loaded from each directory
+> between the file you're working on and the workspace root. Prefer skills unless a convention
+> genuinely needs to be always-on. Each Rules file is truncated past 24,000 bytes, and above
+> 20,000 tokens across all active rules, Antigravity swaps the largest files for pointers.
 
 ## Usage tips
 
@@ -75,6 +77,13 @@ under `.gemini/skills/` or `.agents/skills/` the same way described in Project s
 
 ## Sources
 
+Checked on 2026-09-30.
+
 - [Transitioning Gemini CLI to Antigravity CLI](https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli/) (Google Developers Blog)
-- [Plugins & Skills](https://antigravity.google/docs/cli/plugins/) (Google Antigravity Docs)
+- [Plugins](https://antigravity.google/docs/plugins?tab=cli) (Google Antigravity Docs)
+- [Skills](https://antigravity.google/docs/skills/) (Google Antigravity Docs)
+- [Rules](https://antigravity.google/docs/rules/) (Google Antigravity Docs)
+- [Gemini CLI migration](https://antigravity.google/docs/cli/gcli-migration/) (Google Antigravity Docs)
 - [Agents Command (`/agents`)](https://antigravity.google/docs/cli/commands/agents/) (Google Antigravity Docs)
+- [Agent Skills](https://geminicli.com/docs/cli/skills/) (Gemini CLI docs)
+- [Custom commands](https://geminicli.com/docs/cli/custom-commands/) (Gemini CLI docs)

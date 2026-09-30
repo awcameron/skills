@@ -33,4 +33,9 @@ confirm it names the skill it's using, or run `$review-code` directly (see below
 $review-code
 ```
 
-Skips discovery and runs the named skill directly.
+Skips discovery and runs the named skill directly. `/skills` lists the available skills to pick
+from.
+
+## Sources
+
+Checked against [Build skills](https://learn.chatgpt.com/docs/build-skills) on 2026-09-30.
