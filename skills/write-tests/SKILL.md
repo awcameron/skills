@@ -8,7 +8,7 @@ description: >-
   untested here" as a lead-in to writing them. Covers unit tests, integration/e2e tests against
   real dependencies, and schema/contract tests, wherever a repo's own layout puts them. Does not
   review code quality or standards compliance outside of tests (see `review-code` for that).
-allowed-tools: [Read, Grep, Glob, Edit, Write, Bash(git diff:*), Bash(git log:*), Bash(git show:*), Bash(git status:*), Bash(git fetch:*), Bash(git merge-base:*), Bash(git symbolic-ref:*), Bash(gh repo view:*), Bash(git stash:*), Bash(git restore:*), Bash(npm run test:*), Bash(npm test:*), Bash(npx playwright test:*)]
+allowed-tools: [Read, Grep, Glob, Edit, Write, Bash(git diff:*), Bash(git log:*), Bash(git show:*), Bash(git status:*), Bash(git fetch:*), Bash(git merge-base:*), Bash(git symbolic-ref:*), Bash(gh repo view:*), Bash(gh pr diff:*), Bash(gh issue view:*), Bash(git stash:*), Bash(git restore:*), Bash(npm run test:*), Bash(npm test:*), Bash(pnpm test:*), Bash(pnpm run test:*), Bash(yarn test:*), Bash(yarn run test:*), Bash(npx vitest:*), Bash(npx jest:*), Bash(npx playwright test:*), Bash(pytest:*), Bash(python -m pytest:*), Bash(go test:*), Bash(cargo test:*)]
 ---
 
 # Write Tests
