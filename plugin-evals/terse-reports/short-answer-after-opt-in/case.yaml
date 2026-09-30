@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: terse-reports-short-answer-after-opt-in
+context:
+  scaffold_script: scaffold.sh

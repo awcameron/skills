@@ -41,6 +41,13 @@
       "type": "array",
       "items": { "type": "string" }
     },
+    "experimental": {
+      "type": "object",
+      "description": "Claude Code experimental settings. `evals` names the directory `claude plugin eval` reads its suite from (this repo uses plugin-evals/, since evals/ holds the trigger-routing cases).",
+      "properties": {
+        "evals": { "type": "string", "minLength": 1 }
+      }
+    },
     "hooks": {
       "type": "string",
       "description": "Path to a hooks manifest (e.g. hooks/hooks.json). This repo ships no hooks, so its own plugin.json doesn't set this key, but it's included here as a documented, conceptually valid key other plugin.json consumers may use."

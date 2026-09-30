@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: zero-trust-architecture-flags-tenant-gaps
+context:
+  scaffold_script: scaffold.sh
