@@ -15,11 +15,16 @@ This skill implements a fix from an already-confirmed root cause. It does not di
 `diagnose-bug`), does not write the regression test (see `write-tests`), does not review the
 change (see `review-code`), and does not ship it (see `create-pr`).
 
-## Step 1: Require a confirmed root cause before touching anything
+## Step 1: Require a confirmed root cause and a runnable repro
 
 If you were handed a `diagnose-bug` report (or an equivalent investigation) with evidence, use it.
 If a cause is only asserted, not confirmed ("I think it's X" with no evidence attached), stop --
 either run `diagnose-bug` first or say plainly that any fix from here would be a guess.
+
+Before editing anything, make sure the diagnosis's repro or failing test actually runs here and
+fails. If the repo isn't runnable as checked out (a fresh clone/worktree missing installed
+dependencies, an unbuilt workspace package), get it runnable now -- finding that out after the edit
+leaves nothing to compare against.
 
 ## Step 2: Target the cause, not the symptom
 
@@ -35,23 +40,17 @@ fix in one place is incomplete if the identical defect exists somewhere else, th
 superficially similar piece of code that doesn't actually share the defect doesn't need touching
 just because it looks alike.
 
-## Step 4: Show the diff before applying anything beyond the minimal, obvious change
+## Step 4: Apply the fix, gating anything beyond the minimal change
 
-A one-line fix at the exact location the diagnosis pointed to needs no gate. Anything broader --
-multiple files, a changed public interface, refactoring the surrounding code -- does: stop, show
-the diff, and wait for confirmation before applying it, the same confirmation discipline
+A one-line fix at the exact location the diagnosis pointed to needs no gate -- apply it. Anything
+broader -- multiple files, a changed public interface, refactoring the surrounding code -- does:
+stop, show the diff, and wait for confirmation before applying it, the same confirmation discipline
 `create-pr` uses for visible actions. This is a real stop, not a formality to note and skip past.
 
-## Step 5: Apply the fix
+## Step 5: Verify it resolves the originally confirmed symptom
 
-## Step 6: Verify it actually resolves the originally confirmed symptom
-
-Rerun the repro or failing test from the diagnosis and confirm it now passes. Don't assert a fix
-"should" work without actually checking.
-
-**If the repo isn't runnable as checked out** (a fresh clone/worktree missing installed
-dependencies or an unbuilt workspace package), get it runnable first -- confirm the fix against a
-real passing/failing signal, not a guess dressed up as verification.
+Rerun the repro or failing test from Step 1 and confirm it now passes. Don't assert a fix "should"
+work without actually checking.
 
 **Verify with a throwaway check, not a permanent test file.** A scratch script or a temporary,
 unsaved test run is enough to prove the fix works -- writing a lasting spec is `write-tests`'s job
@@ -59,7 +58,7 @@ unsaved test run is enough to prove the fix works -- writing a lasting spec is `
 code" discipline), not this skill's. Producing your own permanent test here duplicates that step
 instead of handing off to it.
 
-## Step 7: Hand off, don't duplicate
+## Step 6: Hand off, don't duplicate
 
 Point at `write-tests` for the regression test, `review-code` for a standards check, `create-pr`
 to ship. This skill's job ends at a verified fix.
