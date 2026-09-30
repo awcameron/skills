@@ -25,8 +25,9 @@ gh workflow run bump-version.yml --repo <your-github-username>/skills -f bump=pa
 1. Runs `npm run validate` and `npm run eval` -- the bump won't proceed if either fails.
 2. Bumps `package.json`'s version via `npm version --no-git-tag-version` (no tag yet -- see below).
 3. Runs `npm run sync-plugin-version` to copy that version into `.claude-plugin/plugin.json`.
-4. Opens a PR with both changes -- it does not push to `main` directly, same as every other change
-   in this repo.
+4. Opens a PR with all three changes (`package.json`, `package-lock.json`,
+   `.claude-plugin/plugin.json`) -- it does not push to `main` directly, same as every other
+   change in this repo.
 
 Merge that PR like any other. Merging it is what actually ships the new version.
 
