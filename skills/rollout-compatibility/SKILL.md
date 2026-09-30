@@ -114,5 +114,5 @@ changing:
   against the new schema for the deploy's duration -- the migration and the code that depends on it
   are not the same event.
 
-Each reference file below has its own "Common mistakes" section scoped to that mechanism -- read the
-relevant one rather than expecting every mistake to be repeated here.
+Each reference file listed under "Core principles" has its own "Common mistakes" section scoped to
+that mechanism -- read the relevant one rather than expecting every mistake to be repeated here.

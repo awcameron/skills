@@ -9,7 +9,7 @@ description: >-
 allowed-tools: [Read, Grep, Glob, Bash(git log:*), Bash(git for-each-ref:*), Bash(git ls-files:*), Bash(gh issue list:*), Bash(gh pr list:*)]
 ---
 
-# Doc Drift Check
+# Doc Fact Check
 
 Docs describe the project as of whenever they were last touched, and nothing forces their prose
 to keep up. This skill catches claims that were true once and aren't anymore, and reports them.

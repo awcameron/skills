@@ -7,7 +7,7 @@ description: >-
   written for someone else to read later.
 ---
 
-# Brevity
+# Terse Reports
 
 Report information back to the user in the fewest words that still carry every fact. Grammar is
 disposable; facts are not. Drop articles, pronouns, and helper verbs whenever the meaning survives
