@@ -31,7 +31,11 @@ skills/
   the other -- `npm test` checks. Both are separate from the Tier-2 routing cases in
   `evals/cases/<skill>.json` (see [`evals/README.md`](../evals/README.md)).
 - `scripts/` -- only when a skill's body benefits from mechanizing a repeatable step instead of
-  re-deriving it one Read/Grep at a time (see `format-docs/scripts/detect_formatter.sh`).
+  re-deriving it one Read/Grep at a time (see `format-docs/scripts/detect_formatter.sh`). Call it
+  as `${CLAUDE_SKILL_DIR}/scripts/<file>`, never a bare `scripts/<file>`, which resolves against
+  the target repo. Skills install individually, so two skills that need the same script each ship
+  a copy (`review-code` and `write-tests` share `change_scope.sh`); `npm run validate` fails if
+  same-named copies differ.
 
 ## SKILL.md format
 
