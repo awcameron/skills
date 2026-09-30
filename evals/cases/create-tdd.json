@@ -47,6 +47,10 @@
       {
         "prompt": "Fix the null pointer exception crashing the authentication middleware.",
         "owner": "fix-bug"
+      },
+      {
+        "prompt": "Do TDD on this function: write a failing test first, then make it pass.",
+        "owner": "write-tests"
       }
     ]
   }
