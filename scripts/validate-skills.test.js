@@ -306,7 +306,7 @@ describe("validateSharedScripts", () => {
 
 describe("validateReadmeCatalog", () => {
   const entry = (name, target = `skills/${name}/SKILL.md`) =>
-    `- **[\`${name}\`](${target})** -- does a thing.\n`;
+    `| [\`${name}\`](${target}) | Doing a thing. | Some stage |\n`;
   const writeReadme = (entries) => {
     const path = join(skillsDir, "README.md");
     writeFileSync(

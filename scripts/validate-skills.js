@@ -201,7 +201,7 @@ export function validateSharedScripts(skillsDirPath = skillsDir) {
 }
 
 /**
- * Checks that README.md's "What's here" catalog lists every skill directory exactly once, links it
+ * Checks that README.md's "What's here" table lists every skill directory exactly once, links it
  * to its own SKILL.md, and lists nothing that isn't a skill. Presence only: the one-line blurbs are
  * hand-written for humans and aren't compared with the frontmatter descriptions. Returns error
  * strings.
@@ -218,7 +218,8 @@ export function validateReadmeCatalog(skillNames, readmePath = join(repoRoot, "R
 
   const errors = [];
   const listed = new Map(); // name -> times listed
-  for (const [, name, target] of section.matchAll(/^- \*\*\[`([^`]+)`\]\(([^)]+)\)\*\*/gm)) {
+  // One table row per skill, first cell a link: | [`name`](skills/name/SKILL.md) | ... |
+  for (const [, name, target] of section.matchAll(/^\|\s*\[`([^`]+)`\]\(([^)]+)\)\s*\|/gm)) {
     listed.set(name, (listed.get(name) ?? 0) + 1);
     if (target !== `skills/${name}/SKILL.md`) {
       errors.push(`README entry \`${name}\` links to ${target}, expected skills/${name}/SKILL.md`);

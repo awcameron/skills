@@ -19,18 +19,9 @@ reach for it, and a body that tells it what to actually do.
 
 ## Get started
 
-**Try it in a clone** -- no install. The repo ships the symlinks each tool reads, so open your
-tool in the clone and the skills are already there:
-
-```bash
-git clone https://github.com/awcameron/skills.git
-cd skills
-# open Claude Code / Codex CLI / Antigravity CLI / OpenCode / Cursor here
-```
-
-Ask for something a skill matches ("review my changes") and check that the agent names the
-skill, or run a slash command directly (`/review-code` in Claude Code, `$review-code` in Codex
-CLI).
+**Prerequisites:** `git`, plus the [GitHub CLI](https://cli.github.com/) (`gh`), logged in with
+`gh auth login`. Most skills read PRs, issues, or repo settings through `gh`. Without it they fall
+back to plain `git` where they can, and stop where they can't.
 
 **Use it in your own project** -- Claude Code: install the plugin.
 
@@ -49,115 +40,51 @@ mkdir -p .agents && ln -s ~/awcameron-skills/skills .agents/skills
 ```
 
 Then open your tool in the project and ask for something a skill matches ("review my changes");
-the agent should name the skill. Each per-tool guide has a Verify section.
-
-For global installs and tool-specific paths, see the per-tool guides:
-[Claude Code](docs/claude-code-setup.md), [Cursor](docs/cursor-setup.md),
+the agent should name the skill. For global installs, tool-specific paths, and a Verify section,
+see the per-tool guides: [Claude Code](docs/claude-code-setup.md), [Cursor](docs/cursor-setup.md),
 [Codex CLI](docs/codex-setup.md), [Antigravity CLI](docs/antigravity-cli-setup.md),
 [OpenCode](docs/opencode-setup.md).
 
-**Contribute** -- needs Node ≥20:
+**Or try it in a clone** -- no install. The repo ships the symlinks each tool reads, so open your
+tool in the clone and the skills are already there:
 
 ```bash
-npm ci
-npm run validate && npm test && npm run eval
+git clone https://github.com/awcameron/skills.git
+cd skills
+# open Claude Code / Codex CLI / Antigravity CLI / OpenCode / Cursor here
 ```
 
-Branch, commit, and PR conventions are in [AGENTS.md](AGENTS.md).
+**Run a skill directly** instead of waiting for auto-discovery: `/review-code` in Claude Code and
+Antigravity CLI, `$review-code` in Codex CLI, or `/` then the skill name in Cursor's Agent chat.
+OpenCode relies on auto-discovery alone.
+
+**Update** -- plugin: `claude plugin marketplace update awcameron-skills`, then
+`claude plugin update awcameron-skills`, then restart Claude Code. Symlinked clone: `git pull` in
+the clone.
 
 ## What's here
 
-Grouped by what stage of work each skill acts on -- see
-[`docs/skill-categories.md`](docs/skill-categories.md) for the reasoning behind the grouping and
-how the skills in each one hand off to each other.
+Each skill triggers on its own when a request matches it, and the "Stage" column says what part of
+the work it acts on. [`docs/skill-categories.md`](docs/skill-categories.md) explains the stages
+and how skills hand off to each other.
 
-### Feature building
-
-- **[`fullstack-feature-slice`](skills/fullstack-feature-slice/SKILL.md)** -- builds one feature
-  across a monorepo's layers (shared contract, backend, frontend), discovering each layer's own
-  convention rather than assuming a stack.
-
-### Design documentation
-
-- **[`create-tdd`](skills/create-tdd/SKILL.md)** -- generates a Technical Design Document from a
-  bundled reference template, either for a new (greenfield) design or as a retroactive writeup of
-  an existing codebase.
-
-### Code-quality lenses
-
-Read code against a body of standards, whether writing or reviewing.
-
-- **[`review-code`](skills/review-code/SKILL.md)** -- discovers a repo's own coding/observability
-  standards, then reviews a diff or PR against them with findings only (no auto-fix).
-- **[`ts-best-practices`](skills/ts-best-practices/SKILL.md)** -- staff-engineer-level
-  TypeScript/JavaScript judgment calls a linter can't enforce, as short, example-driven reference
-  files.
-- **[`zero-trust-architecture`](skills/zero-trust-architecture/SKILL.md)** -- never trusts a caller
-  based on what layer already checked it; verifies identity and ownership explicitly across the
-  whole request chain, discovered against a repo's own stack.
-- **[`rollout-compatibility`](skills/rollout-compatibility/SKILL.md)** --
-  backward/forward-compatible change discipline (expand-contract migrations, additive API/event
-  changes, N/N-1 rolling-deploy tolerance) for a repo whose pieces deploy independently or
-  gradually.
-
-### The bug lifecycle
-
-A two-step pipeline where diagnosis produces a confirmed root cause and fixing consumes it instead
-of re-guessing.
-
-- **[`diagnose-bug`](skills/diagnose-bug/SKILL.md)** -- finds the confirmed root cause of a
-  failing/crashing/flaky/slow bug, evidence-first, without implementing the fix.
-- **[`fix-bug`](skills/fix-bug/SKILL.md)** -- implements a fix from an already-confirmed root
-  cause, targeting the actual cause rather than the symptom.
-
-### Test authoring
-
-- **[`write-tests`](skills/write-tests/SKILL.md)** -- writes real, runnable tests grounded in a
-  repo's actual test conventions; every new test must fail against the unfixed code first.
-
-### Dependency maintenance
-
-- **[`upgrade-dependency`](skills/upgrade-dependency/SKILL.md)** -- bumps a dependency grounded in
-  what the version jump actually changes: a real changelog read, a real usage check, real test
-  results.
-
-### Shipping workflow
-
-- **[`create-pr`](skills/create-pr/SKILL.md)** -- carries local changes through a repo's real
-  branch → commit → push → PR workflow, discovering its naming/title conventions from its own
-  history.
-
-### Documentation integrity
-
-Two orthogonal axes: factual accuracy and mechanical formatting.
-
-- **[`doc-fact-check`](skills/doc-fact-check/SKILL.md)** -- cross-checks a doc's factual claims
-  (including skill files) against the codebase itself, since an agent *executes* a stale skill
-  claim instead of just reading it.
-- **[`format-docs`](skills/format-docs/SKILL.md)** -- applies a repo's own Markdown formatter
-  mechanically, flagging (not silently resolving) structural inconsistencies.
-
-### Agent meta-behavior
-
-Governs how the agent itself operates, not the target codebase.
-
-- **[`choose-subagent`](skills/choose-subagent/SKILL.md)** -- a decision checklist for which
-  subagent type/model to spawn a task on, based on whether the task writes anything, not what
-  it's about.
-- **[`terse-reports`](skills/terse-reports/SKILL.md)** -- reports status/summaries in terse,
-  fact-dense language, without touching code, commit, or PR-body grammar. Opt-in per conversation
-  (ask for it, or run `/terse-reports`). For terse reporting in every session, a skill is the
-  wrong mechanism, since it only applies when it triggers -- use Claude Code's built-in Concise
-  output style (`/output-style concise`), a custom output style in `~/.claude/output-styles/`, or
-  a one-line instruction in your `CLAUDE.md`.
-
-### Slash commands
-
-Every skill ships a matching slash command for explicit invocation instead of waiting on
-auto-discovery. `zero-trust-architecture`, `fullstack-feature-slice`, and `rollout-compatibility`
-are still meant to auto-trigger on ordinary feature/review/migration requests; their commands are
-for when you want to invoke one directly. Claude Code uses `.claude/commands/<name>.md`, and the
-legacy Gemini CLI uses `.gemini/commands/<name>.toml`. Antigravity CLI generates its own.
+| Skill | Use it when | Stage |
+|---|---|---|
+| [`fullstack-feature-slice`](skills/fullstack-feature-slice/SKILL.md) | Building one feature across a monorepo's layers (shared contract, backend, frontend), following each layer's own conventions. | Feature building |
+| [`create-tdd`](skills/create-tdd/SKILL.md) | Writing a technical design doc or RFC, greenfield or for existing code, from your template or the repo's own (with a bundled fallback). | Design documentation |
+| [`review-code`](skills/review-code/SKILL.md) | Reviewing a diff or PR against the repo's own standards. Reports findings; doesn't fix them. | Code-quality lenses |
+| [`ts-best-practices`](skills/ts-best-practices/SKILL.md) | Writing or reviewing TypeScript/JavaScript: the judgment calls a linter can't enforce. | Code-quality lenses |
+| [`zero-trust-architecture`](skills/zero-trust-architecture/SKILL.md) | Touching auth, tenant isolation, or service-to-service calls: verify identity and ownership at every layer. | Code-quality lenses |
+| [`rollout-compatibility`](skills/rollout-compatibility/SKILL.md) | Changing a schema, API shape, or event contract that something else deploys against. | Code-quality lenses |
+| [`diagnose-bug`](skills/diagnose-bug/SKILL.md) | Something fails, crashes, flakes, or is slow: find the confirmed root cause, evidence first, without fixing it. | The bug lifecycle |
+| [`fix-bug`](skills/fix-bug/SKILL.md) | The root cause is confirmed: fix the cause, not the symptom, and verify it. | The bug lifecycle |
+| [`write-tests`](skills/write-tests/SKILL.md) | Adding tests with the repo's own runner and conventions, and proving each new test can fail. | Test authoring |
+| [`upgrade-dependency`](skills/upgrade-dependency/SKILL.md) | Bumping a dependency: read the changelog across the range, check real usage, compare tests against a baseline. | Dependency maintenance |
+| [`create-pr`](skills/create-pr/SKILL.md) | Taking local changes through the repo's branch, commit, push, and PR conventions, and cleaning up after merge. | Shipping workflow |
+| [`doc-fact-check`](skills/doc-fact-check/SKILL.md) | Checking a doc's claims (including skill files) against the code and git history. | Documentation integrity |
+| [`format-docs`](skills/format-docs/SKILL.md) | Formatting Markdown with the repo's own formatter, and flagging structural changes instead of making them. | Documentation integrity |
+| [`choose-subagent`](skills/choose-subagent/SKILL.md) | Deciding which subagent type and model to spawn, based on whether the task writes anything. | Agent meta-behavior |
+| [`terse-reports`](skills/terse-reports/SKILL.md) | You ask for terse, fact-dense status reports in this conversation. For every session, use the Concise output style (`/output-style concise`) instead. | Agent meta-behavior |
 
 ## Philosophy
 
@@ -171,6 +98,13 @@ story behind a few of these skills, including a real skill-drift bug this repo's
 `doc-fact-check` skill was built to catch.
 
 ## Contributing
+
+Needs Node ≥20:
+
+```bash
+npm ci
+npm run validate && npm test && npm run eval
+```
 
 - **Repo conventions** (branches, commits, PRs, releases): [AGENTS.md](AGENTS.md), the canonical
   contributor doc for humans and agents alike. Release steps are in
