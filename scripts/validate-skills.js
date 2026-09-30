@@ -200,6 +200,43 @@ export function validateSharedScripts(skillsDirPath = skillsDir) {
   return errors;
 }
 
+/**
+ * Checks that README.md's "What's here" catalog lists every skill directory exactly once, links it
+ * to its own SKILL.md, and lists nothing that isn't a skill. Presence only: the one-line blurbs are
+ * hand-written for humans and aren't compared with the frontmatter descriptions. Returns error
+ * strings.
+ */
+export function validateReadmeCatalog(skillNames, readmePath = join(repoRoot, "README.md")) {
+  let readme;
+  try {
+    readme = readFileSync(readmePath, "utf8");
+  } catch (error) {
+    return [`could not read ${readmePath}: ${error.message}`];
+  }
+  const section = readme.match(/^## What's here\n([\s\S]*?)(?=^## |(?![\s\S]))/m)?.[1];
+  if (section === undefined) return ['README.md has no "## What\'s here" section'];
+
+  const errors = [];
+  const listed = new Map(); // name -> times listed
+  for (const [, name, target] of section.matchAll(/^- \*\*\[`([^`]+)`\]\(([^)]+)\)\*\*/gm)) {
+    listed.set(name, (listed.get(name) ?? 0) + 1);
+    if (target !== `skills/${name}/SKILL.md`) {
+      errors.push(`README entry \`${name}\` links to ${target}, expected skills/${name}/SKILL.md`);
+    }
+  }
+  for (const name of skillNames) {
+    if (!listed.has(name)) errors.push(`skills/${name}/ has no entry in README's "What's here"`);
+  }
+  for (const [name, count] of listed) {
+    if (!skillNames.includes(name)) {
+      errors.push(`README's "What's here" lists \`${name}\`, but there's no skills/${name}/`);
+    } else if (count > 1) {
+      errors.push(`README's "What's here" lists \`${name}\` ${count} times`);
+    }
+  }
+  return errors;
+}
+
 function main() {
   const dirNames = readdirSync(skillsDir).filter((entry) =>
     statSync(join(skillsDir, entry)).isDirectory(),
@@ -230,6 +267,7 @@ function main() {
   const versionSyncFailed = report("version sync", validateVersionSync());
   if (versionSyncFailed) manifestFailures++;
   if (report("shared skill scripts", validateSharedScripts())) manifestFailures++;
+  if (report("README skill catalog", validateReadmeCatalog(dirNames))) manifestFailures++;
 
   let failures = 0;
   let warnings = 0;
@@ -241,7 +279,7 @@ function main() {
     }
   }
 
-  const manifestTotal = manifestChecks.length + 2; // + version sync, shared scripts
+  const manifestTotal = manifestChecks.length + 3; // + version sync, shared scripts, README
   console.log(`\n${manifestTotal - manifestFailures}/${manifestTotal} manifest checks passed`);
   console.log(`${dirNames.length - failures}/${dirNames.length} skills passed`);
   if (warnings > 0) console.log(`${warnings} warning${warnings === 1 ? "" : "s"} (not failing)`);

@@ -12,6 +12,7 @@ import { after, beforeEach, describe, it } from "node:test";
 import {
   SOFT_DESCRIPTION_LENGTH,
   skillWarnings,
+  validateReadmeCatalog,
   validateSharedScripts,
   validateSkill,
   validateVersionSync,
@@ -300,5 +301,59 @@ describe("validateSharedScripts", () => {
     writeSkill("my-skill");
 
     assert.deepEqual(validateSharedScripts(skillsDir), []);
+  });
+});
+
+describe("validateReadmeCatalog", () => {
+  const entry = (name, target = `skills/${name}/SKILL.md`) =>
+    `- **[\`${name}\`](${target})** -- does a thing.\n`;
+  const writeReadme = (entries) => {
+    const path = join(skillsDir, "README.md");
+    writeFileSync(
+      path,
+      `# Title\n\n## What's here\n\n### Group\n\n${entries.join("")}\n## Philosophy\n\n${entry("after-section")}`,
+    );
+    return path;
+  };
+
+  it("passes when every skill is listed once, with its own link", () => {
+    const readme = writeReadme([entry("a-skill"), entry("b-skill")]);
+
+    assert.deepEqual(validateReadmeCatalog(["a-skill", "b-skill"], readme), []);
+  });
+
+  it("fails on a skill with no entry, and ignores entries outside the section", () => {
+    const readme = writeReadme([entry("a-skill")]);
+
+    assert.deepEqual(validateReadmeCatalog(["a-skill", "b-skill"], readme), [
+      `skills/b-skill/ has no entry in README's "What's here"`,
+    ]);
+  });
+
+  it("fails on an entry for a skill that doesn't exist", () => {
+    const readme = writeReadme([entry("a-skill"), entry("gone-skill")]);
+
+    assert.deepEqual(validateReadmeCatalog(["a-skill"], readme), [
+      "README's \"What's here\" lists `gone-skill`, but there's no skills/gone-skill/",
+    ]);
+  });
+
+  it("fails on a duplicate entry or a link to another skill's file", () => {
+    const readme = writeReadme([entry("a-skill"), entry("a-skill", "skills/b-skill/SKILL.md")]);
+
+    const errors = validateReadmeCatalog(["a-skill", "b-skill"], readme);
+    assert.equal(errors.length, 3);
+    assert.match(errors[0], /`a-skill` links to skills\/b-skill\/SKILL\.md/);
+    assert.match(errors[1], /skills\/b-skill\/ has no entry/);
+    assert.match(errors[2], /lists `a-skill` 2 times/);
+  });
+
+  it("fails when the section is missing", () => {
+    const path = join(skillsDir, "README.md");
+    writeFileSync(path, "# Title\n\n## Something else\n");
+
+    assert.deepEqual(validateReadmeCatalog(["a-skill"], path), [
+      `README.md has no "## What's here" section`,
+    ]);
   });
 });
