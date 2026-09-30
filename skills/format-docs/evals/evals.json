@@ -16,7 +16,7 @@
     {
       "id": 2,
       "prompt": "format the markdown docs in this project",
-      "expected_output": "Discovers mdformat via pyproject.toml's [tool.mdformat] section (no package.json exists in this repo at all), checks the wrap setting before treating a write as mechanical (mdformat rewraps prose by default), and does not default to or mention Prettier as the tool being used.",
+      "expected_output": "Discovers mdformat via pyproject.toml's [tool.mdformat] section (no package.json exists in this repo at all), checks the resolved wrap setting before treating a write as mechanical (mdformat preserves line breaks by default, but an integer wrap setting reflows prose), and does not default to or mention Prettier as the tool being used.",
       "files": [],
       "expectations": [
         "Discovers and names mdformat as the formatter to use, citing pyproject.toml's [tool.mdformat] section as the source",
