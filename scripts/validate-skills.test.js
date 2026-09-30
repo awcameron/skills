@@ -1,5 +1,4 @@
-// Tests for scripts/validate-skills.js. Uses node:test -- no dependency, consistent with the
-// script itself being deliberately dependency-free.
+// Tests for scripts/validate-skills.js. Uses node:test, so the tests add no dependency.
 //
 // Usage: node --test scripts/
 
@@ -106,6 +105,39 @@ describe("validateSkill", () => {
 });
 
 describe("validateSkill -- schema checks", () => {
+  it("reports only the YAML error when the frontmatter isn't valid YAML", () => {
+    writeSkill("my-skill", {
+      frontmatter: `---\nname: my-skill\ndescription: Does a thing: badly. Use when asked.\n---\n`,
+    });
+
+    const errors = validateSkill("my-skill", skillsDir);
+
+    assert.equal(errors.length, 1);
+    assert.match(errors[0], /could not parse frontmatter as YAML/);
+  });
+
+  it("reads a quoted description and a >- folded one the same as a plain one", () => {
+    for (const description of [
+      `"Does a thing. Use when asked."`,
+      `>-\n  Does a thing.\n  Use when asked.`,
+    ]) {
+      writeSkill("my-skill", {
+        frontmatter: `---\nname: my-skill\ndescription: ${description}\n---\n`,
+      });
+
+      assert.deepEqual(validateSkill("my-skill", skillsDir), [], description);
+    }
+  });
+
+  it("leaves a non-string description to the schema, without a misleading trigger-phrase error", () => {
+    writeSkill("my-skill", { frontmatter: `---\nname: my-skill\ndescription: 42\n---\n` });
+
+    const errors = validateSkill("my-skill", skillsDir);
+
+    assert.equal(errors.length, 1);
+    assert.match(errors[0], /frontmatter .*description.*string/);
+  });
+
   it("fails a skill with an unrecognized frontmatter key", () => {
     writeSkill("my-skill", {
       frontmatter: `---\nname: my-skill\ndescription: Does a thing. Use when the thing is needed.\nfoo: bar\n---\n`,

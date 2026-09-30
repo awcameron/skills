@@ -10,8 +10,8 @@ import { afterEach, beforeEach, describe, it } from "node:test";
 
 import {
   loadAllSkills,
-  parseFrontmatterFields,
   parseFrontmatterYaml,
+  parseSkillFile,
   readFrontmatterBlock,
 } from "./parse-skill.js";
 
@@ -49,21 +49,28 @@ describe("readFrontmatterBlock", () => {
   });
 });
 
-describe("parseFrontmatterFields", () => {
+describe("parseSkillFile", () => {
   it("reads a single-line value and strips surrounding quotes", () => {
-    assert.deepEqual(parseFrontmatterFields('name: a\ndescription: "Does a. Use when asked."'), {
-      name: "a",
-      description: "Does a. Use when asked.",
-    });
+    const path = writeSkill("a", '---\nname: a\ndescription: "Does a. Use when asked."\n---\n');
+    assert.deepEqual(parseSkillFile(path), { name: "a", description: "Does a. Use when asked." });
   });
 
   it("joins a >- folded description's indented lines with spaces", () => {
-    const block = "name: a\ndescription: >-\n  Does a thing.\n  Use when asked.\nallowed-tools: [Read]";
-    assert.equal(parseFrontmatterFields(block).description, "Does a thing. Use when asked.");
+    const path = writeSkill(
+      "a",
+      "---\nname: a\ndescription: >-\n  Does a thing.\n  Use when asked.\nallowed-tools: [Read]\n---\n",
+    );
+    assert.equal(parseSkillFile(path).description, "Does a thing. Use when asked.");
   });
 
   it("returns null for a missing field", () => {
-    assert.deepEqual(parseFrontmatterFields("name: a"), { name: "a", description: null });
+    const path = writeSkill("a", "---\nname: a\n---\n");
+    assert.deepEqual(parseSkillFile(path), { name: "a", description: null });
+  });
+
+  it("throws when the frontmatter isn't valid YAML", () => {
+    const path = writeSkill("a", "---\nname: a\ndescription: Does: badly\n---\n");
+    assert.throws(() => parseSkillFile(path), { name: "YAMLException" });
   });
 });
 
