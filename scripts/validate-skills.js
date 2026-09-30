@@ -9,6 +9,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { uncoveredCommands } from "./lib/allowed-tools.js";
 import {
   parseFrontmatterFields,
   parseFrontmatterYaml,
@@ -54,21 +55,33 @@ function report(label, errors) {
   return true;
 }
 
-/** Non-failing checks for a skill. Returns warning strings; an unreadable file is validateSkill's job. */
+/**
+ * Non-failing checks for a skill. Returns warning strings; an unreadable file or invalid YAML is
+ * validateSkill's job.
+ */
 export function skillWarnings(dirName, skillsDirPath = skillsDir) {
-  let frontmatterBlock;
+  const skillMdPath = join(skillsDirPath, dirName, "SKILL.md");
+  let content, frontmatter;
   try {
-    frontmatterBlock = readFrontmatterBlock(join(skillsDirPath, dirName, "SKILL.md"));
+    content = readFileSync(skillMdPath, "utf8");
+    frontmatter = parseFrontmatterYaml(readFrontmatterBlock(skillMdPath));
   } catch {
     return [];
   }
-  const { description } = parseFrontmatterFields(frontmatterBlock);
-  if (description && description.length > SOFT_DESCRIPTION_LENGTH) {
-    return [
+
+  const warnings = [];
+  const { description } = frontmatter;
+  if (typeof description === "string" && description.length > SOFT_DESCRIPTION_LENGTH) {
+    warnings.push(
       `description is ${description.length} chars, over the ${SOFT_DESCRIPTION_LENGTH}-char soft limit -- it loads into every session, so move mechanism detail into the body`,
-    ];
+    );
   }
-  return [];
+  for (const { line, command } of uncoveredCommands(frontmatter["allowed-tools"], content)) {
+    warnings.push(
+      `line ${line}: \`${command}\` isn't covered by allowed-tools -- add a Bash(...) entry, or reword it if it's not meant to be run`,
+    );
+  }
+  return warnings;
 }
 
 export function validateSkill(dirName, skillsDirPath = skillsDir) {
