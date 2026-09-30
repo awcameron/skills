@@ -154,7 +154,7 @@ Requires Node >=20 + npm (for the commands in steps 3-4 below) -- run `npm ci` o
 5. Add a matching slash command: `.claude/commands/<name>.md` and `.gemini/commands/<name>.toml`
    (see any existing pair for the shape). Every skill ships one, including skills meant to
    auto-trigger, so it can always be invoked directly.
-6. Add a row for the skill in [README.md](../README.md)'s "What's here" list, under whichever
-   category it fits (see [`docs/skill-categories.md`](skill-categories.md) if none of the existing
-   categories fit), as `- **[\`<name>\`](skills/<name>/SKILL.md)** -- ...`. `npm run validate`
-   fails if a skill has no entry there, or an entry names a skill that doesn't exist.
+6. Add a row for the skill to [README.md](../README.md)'s "What's here" table:
+   `| [\`<name>\`](skills/<name>/SKILL.md) | <use it when> | <stage> |`, with a stage from
+   [`docs/skill-categories.md`](skill-categories.md) (add one there if none fits).
+   `npm run validate` fails if a skill has no row, or a row names a skill that doesn't exist.
