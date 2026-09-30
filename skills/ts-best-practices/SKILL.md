@@ -1,6 +1,6 @@
 ---
 name: ts-best-practices
-description: Staff-level judgment calls for writing and reviewing TypeScript/JavaScript that a linter can't enforce -- comments, type casts, function and class design, error handling, async, naming, immutability, imports, narrowing, and enum/interface-vs-type choices. Use when writing new TS/JS, refactoring, or when the user asks "clean this up", "is this idiomatic", "review this for best practices", "does this look right", or calls code messy or hard to follow.
+description: Staff-level judgment calls for writing and reviewing TypeScript/JavaScript that a linter can't enforce -- comments, type casts, function and class design, error handling, async, naming, immutability, imports, narrowing, and enum/interface-vs-type choices. Use when writing new TS/JS, refactoring, or when the user asks "clean this up", "is this idiomatic", "review this for best practices", or calls code messy or hard to follow.
 ---
 
 # TS Best Practices

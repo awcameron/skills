@@ -4,7 +4,7 @@ description: >-
   Review code changes against the repo's own coding standards -- its conventions docs, lint config,
   ADRs, observability and security practices -- and report findings by severity without fixing them.
   Use when the user says "review this", "code review", "review my changes", "review the diff",
-  "check this code", "does this look right", "anything wrong with this", or "sanity check this",
+  "check this code", "does this diff look right", "anything wrong with this", or "sanity check this",
   including before merging. Posts one PR summary comment only when explicitly asked.
 allowed-tools:
   [
