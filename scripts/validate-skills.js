@@ -10,6 +10,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { uncoveredCommands } from "./lib/allowed-tools.js";
+import { isMain } from "./lib/is-main.js";
 import {
   parseFrontmatterFields,
   parseFrontmatterYaml,
@@ -320,6 +321,6 @@ function main() {
 }
 
 // Only run when invoked directly (`node scripts/validate-skills.js`), not when imported by tests.
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMain(import.meta.url)) {
   main();
 }
