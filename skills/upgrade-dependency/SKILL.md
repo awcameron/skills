@@ -12,7 +12,7 @@ description: >-
   already uses (npm/yarn/pnpm, pip/poetry/uv, cargo, go modules, Maven, Gradle, bundler, etc.)
   rather than assuming one. Does not add a brand-new dependency (a different, judgment-heavy
   decision) -- only bumps one already in use.
-allowed-tools: [Read, Grep, Glob, Edit, WebFetch, Bash(git diff:*), Bash(git log:*), Bash(git show:*), Bash(npm outdated:*), Bash(npm view:*), Bash(npm install:*), Bash(npm dedupe:*), Bash(npm ls:*), Bash(yarn upgrade:*), Bash(yarn info:*), Bash(yarn dedupe:*), Bash(pnpm update:*), Bash(pnpm outdated:*), Bash(pip list:*), Bash(poetry show:*), Bash(poetry add:*), Bash(cargo update:*), Bash(cargo outdated:*), Bash(go get:*), Bash(go list:*), Bash(mvn versions:display-dependency-updates:*), Bash(mvn versions:use-latest-releases:*), Bash(mvn versions:set-property:*), Bash(mvn dependency:tree:*), Bash(./gradlew dependencies:*), Bash(./gradlew dependencyUpdates:*), Bash(npm test:*), Bash(npm run test:*), Bash(pytest:*), Bash(cargo test:*), Bash(go test:*), Bash(mvn test:*), Bash(./gradlew test:*)]
+allowed-tools: [Read, Grep, Glob, Edit, WebFetch, Bash(git diff:*), Bash(git log:*), Bash(git show:*), Bash(gh release list:*), Bash(gh release view:*), Bash(npm outdated:*), Bash(npm view:*), Bash(npm install:*), Bash(npm dedupe:*), Bash(npm ls:*), Bash(yarn upgrade:*), Bash(yarn info:*), Bash(yarn dedupe:*), Bash(pnpm update:*), Bash(pnpm outdated:*), Bash(pip list:*), Bash(poetry show:*), Bash(poetry add:*), Bash(cargo update:*), Bash(cargo outdated:*), Bash(go get:*), Bash(go list:*), Bash(mvn versions:display-dependency-updates:*), Bash(mvn versions:use-latest-releases:*), Bash(mvn versions:set-property:*), Bash(mvn dependency:tree:*), Bash(./gradlew dependencies:*), Bash(./gradlew dependencyUpdates:*), Bash(npm test:*), Bash(npm run test:*), Bash(pytest:*), Bash(cargo test:*), Bash(go test:*), Bash(mvn test:*), Bash(./gradlew test:*)]
 ---
 
 # Upgrade Dependency
@@ -43,9 +43,26 @@ a monorepo with a quarantined legacy sibling is common, and that boundary applie
 
 ## Step 2: Read the actual changelog across the whole range being crossed
 
-Not just the newest entry -- every major crossed on the way from current to target. Check the
-package's own shipped `CHANGELOG.md`/`HISTORY.md`/migration guide first; fall back to its GitHub
-Releases page only if nothing local exists.
+Not just the newest entry -- every major crossed on the way from current to target.
+
+**Don't read the locally installed copy's changelog.** Before the bump, what's on disk
+(`node_modules/<pkg>/CHANGELOG.md`, a vendored or site-packages copy) is the *current* version, so
+its changelog stops exactly where the range you need begins. Read notes that reach the target:
+
+1. **Find the source repo** from the registry's metadata, not a guess -- e.g.
+   `npm view <pkg> repository.url`, the PyPI/crates.io/RubyGems project page's source link, or a
+   Go module path.
+2. **Release notes for every version in the range** -- for a GitHub-hosted package,
+   `gh release list -R <owner>/<repo>` to see which tags fall between current and target, then
+   `gh release view <tag> -R <owner>/<repo>` for each major (and any minor whose notes mention a
+   breaking change or deprecation).
+3. **The changelog/migration guide as of the target tag**, when release notes are thin or just
+   point to it -- fetch the file at that tag
+   (`https://raw.githubusercontent.com/<owner>/<repo>/<tag>/CHANGELOG.md`, or the project's
+   hosted migration guide) with `WebFetch`.
+
+If none of these reach the target version, say so in the report rather than treating an empty
+read as "no breaking changes."
 
 ## Step 3: Extract concrete breaking-change items from that range
 
