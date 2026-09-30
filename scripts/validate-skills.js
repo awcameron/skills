@@ -20,6 +20,9 @@ const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const skillsDir = join(repoRoot, "skills");
 const schemasDir = join(repoRoot, "schemas");
 const MAX_DESCRIPTION_LENGTH = 1024;
+// Every skill's description is loaded into every session, used or not, so the budget is shared.
+// Past this, warn (not fail): move mechanism detail into the body instead.
+export const SOFT_DESCRIPTION_LENGTH = 600;
 const NAME_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 const validateFrontmatterSchema = compileSchema(join(schemasDir, "skill-frontmatter.schema.json"));
@@ -49,6 +52,23 @@ function report(label, errors) {
   console.log(`FAIL  ${label}`);
   for (const error of errors) console.log(`        - ${error}`);
   return true;
+}
+
+/** Non-failing checks for a skill. Returns warning strings; an unreadable file is validateSkill's job. */
+export function skillWarnings(dirName, skillsDirPath = skillsDir) {
+  let frontmatterBlock;
+  try {
+    frontmatterBlock = readFrontmatterBlock(join(skillsDirPath, dirName, "SKILL.md"));
+  } catch {
+    return [];
+  }
+  const { description } = parseFrontmatterFields(frontmatterBlock);
+  if (description && description.length > SOFT_DESCRIPTION_LENGTH) {
+    return [
+      `description is ${description.length} chars, over the ${SOFT_DESCRIPTION_LENGTH}-char soft limit -- it loads into every session, so move mechanism detail into the body`,
+    ];
+  }
+  return [];
 }
 
 export function validateSkill(dirName, skillsDirPath = skillsDir) {
@@ -167,13 +187,19 @@ function main() {
   if (versionSyncFailed) manifestFailures++;
 
   let failures = 0;
+  let warnings = 0;
   for (const dirName of dirNames.sort()) {
     if (report(dirName, validateSkill(dirName))) failures++;
+    for (const warning of skillWarnings(dirName)) {
+      console.log(`        ! warning: ${warning}`);
+      warnings++;
+    }
   }
 
   const manifestTotal = manifestChecks.length + 1; // + version sync
   console.log(`\n${manifestTotal - manifestFailures}/${manifestTotal} manifest checks passed`);
   console.log(`${dirNames.length - failures}/${dirNames.length} skills passed`);
+  if (warnings > 0) console.log(`${warnings} warning${warnings === 1 ? "" : "s"} (not failing)`);
   process.exit(manifestFailures > 0 || failures > 0 ? 1 : 0);
 }
 

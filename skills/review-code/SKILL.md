@@ -1,15 +1,11 @@
 ---
 name: review-code
 description: >-
-  Review code changes against a repo's own coding standards. Use this skill when the user asks to
-  "review this", "code review", "check this code", "review my changes", "review the diff",
-  "look over this", "check for issues", or wants feedback on code quality, conventions, or
-  observability patterns. Also use when the user says "does this look right", "anything wrong with
-  this", or "sanity check this". This skill discovers and checks against the repo's own coding
-  guidelines, observability principles, DI patterns, and security practices -- it reports findings
-  but does not auto-fix. Also use when the user asks to "post this review to the PR" or "leave
-  this as a PR comment" -- posting is opt-in, only happens when explicitly asked, and is a single
-  summary comment, not inline per-line review comments.
+  Review code changes against the repo's own coding standards -- its conventions docs, lint config,
+  ADRs, observability and security practices -- and report findings by severity without fixing them.
+  Use when the user says "review this", "code review", "review my changes", "review the diff",
+  "check this code", "does this look right", "anything wrong with this", or "sanity check this",
+  including before merging. Posts one PR summary comment only when explicitly asked.
 allowed-tools:
   [
     Read,

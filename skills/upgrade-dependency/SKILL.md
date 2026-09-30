@@ -1,17 +1,11 @@
 ---
 name: upgrade-dependency
 description: >-
-  Safely bumps a dependency to a target (or latest) version: discovers the repo's own package
-  manager, reads the actual changelog/release notes/migration guide across the version range being
-  crossed (not just the latest entry), greps the repo for real usage of anything that changed
-  before treating it as relevant, applies the bump through the package manager's own mechanism,
-  and runs the repo's own test suite -- reporting what the bump actually broke versus what's
-  unrelated noise. Use this skill when the user asks to "upgrade X", "bump this dependency",
-  "update to the latest version of Y", "is it safe to upgrade X", or points at an outdated or
-  flagged-vulnerable package and asks to update it. Discovers whatever package manager the repo
-  already uses (npm/yarn/pnpm, pip/poetry/uv, cargo, go modules, Maven, Gradle, bundler, etc.)
-  rather than assuming one. Does not add a brand-new dependency (a different, judgment-heavy
-  decision) -- only bumps one already in use.
+  Bump a dependency the repo already uses to a target or latest version through the repo's own
+  package manager -- reading release notes across the whole version range, checking which breaking
+  changes the code actually touches, and running the tests. Use when the user asks to "upgrade X",
+  "bump this dependency", "update to the latest version", "is it safe to upgrade", or to update an
+  outdated or vulnerable package. Not for adding a new dependency.
 allowed-tools: [Read, Grep, Glob, Edit, WebFetch, Bash(git diff:*), Bash(git log:*), Bash(git show:*), Bash(gh release list:*), Bash(gh release view:*), Bash(npm outdated:*), Bash(npm view:*), Bash(npm install:*), Bash(npm dedupe:*), Bash(npm ls:*), Bash(yarn upgrade:*), Bash(yarn info:*), Bash(yarn dedupe:*), Bash(pnpm update:*), Bash(pnpm outdated:*), Bash(pip list:*), Bash(poetry show:*), Bash(poetry add:*), Bash(cargo update:*), Bash(cargo outdated:*), Bash(go get:*), Bash(go list:*), Bash(mvn versions:display-dependency-updates:*), Bash(mvn versions:use-latest-releases:*), Bash(mvn versions:set-property:*), Bash(mvn dependency:tree:*), Bash(./gradlew dependencies:*), Bash(./gradlew dependencyUpdates:*), Bash(npm test:*), Bash(npm run test:*), Bash(pytest:*), Bash(cargo test:*), Bash(go test:*), Bash(mvn test:*), Bash(./gradlew test:*)]
 ---
 

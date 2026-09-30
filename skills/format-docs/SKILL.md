@@ -1,17 +1,11 @@
 ---
 name: format-docs
 description: >-
-  Format and check consistency of a repo's Markdown docs (README, AGENTS.md/CONTRIBUTING.md-style
-  files, docs/**). Use this skill when the user asks to "format the docs", "format markdown",
-  "lint the docs", "check doc formatting", "clean up the docs", "fix markdown formatting", or
-  points at a `.md` file and asks for formatting/consistency fixes -- also "does this doc look
-  right" or "check this markdown" for a doc-focused request. Discovers whatever Markdown formatter
-  the repo already uses (Prettier, dprint, markdownlint-cli2, mdformat, remark) and applies its
-  mechanical formatting directly (whitespace, list-marker indentation, table alignment, trailing
-  newlines), showing the diff. Flags but does not silently apply anything that changes wording,
-  restructures headings, or resolves a cross-doc inconsistency (e.g. prose-wrap style) -- those
-  are proposed for the user to confirm. Does not review code (see `review-code`) and is not the
-  same as a repo's own code formatter, usually run via its own pre-commit hook/CI.
+  Format a repo's Markdown docs (README, AGENTS.md/CONTRIBUTING.md, docs/**) with whatever formatter
+  it already uses -- applying whitespace, list indentation, and table fixes directly, and proposing
+  heading, wording, or wrap-style changes for confirmation. Use when the user asks to "format the
+  docs", "lint the docs", "clean up the formatting", "fix markdown formatting", or "check this
+  markdown". Not for fact-checking a doc (`doc-fact-check`) or reviewing code.
 allowed-tools:
   [
     Read,

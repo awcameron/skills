@@ -1,15 +1,11 @@
 ---
 name: fix-bug
 description: >-
-  Implements a fix for a bug from a confirmed root cause -- either handed to it (e.g. a
-  diagnose-bug report) or already known -- targeting the actual cause rather than a symptom, then
-  hands off downstream (coverage, a standards pass, shipping it) rather than duplicating any of
-  that itself. Use this skill when the user has a known root cause and wants it fixed ("fix this",
-  "here's the bug, fix it", "implement the fix for X"), or right after a diagnose-bug run when the
-  user says to go ahead and fix what was found. If the root cause isn't actually confirmed yet,
-  delegates to diagnose-bug first rather than guessing at a patch. Its own job stops at a verified
-  fix -- adding coverage is write-tests's job, a standards pass is review-code's, and shipping it
-  is create-pr's.
+  Implement a fix for a bug whose root cause is confirmed -- handed over from `diagnose-bug` or
+  already known -- targeting the cause, not the symptom. Use when the user says "fix this", "here's
+  the root cause, go implement the fix", or "go ahead and fix what the diagnosis found". If the
+  cause isn't confirmed, run `diagnose-bug` first. Stops at a verified fix; coverage, review, and
+  shipping are separate steps.
 allowed-tools: [Read, Grep, Glob, Edit, Write, Bash(git diff:*), Bash(git status:*), Bash(git log:*), Bash(git show:*), Bash(npm install:*), Bash(npm ci:*), Bash(npm run build:*), Bash(npm test:*), Bash(npm run test:*), Bash(pytest:*), Bash(python -m pytest:*), Bash(go test:*), Bash(cargo test:*)]
 ---
 

@@ -1,15 +1,12 @@
 ---
 name: fullstack-feature-slice
 description: >-
-  Build or extend one feature end-to-end across a monorepo's layers -- typically a shared
-  type/contract package plus a backend handler and a frontend slice -- keeping the type discovered
-  once and re-derived everywhere else, not hand-duplicated per layer. Use whenever the user asks to
-  add a feature, endpoint, route, or contract spanning a shared-types package and both a backend and
-  frontend app, or mentions "vertical slice", "feature slice", or "shared types" in a multi-package
-  repo. Also covers a database schema or migration added as part of a feature -- "add a migration",
-  "add a table/column" -- even when the request doesn't name a feature. A schema change, a new
-  cross-package dependency, or a new architectural pattern is often Ask-First -- confirm before
-  generating one. Not for a change confined to a single package or layer; that's a normal edit.
+  Build or extend one feature end to end across a monorepo's layers -- a shared types/contract
+  package, a backend handler, and a frontend -- deriving each layer's type from the shared contract
+  instead of duplicating it. Use when adding a feature, endpoint, or contract that spans the
+  shared-types package and both apps, or when the user says "vertical slice", "feature slice",
+  "shared types", or "add a migration" / "add a table/column" as part of a feature. Not for a change
+  inside one package.
 allowed-tools: [Read, Grep, Glob, Edit, Write, Bash]
 ---
 
