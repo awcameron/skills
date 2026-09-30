@@ -106,6 +106,36 @@ export function validateSkill(dirName, skillsDirPath = skillsDir) {
   return errors;
 }
 
+/**
+ * Checks that package.json, package-lock.json (both its top-level and `packages[""]` entries), and
+ * .claude-plugin/plugin.json all carry the same version. Returns error strings, one per mismatch.
+ */
+export function validateVersionSync(root = repoRoot) {
+  const readJson = (relativePath) => JSON.parse(readFileSync(join(root, relativePath), "utf8"));
+
+  let pkg, plugin, lock;
+  try {
+    pkg = readJson("package.json");
+    plugin = readJson(".claude-plugin/plugin.json");
+    lock = readJson("package-lock.json");
+  } catch (error) {
+    return [`could not read version files: ${error.message}`];
+  }
+
+  const others = {
+    ".claude-plugin/plugin.json": plugin.version,
+    "package-lock.json": lock.version,
+    'package-lock.json packages[""]': lock.packages?.[""]?.version,
+  };
+
+  return Object.entries(others)
+    .filter(([, version]) => version !== pkg.version)
+    .map(
+      ([label, version]) =>
+        `${label} version is ${JSON.stringify(version)}, expected ${JSON.stringify(pkg.version)} (package.json)`,
+    );
+}
+
 function main() {
   const dirNames = readdirSync(skillsDir).filter((entry) =>
     statSync(join(skillsDir, entry)).isDirectory(),
@@ -132,13 +162,17 @@ function main() {
   for (const { label, path, validator } of manifestChecks) {
     if (report(label, validateManifest(path, validator))) manifestFailures++;
   }
+  // Not a schema check, but a manifest-level one: the three version fields must agree.
+  const versionSyncFailed = report("version sync", validateVersionSync());
+  if (versionSyncFailed) manifestFailures++;
 
   let failures = 0;
   for (const dirName of dirNames.sort()) {
     if (report(dirName, validateSkill(dirName))) failures++;
   }
 
-  console.log(`\n${manifestChecks.length - manifestFailures}/${manifestChecks.length} manifests passed`);
+  const manifestTotal = manifestChecks.length + 1; // + version sync
+  console.log(`\n${manifestTotal - manifestFailures}/${manifestTotal} manifest checks passed`);
   console.log(`${dirNames.length - failures}/${dirNames.length} skills passed`);
   process.exit(manifestFailures > 0 || failures > 0 ? 1 : 0);
 }

@@ -22,7 +22,8 @@ consumers; see [README.md](README.md) for what this repo is and how it's consume
   npm ci              # once per clone/dependency change -- validate depends on ajv + js-yaml
   npm run validate    # skill frontmatter (incl. schemas/skill-frontmatter.schema.json) and the
                        # .claude-plugin manifests (schemas/plugin-manifest.schema.json,
-                       # schemas/marketplace-registry.schema.json) are well-formed
+                       # schemas/marketplace-registry.schema.json) are well-formed, and
+                       # package.json / package-lock.json / plugin.json versions agree
   npm run eval        # trigger-routing hasn't regressed -- see evals/README.md
   ```
 
@@ -95,8 +96,9 @@ is currently `false` for this repo, so the remote branch needs an explicit
 
 ## Versioning and releases
 
-Version lives in both `package.json` and `.claude-plugin/plugin.json`, kept in sync via
-`npm run sync-plugin-version`. Full bump/release pipeline: [`docs/releasing.md`](docs/releasing.md).
+Version lives in `package.json`, `package-lock.json`, and `.claude-plugin/plugin.json`. The bump
+workflow keeps all three in sync, and `npm run validate` fails if they ever disagree. Full
+bump/release pipeline: [`docs/releasing.md`](docs/releasing.md).
 
 ## Where things live
 
