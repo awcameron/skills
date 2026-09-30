@@ -4,7 +4,7 @@
     "positive": [
       { "prompt": "is this idiomatic, clean this function up", "top_k": 2 },
       { "prompt": "review this class for best practices", "top_k": 2 },
-      { "prompt": "does this look right, this function feels messy", "top_k": 3 }
+      { "prompt": "does this look right, this function feels messy", "top_k": 1 }
     ],
     "negative": [
       { "prompt": "review this diff for security and observability issues", "owner": "review-code" }
