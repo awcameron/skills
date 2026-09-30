@@ -1,8 +1,9 @@
 # Releasing
 
-This repo's version lives in two places that must stay in sync: `package.json` and
-`.claude-plugin/plugin.json`. A small pipeline of GitHub Actions workflows handles bumping both
-together and publishing a GitHub Release -- this doc is how to actually use it.
+This repo's version lives in three places that must stay in sync: `package.json`,
+`package-lock.json`, and `.claude-plugin/plugin.json` (`npm run validate` fails if they differ). A
+small pipeline of GitHub Actions workflows handles bumping all three together and publishing a
+GitHub Release -- this doc is how to actually use it.
 
 ## Triggering a version bump
 
