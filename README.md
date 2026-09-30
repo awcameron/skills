@@ -154,10 +154,10 @@ Governs how the agent itself operates, not the target codebase.
 ### Slash commands
 
 Every skill ships a matching slash command for explicit invocation instead of waiting on
-auto-discovery -- except `zero-trust-architecture`, `fullstack-feature-slice`, and
-`rollout-compatibility`, which are meant to auto-trigger on ordinary feature/review/migration
-requests instead. Claude Code uses `.claude/commands/<name>.md`, and the legacy Gemini CLI uses
-`.gemini/commands/<name>.toml`. Antigravity CLI generates its own.
+auto-discovery. `zero-trust-architecture`, `fullstack-feature-slice`, and `rollout-compatibility`
+are still meant to auto-trigger on ordinary feature/review/migration requests; their commands are
+for when you want to invoke one directly. Claude Code uses `.claude/commands/<name>.md`, and the
+legacy Gemini CLI uses `.gemini/commands/<name>.toml`. Antigravity CLI generates its own.
 
 ## Philosophy
 
