@@ -1,7 +1,7 @@
 {
   "name": "awcameron-skills",
   "version": "0.12.4",
-  "description": "A portable library of agent skills for Claude Code, Cursor, OpenCode, Codex CLI, and Gemini CLI.",
+  "description": "A portable library of agent skills for Claude Code, Cursor, OpenCode, Codex CLI, and Antigravity CLI.",
   "author": {
     "name": "Antonio Cameron"
   },
