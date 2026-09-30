@@ -1,8 +1,9 @@
 # Using skills with Cursor
 
-Cursor's Agent Skills system discovers `SKILL.md` files from several paths, in project scope and
-globally, including `.claude/skills/`, `.cursor/skills/`, `.agents/skills/`, and `.codex/skills/`
-(all treated as compatible locations).
+Cursor's Agent Skills system discovers `SKILL.md` files from `.cursor/skills/` and
+`.agents/skills/` in a project, and from `~/.cursor/skills/` and `~/.agents/skills/` globally. For
+compatibility it also loads `.claude/skills/`, `.codex/skills/`, `~/.claude/skills/`, and
+`~/.codex/skills/`.
 
 ## Project setup
 
@@ -27,9 +28,14 @@ ln -s ~/awcameron-skills/skills ~/.cursor/skills
 ```
 
 Makes every skill available in every Cursor project without repeating the symlink per-repo.
+`~/.agents/skills` works too, and is shared with Codex CLI and OpenCode.
 
 ## Verify
 
 Ask Cursor's Agent something that matches a skill's trigger phrasing (e.g. "review my changes")
 and confirm it names the skill it's using, or type `/` in Agent chat and search for
 `review-code`.
+
+## Sources
+
+Checked against [Agent Skills](https://cursor.com/docs/context/skills) on 2026-09-30.

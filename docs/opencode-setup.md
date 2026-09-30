@@ -1,8 +1,9 @@
 # Using skills with OpenCode
 
-OpenCode discovers `SKILL.md` files from several locations, searched in order: `.opencode/skills/`,
-`.claude/skills/`, `.agents/skills/` (project-level, walking up to the git worktree root), then
-the equivalent `~/.config/opencode/skills/`, `~/.claude/skills/`, `~/.agents/skills/` globally.
+OpenCode discovers `SKILL.md` files in `.opencode/skills/`, `.claude/skills/`, and
+`.agents/skills/` (project-level, walking up to the git worktree root), and in
+`~/.config/opencode/skills/`, `~/.claude/skills/`, and `~/.agents/skills/` globally. Skill names
+must be unique across all of them.
 
 ## Project setup
 
@@ -26,5 +27,11 @@ Available in every OpenCode session from then on, without a per-project symlink.
 ## Verify
 
 Ask OpenCode something that matches a skill's trigger phrasing (e.g. "review my changes") and
-confirm it names the skill it's using. OpenCode currently relies on auto-discovery alone, so
-there's no slash command to run instead.
+confirm it names the skill it's using. OpenCode's agent loads skills itself through its
+built-in `skill` tool, so there's no way to run one directly (custom commands in
+`.opencode/commands/` are a separate feature).
+
+## Sources
+
+Checked against [Agent Skills](https://opencode.ai/docs/skills) and
+[Commands](https://opencode.ai/docs/commands/) on 2026-09-30.

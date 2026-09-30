@@ -27,7 +27,7 @@ back to plain `git` where they can, and stop where they can't.
 
 ```bash
 claude plugin marketplace add awcameron/skills
-claude plugin install awcameron-skills
+claude plugin install awcameron-skills@awcameron-skills
 ```
 
 Cursor, Codex CLI, Antigravity CLI, OpenCode: clone anywhere, then symlink `skills/` into your
@@ -56,7 +56,7 @@ cd skills
 
 **Run a skill directly** instead of waiting for auto-discovery: `/review-code` in Claude Code and
 Antigravity CLI, `$review-code` in Codex CLI, or `/` then the skill name in Cursor's Agent chat.
-OpenCode relies on auto-discovery alone.
+In OpenCode the agent loads skills itself, so there's no way to run one directly.
 
 **Update** -- plugin: `claude plugin marketplace update awcameron-skills`, then
 `claude plugin update awcameron-skills`, then restart Claude Code. Symlinked clone: `git pull` in

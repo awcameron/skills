@@ -8,15 +8,18 @@ automatically:
 
 ```bash
 claude plugin marketplace add awcameron/skills
-claude plugin install awcameron-skills
+claude plugin install awcameron-skills@awcameron-skills
 ```
 
 Or, from inside a session:
 
 ```text
 /plugin marketplace add awcameron/skills
-/plugin install awcameron-skills
+/plugin install awcameron-skills@awcameron-skills
 ```
+
+In a session, `/plugin install` opens the plugin's details panel so you can pick a scope before it
+installs.
 
 Skills load as `awcameron-skills:<skill-name>` (e.g. `awcameron-skills:review-code`) and activate
 automatically when your request matches a skill's description. The slash commands under
@@ -61,3 +64,9 @@ budget, set `skillListingBudgetFraction` in `settings.json` (e.g. `0.02` for 2%)
 `SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variable to a fixed character count; to free budget,
 set skills you rarely use to `"name-only"` in `skillOverrides`. See Claude Code's
 [Skill descriptions are cut short](https://code.claude.com/docs/en/skills#skill-descriptions-are-cut-short).
+
+## Sources
+
+Checked against these on 2026-09-30:
+[Skills](https://code.claude.com/docs/en/skills),
+[Discover and install plugins](https://code.claude.com/docs/en/discover-plugins).
