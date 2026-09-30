@@ -26,12 +26,6 @@ consumers; see [README.md](README.md) for what this repo is and how it's consume
                        # package.json / package-lock.json / plugin.json versions agree
   npm run eval        # trigger-routing hasn't regressed -- see evals/README.md
   ```
-- If the PR changes what a skill tells the agent to do (its body, not just its description), also
-  run that skill's behavioral case before merging -- it costs well under a dollar, and CI doesn't
-  run it (see [`plugin-evals/README.md`](plugin-evals/README.md)):
-  ```bash
-  claude plugin eval . --case '<skill-name>*' --scaffold --allow-tools Bash Edit Write
-  ```
 
 ### For AI Agents (Subagent Delegation Rules)
 - Do NOT spawn subagents for single-file reads, minor edits, or standard terminal commands.
@@ -117,6 +111,7 @@ bump/release pipeline: [`docs/releasing.md`](docs/releasing.md).
   - No confirmed tool actually discovers skills from `.codex/skills/` (see
     `docs/codex-setup.md`, which never references it).
 - `evals/` -- the trigger-routing eval system; see [`evals/README.md`](evals/README.md).
-- `plugin-evals/` -- behavioral `claude plugin eval` cases, run by hand (not in CI); see
+- `plugin-evals/` -- behavioral `claude plugin eval` cases. Opt-in: each run costs money, so no
+  routine check runs them -- don't run them unless asked. See
   [`plugin-evals/README.md`](plugin-evals/README.md).
 - `docs/*-setup.md` -- per-tool consumer setup instructions (not relevant to developing this repo).

@@ -44,11 +44,11 @@ claude plugin eval . --scaffold \
   `--max-cost-usd` to cap it.
 - Results land in `plugin-evals/results/` (gitignored).
 
-Not run in CI: it needs a Claude credential and costs money per run. Instead, run a skill's case
-when a PR changes that skill's instructions (see `AGENTS.md`), and the whole suite once before a
-version bump (see [`docs/releasing.md`](../docs/releasing.md)). `npm test` does check that
-every skill has a case (here, or a skill-creator `skills/<name>/evals/evals.json`) and that each
-case has a grader and an executable scaffold script.
+**Opt-in only.** Every run is billed to whoever runs it, so nothing in this repo runs it: not CI,
+not a release step, not the pre-PR checks in `AGENTS.md`. An agent working on this repo shouldn't
+run it unless the maintainer asks. The free part is structural: `npm test` checks that every skill
+has a case (here, or a skill-creator `skills/<name>/evals/evals.json`) and that each case has a
+grader and an executable scaffold script.
 
 ## Known caveats
 
