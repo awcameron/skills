@@ -8,7 +8,7 @@ description: >-
   untested here" as a lead-in to writing them. Covers unit tests, integration/e2e tests against
   real dependencies, and schema/contract tests, wherever a repo's own layout puts them. Does not
   review code quality or standards compliance outside of tests (see `review-code` for that).
-allowed-tools: [Read, Grep, Glob, Edit, Write, Bash(git diff:*), Bash(git log:*), Bash(git show:*), Bash(git stash:*), Bash(npm run test:*), Bash(npm test:*), Bash(npx playwright test:*)]
+allowed-tools: [Read, Grep, Glob, Edit, Write, Bash(git diff:*), Bash(git log:*), Bash(git show:*), Bash(git status:*), Bash(git fetch:*), Bash(git merge-base:*), Bash(git symbolic-ref:*), Bash(gh repo view:*), Bash(git stash:*), Bash(npm run test:*), Bash(npm test:*), Bash(npx playwright test:*)]
 ---
 
 # Write Tests
@@ -42,12 +42,22 @@ tests yet" note) that's since closed, trust what you actually find over a stale 
 ## Step 1: Identify what's untested
 
 - If the user points at specific files, use those.
-- If they say "test my changes" or give no target, read the diff:
+- If they say "test my changes" or give no target, diff the working tree -- committed, staged,
+  *and* uncommitted changes -- against where this branch left the repo's actual default branch:
 
 ```bash
-git diff --name-only origin/<default-branch>...HEAD
-git diff origin/<default-branch>...HEAD
+gh repo view --json defaultBranchRef -q .defaultBranchRef.name   # -> <default-branch>
+git fetch origin <default-branch>
+git merge-base origin/<default-branch> HEAD                      # -> <base>
+git status --short
+git diff --name-only <base>
+git diff <base>
 ```
+
+  Don't use `origin/<default-branch>...HEAD` -- it only covers commits, so uncommitted work comes
+  back empty. `git diff <base>` also skips untracked files: read every `??` path from
+  `git status` in full as new code. Off GitHub, get the default branch from
+  `git symbolic-ref --short refs/remotes/origin/HEAD` instead (unset in some clones).
 
 - If given a PR or issue number, read it first with `gh pr diff <n>` / `gh issue view <n>`.
 

@@ -18,6 +18,11 @@ allowed-tools:
     Bash(git diff:*),
     Bash(git log:*),
     Bash(git show:*),
+    Bash(git status:*),
+    Bash(git fetch:*),
+    Bash(git merge-base:*),
+    Bash(git symbolic-ref:*),
+    Bash(gh repo view:*),
     Bash(gh pr view:*),
     Bash(gh pr diff:*),
     Bash(gh pr comment:*),
@@ -66,13 +71,23 @@ exempt).
 Determine what to review based on context:
 
 - If the user points to specific files, review those.
-- If they say "review my changes" (or give no target), check the local git diff against the
-  repo's actual default branch:
+- If they say "review my changes" (or give no target), diff the working tree -- committed,
+  staged, *and* uncommitted changes -- against where this branch left the repo's actual default
+  branch:
 
 ```bash
-git diff --name-only origin/<default-branch>...HEAD
-git diff origin/<default-branch>...HEAD
+gh repo view --json defaultBranchRef -q .defaultBranchRef.name   # -> <default-branch>
+git fetch origin <default-branch>
+git merge-base origin/<default-branch> HEAD                      # -> <base>
+git status --short
+git diff --name-only <base>
+git diff <base>
 ```
+
+  Don't use `origin/<default-branch>...HEAD` -- it only covers commits, so uncommitted work (the
+  usual case for "review my changes") comes back empty. `git diff <base>` also skips untracked
+  files: read every `??` path from `git status` in full as a new file. Off GitHub, get the default
+  branch from `git symbolic-ref --short refs/remotes/origin/HEAD` instead (unset in some clones).
 
 - If the user gives a PR number, review that PR directly via `gh` -- don't require it to be
   checked out locally first:
