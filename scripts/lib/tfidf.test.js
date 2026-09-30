@@ -9,7 +9,7 @@ import { cosineSimilarity, fitTfIdf, rank, tokenize } from "./tfidf.js";
 
 describe("tokenize", () => {
   it("lowercases, splits on non-alphanumerics, and drops one-letter tokens", () => {
-    assert.deepEqual(tokenize("Review-Code: X y"), ["review", "code"]);
+    assert.deepEqual(tokenize("Review-Diff: X y"), ["review", "diff"]);
   });
 
   it("drops stopwords, including the halves of a split contraction", () => {
@@ -18,6 +18,21 @@ describe("tokenize", () => {
 
   it("strips -ing and a plain plural -s, but not -ss", () => {
     assert.deepEqual(tokenize("reviewing tests class"), ["review", "test", "class"]);
+  });
+
+  it("reduces a word ending in a silent e and its other forms to one stem", () => {
+    for (const forms of ["file files", "change changes changed changing", "base based"]) {
+      assert.equal(new Set(tokenize(forms)).size, 1, forms);
+    }
+  });
+
+  it("strips -es only after a sibilant, and -ies to -y", () => {
+    assert.deepEqual(tokenize("fixes classes pushes dependencies"), [
+      "fix",
+      "class",
+      "push",
+      "dependency",
+    ]);
   });
 });
 

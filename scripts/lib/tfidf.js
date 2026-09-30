@@ -22,14 +22,24 @@ const STOPWORDS = new Set(
     .filter(Boolean),
 );
 
-/** Strips a handful of common suffixes -- a stemmer only in the loosest sense, not Porter. */
+/**
+ * Strips a handful of common suffixes -- a stemmer only in the loosest sense, not Porter. The aim
+ * is that a word's common forms reduce to one stem: `file`/`files`, `change`/`changes`/`changed`/
+ * `changing`, and `base`/`based` all do, because a final silent "e" is dropped last.
+ */
 function stem(word) {
-  if (word.length > 5 && word.endsWith("ing")) return word.slice(0, -3);
-  if (word.length > 4 && word.endsWith("ies")) return word.slice(0, -3) + "y";
-  if (word.length > 4 && word.endsWith("es")) return word.slice(0, -2);
-  if (word.length > 4 && word.endsWith("ed")) return word.slice(0, -2);
-  if (word.length > 4 && word.endsWith("s") && !word.endsWith("ss")) return word.slice(0, -1);
-  return word;
+  let stemmed = word;
+  if (stemmed.length > 5 && stemmed.endsWith("ing")) stemmed = stemmed.slice(0, -3);
+  else if (stemmed.length > 4 && stemmed.endsWith("ies")) stemmed = `${stemmed.slice(0, -3)}y`;
+  // "-es" is its own suffix only after a sibilant (fixes, classes, pushes); in "files" the "e"
+  // belongs to the word, so only the "s" goes.
+  else if (stemmed.length > 4 && /(s|x|z|ch|sh)es$/.test(stemmed)) stemmed = stemmed.slice(0, -2);
+  else if (stemmed.length > 4 && stemmed.endsWith("ed")) stemmed = stemmed.slice(0, -2);
+  else if (stemmed.length > 3 && stemmed.endsWith("s") && !stemmed.endsWith("ss")) {
+    stemmed = stemmed.slice(0, -1);
+  }
+  if (stemmed.length > 3 && stemmed.endsWith("e")) stemmed = stemmed.slice(0, -1);
+  return stemmed;
 }
 
 export function tokenize(text) {
