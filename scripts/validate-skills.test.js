@@ -12,6 +12,7 @@ import { after, beforeEach, describe, it } from "node:test";
 import {
   SOFT_DESCRIPTION_LENGTH,
   skillWarnings,
+  validateSharedScripts,
   validateSkill,
   validateVersionSync,
 } from "./validate-skills.js";
@@ -269,5 +270,35 @@ describe("skillWarnings", () => {
 
   it("returns no warnings for a missing SKILL.md (validateSkill reports that)", () => {
     assert.deepEqual(skillWarnings("does-not-exist", skillsDir), []);
+  });
+});
+
+describe("validateSharedScripts", () => {
+  const writeScript = (skill, file, content) => {
+    mkdirSync(join(skillsDir, skill, "scripts"), { recursive: true });
+    writeFileSync(join(skillsDir, skill, "scripts", file), content);
+  };
+
+  it("passes when a script shared by two skills is identical in both", () => {
+    writeScript("a-skill", "shared.sh", "echo hi\n");
+    writeScript("b-skill", "shared.sh", "echo hi\n");
+    writeScript("b-skill", "own.sh", "echo only b\n");
+
+    assert.deepEqual(validateSharedScripts(skillsDir), []);
+  });
+
+  it("fails when the copies differ", () => {
+    writeScript("a-skill", "shared.sh", "echo hi\n");
+    writeScript("b-skill", "shared.sh", "echo bye\n");
+
+    const errors = validateSharedScripts(skillsDir);
+    assert.equal(errors.length, 1);
+    assert.match(errors[0], /skills\/b-skill\/scripts\/shared\.sh differs from skills\/a-skill/);
+  });
+
+  it("ignores skills without a scripts/ directory", () => {
+    writeSkill("my-skill");
+
+    assert.deepEqual(validateSharedScripts(skillsDir), []);
   });
 });

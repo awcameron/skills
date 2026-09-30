@@ -19,6 +19,7 @@ allowed-tools:
     Bash(git merge-base:*),
     Bash(git symbolic-ref:*),
     Bash(gh repo view:*),
+    "Bash(${CLAUDE_SKILL_DIR}/scripts/change_scope.sh:*)",
     Bash(gh pr view:*),
     Bash(gh pr diff:*),
     Bash(gh pr comment:*),
@@ -72,18 +73,21 @@ Determine what to review based on context:
   branch:
 
 ```bash
-gh repo view --json defaultBranchRef -q .defaultBranchRef.name   # -> <default-branch>
-git fetch origin <default-branch>
-git merge-base origin/<default-branch> HEAD                      # -> <base>
-git status --short
-git diff --name-only <base>
+${CLAUDE_SKILL_DIR}/scripts/change_scope.sh   # -> default branch, <base>, changed + untracked paths
 git diff <base>
 ```
 
+  The script ships inside this skill's directory, not the target repo. Claude Code fills in
+  `${CLAUDE_SKILL_DIR}`; if it's still literal text, use the absolute path of the `scripts/`
+  directory next to this `SKILL.md`. If the script can't run (no bash), do its steps by hand: get
+  the default branch from `gh repo view --json defaultBranchRef -q .defaultBranchRef.name` (off
+  GitHub, `git symbolic-ref --short refs/remotes/origin/HEAD`, unset in some clones), then
+  `git fetch origin <default-branch>`, `git merge-base origin/<default-branch> HEAD` for `<base>`,
+  `git diff --name-only <base>`, and `git status --short` for untracked (`??`) paths.
+
   Don't use `origin/<default-branch>...HEAD` -- it only covers commits, so uncommitted work (the
   usual case for "review my changes") comes back empty. `git diff <base>` also skips untracked
-  files: read every `??` path from `git status` in full as a new file. Off GitHub, get the default
-  branch from `git symbolic-ref --short refs/remotes/origin/HEAD` instead (unset in some clones).
+  files: read every untracked path in full as a new file.
 
 - If the user gives a PR number, review that PR directly via `gh` -- don't require it to be
   checked out locally first:

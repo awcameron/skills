@@ -169,6 +169,37 @@ export function validateVersionSync(root = repoRoot) {
     );
 }
 
+/**
+ * Checks that a script shipped by more than one skill (same `scripts/<file>` name) is byte-identical
+ * in each. Skills install individually, so a shared script is copied rather than referenced, and
+ * the copies must not drift. Returns error strings, one per differing copy.
+ */
+export function validateSharedScripts(skillsDirPath = skillsDir) {
+  const copies = new Map(); // file name -> [{ skill, content }]
+  for (const skill of readdirSync(skillsDirPath).sort()) {
+    const scriptsDir = join(skillsDirPath, skill, "scripts");
+    if (!existsSync(scriptsDir) || !statSync(scriptsDir).isDirectory()) continue;
+    for (const file of readdirSync(scriptsDir)) {
+      const path = join(scriptsDir, file);
+      if (!statSync(path).isFile()) continue;
+      if (!copies.has(file)) copies.set(file, []);
+      copies.get(file).push({ skill, content: readFileSync(path, "utf8") });
+    }
+  }
+
+  const errors = [];
+  for (const [file, [first, ...rest]] of copies) {
+    for (const copy of rest) {
+      if (copy.content !== first.content) {
+        errors.push(
+          `skills/${copy.skill}/scripts/${file} differs from skills/${first.skill}/scripts/${file} -- keep the copies identical`,
+        );
+      }
+    }
+  }
+  return errors;
+}
+
 function main() {
   const dirNames = readdirSync(skillsDir).filter((entry) =>
     statSync(join(skillsDir, entry)).isDirectory(),
@@ -198,6 +229,7 @@ function main() {
   // Not a schema check, but a manifest-level one: the three version fields must agree.
   const versionSyncFailed = report("version sync", validateVersionSync());
   if (versionSyncFailed) manifestFailures++;
+  if (report("shared skill scripts", validateSharedScripts())) manifestFailures++;
 
   let failures = 0;
   let warnings = 0;
@@ -209,7 +241,7 @@ function main() {
     }
   }
 
-  const manifestTotal = manifestChecks.length + 1; // + version sync
+  const manifestTotal = manifestChecks.length + 2; // + version sync, shared scripts
   console.log(`\n${manifestTotal - manifestFailures}/${manifestTotal} manifest checks passed`);
   console.log(`${dirNames.length - failures}/${dirNames.length} skills passed`);
   if (warnings > 0) console.log(`${warnings} warning${warnings === 1 ? "" : "s"} (not failing)`);

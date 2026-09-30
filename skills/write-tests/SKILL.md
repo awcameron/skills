@@ -6,7 +6,7 @@ description: >-
   tests", "test this", "scaffold a spec", or "add test coverage", or asks "does this have tests" /
   "what's untested here". Covers unit, integration/e2e, and schema/contract tests. Not for general
   code review (`review-code`).
-allowed-tools: [Read, Grep, Glob, Edit, Write, Bash(git diff:*), Bash(git log:*), Bash(git show:*), Bash(git status:*), Bash(git fetch:*), Bash(git merge-base:*), Bash(git symbolic-ref:*), Bash(gh repo view:*), Bash(gh pr diff:*), Bash(gh issue view:*), Bash(git stash:*), Bash(git restore:*), Bash(npm run test:*), Bash(npm test:*), Bash(pnpm test:*), Bash(pnpm run test:*), Bash(yarn test:*), Bash(yarn run test:*), Bash(npx vitest:*), Bash(npx jest:*), Bash(npx playwright test:*), Bash(pytest:*), Bash(python -m pytest:*), Bash(go test:*), Bash(cargo test:*)]
+allowed-tools: [Read, Grep, Glob, Edit, Write, Bash(git diff:*), Bash(git log:*), Bash(git show:*), Bash(git status:*), Bash(git fetch:*), Bash(git merge-base:*), Bash(git symbolic-ref:*), Bash(gh repo view:*), "Bash(${CLAUDE_SKILL_DIR}/scripts/change_scope.sh:*)", Bash(gh pr diff:*), Bash(gh issue view:*), Bash(git stash:*), Bash(git restore:*), Bash(npm run test:*), Bash(npm test:*), Bash(pnpm test:*), Bash(pnpm run test:*), Bash(yarn test:*), Bash(yarn run test:*), Bash(npx vitest:*), Bash(npx jest:*), Bash(npx playwright test:*), Bash(pytest:*), Bash(python -m pytest:*), Bash(go test:*), Bash(cargo test:*)]
 ---
 
 # Write Tests
@@ -44,18 +44,21 @@ tests yet" note) that's since closed, trust what you actually find over a stale 
   *and* uncommitted changes -- against where this branch left the repo's actual default branch:
 
 ```bash
-gh repo view --json defaultBranchRef -q .defaultBranchRef.name   # -> <default-branch>
-git fetch origin <default-branch>
-git merge-base origin/<default-branch> HEAD                      # -> <base>
-git status --short
-git diff --name-only <base>
+${CLAUDE_SKILL_DIR}/scripts/change_scope.sh   # -> default branch, <base>, changed + untracked paths
 git diff <base>
 ```
 
+  The script ships inside this skill's directory, not the target repo. Claude Code fills in
+  `${CLAUDE_SKILL_DIR}`; if it's still literal text, use the absolute path of the `scripts/`
+  directory next to this `SKILL.md`. If the script can't run (no bash), do its steps by hand: get
+  the default branch from `gh repo view --json defaultBranchRef -q .defaultBranchRef.name` (off
+  GitHub, `git symbolic-ref --short refs/remotes/origin/HEAD`, unset in some clones), then
+  `git fetch origin <default-branch>`, `git merge-base origin/<default-branch> HEAD` for `<base>`,
+  `git diff --name-only <base>`, and `git status --short` for untracked (`??`) paths.
+
   Don't use `origin/<default-branch>...HEAD` -- it only covers commits, so uncommitted work comes
-  back empty. `git diff <base>` also skips untracked files: read every `??` path from
-  `git status` in full as new code. Off GitHub, get the default branch from
-  `git symbolic-ref --short refs/remotes/origin/HEAD` instead (unset in some clones).
+  back empty. `git diff <base>` also skips untracked files: read every untracked path in full as
+  new code.
 
 - If given a PR or issue number, read it first with `gh pr diff <n>` / `gh issue view <n>`.
 
