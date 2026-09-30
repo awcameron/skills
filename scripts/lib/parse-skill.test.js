@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { after, beforeEach, describe, it } from "node:test";
+import { afterEach, beforeEach, describe, it } from "node:test";
 
 import {
   loadAllSkills,
@@ -21,8 +21,8 @@ beforeEach(() => {
   dir = mkdtempSync(join(tmpdir(), "parse-skill-test-"));
 });
 
-after(() => {
-  if (dir) rmSync(dir, { recursive: true, force: true });
+afterEach(() => {
+  rmSync(dir, { recursive: true, force: true });
 });
 
 function writeSkill(name, content) {

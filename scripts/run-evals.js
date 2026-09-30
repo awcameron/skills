@@ -35,7 +35,9 @@ export function parseArgs(argv) {
     const minRank1 = Number(value);
     // Number(undefined) is NaN, and `rate < NaN` is always false -- a missing value would
     // silently pass the threshold, so reject it here.
-    if (value === undefined || !Number.isFinite(minRank1) || minRank1 < 0 || minRank1 > 100) {
+    // Number("") is 0, so an empty value needs its own check too.
+    const missing = value === undefined || value.trim() === "";
+    if (missing || !Number.isFinite(minRank1) || minRank1 < 0 || minRank1 > 100) {
       throw new Error(`--min-rank1 needs a percentage from 0 to 100, got ${JSON.stringify(value)}`);
     }
     args.minRank1 = minRank1;

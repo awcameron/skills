@@ -25,17 +25,29 @@ const STOPWORDS = new Set(
 /**
  * Strips a handful of common suffixes -- a stemmer only in the loosest sense, not Porter. The aim
  * is that a word's common forms reduce to one stem: `file`/`files`, `change`/`changes`/`changed`/
- * `changing`, and `base`/`based` all do, because a final silent "e" is dropped last.
+ * `changing`, and `base`/`based` all do, because a final silent "e" is dropped last; `debug`/
+ * `debugging`/`debugged` and `log`/`logging` do, because a doubled consonant is undone.
  */
 function stem(word) {
   let stemmed = word;
-  if (stemmed.length > 5 && stemmed.endsWith("ing")) stemmed = stemmed.slice(0, -3);
-  else if (stemmed.length > 4 && stemmed.endsWith("ies")) stemmed = `${stemmed.slice(0, -3)}y`;
+  let strippedVerbEnding = false;
+  // Only strip -ing when a vowel is left, so a noun like "string" isn't cut to "str".
+  if (stemmed.length > 5 && /[aeiouy].*ing$/.test(stemmed)) {
+    stemmed = stemmed.slice(0, -3);
+    strippedVerbEnding = true;
+  } else if (stemmed.length > 4 && stemmed.endsWith("ies")) stemmed = `${stemmed.slice(0, -3)}y`;
   // "-es" is its own suffix only after a sibilant (fixes, classes, pushes); in "files" the "e"
   // belongs to the word, so only the "s" goes.
   else if (stemmed.length > 4 && /(s|x|z|ch|sh)es$/.test(stemmed)) stemmed = stemmed.slice(0, -2);
-  else if (stemmed.length > 4 && stemmed.endsWith("ed")) stemmed = stemmed.slice(0, -2);
-  else if (stemmed.length > 3 && stemmed.endsWith("s") && !stemmed.endsWith("ss")) {
+  else if (stemmed.length > 4 && stemmed.endsWith("ed")) {
+    stemmed = stemmed.slice(0, -2);
+    strippedVerbEnding = true;
+  } else if (stemmed.length > 3 && stemmed.endsWith("s") && !stemmed.endsWith("ss")) {
+    stemmed = stemmed.slice(0, -1);
+  }
+  // debugg -> debug, runn -> run; but pass, call, and buzz keep their pair, and "add" (from
+  // adding/added) stays "add" rather than shrinking to two letters.
+  if (strippedVerbEnding && stemmed.length > 3 && /([^aeiouslz])\1$/.test(stemmed)) {
     stemmed = stemmed.slice(0, -1);
   }
   if (stemmed.length > 3 && stemmed.endsWith("e")) stemmed = stemmed.slice(0, -1);

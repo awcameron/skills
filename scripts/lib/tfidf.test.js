@@ -26,6 +26,24 @@ describe("tokenize", () => {
     }
   });
 
+  it("undoes a doubled consonant left by -ing or -ed, except ss, ll, zz, and short words", () => {
+    for (const forms of [
+      "debug debugging debugged",
+      "log logs logging logged",
+      "run running",
+      "commit committing committed",
+      "pass passing passed",
+      "call calling called",
+      "add adding added",
+    ]) {
+      assert.equal(new Set(tokenize(forms)).size, 1, forms);
+    }
+  });
+
+  it("keeps -ing on a word with no vowel before it, like string", () => {
+    assert.deepEqual(tokenize("string strings"), ["string", "string"]);
+  });
+
   it("strips -es only after a sibilant, and -ies to -y", () => {
     assert.deepEqual(tokenize("fixes classes pushes dependencies"), [
       "fix",

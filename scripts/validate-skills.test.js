@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { after, beforeEach, describe, it } from "node:test";
+import { afterEach, beforeEach, describe, it } from "node:test";
 
 import {
   SOFT_DESCRIPTION_LENGTH,
@@ -33,8 +33,8 @@ beforeEach(() => {
   skillsDir = mkdtempSync(join(tmpdir(), "validate-skills-test-"));
 });
 
-after(() => {
-  if (skillsDir) rmSync(skillsDir, { recursive: true, force: true });
+afterEach(() => {
+  rmSync(skillsDir, { recursive: true, force: true });
 });
 
 function writeSkill(dirName, { frontmatter = VALID_FRONTMATTER, evalsJson } = {}) {
