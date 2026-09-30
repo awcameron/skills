@@ -170,6 +170,35 @@ export function validateVersionSync(root = repoRoot) {
 }
 
 /**
+ * Checks that the plugin's one-line description is identical in plugin.json, both marketplace.json
+ * entries, and package.json. The marketplace plugin entry is what Claude Code users see when
+ * browsing the plugin. The GitHub About description has the same text but isn't checked here
+ * (validate runs offline). Returns error strings, one per copy that differs from package.json's.
+ */
+export function validateDescriptionSync(root = repoRoot) {
+  const readJson = (relativePath) => JSON.parse(readFileSync(join(root, relativePath), "utf8"));
+
+  let pkg, plugin, marketplace;
+  try {
+    pkg = readJson("package.json");
+    plugin = readJson(".claude-plugin/plugin.json");
+    marketplace = readJson(".claude-plugin/marketplace.json");
+  } catch (error) {
+    return [`could not read description files: ${error.message}`];
+  }
+
+  const others = {
+    ".claude-plugin/plugin.json": plugin.description,
+    ".claude-plugin/marketplace.json": marketplace.description,
+    ".claude-plugin/marketplace.json plugins[0]": marketplace.plugins?.[0]?.description,
+  };
+
+  return Object.entries(others)
+    .filter(([, description]) => description !== pkg.description)
+    .map(([label]) => `${label} description differs from package.json's -- keep all four identical`);
+}
+
+/**
  * Checks that a script shipped by more than one skill (same `scripts/<file>` name) is byte-identical
  * in each. Skills install individually, so a shared script is copied rather than referenced, and
  * the copies must not drift. Returns error strings, one per differing copy.
@@ -265,6 +294,7 @@ function main() {
         ),
     },
     { label: "version sync", run: () => validateVersionSync() },
+    { label: "description sync", run: () => validateDescriptionSync() },
     { label: "shared skill scripts", run: () => validateSharedScripts() },
     { label: "README skill catalog", run: () => validateReadmeCatalog(dirNames) },
   ];

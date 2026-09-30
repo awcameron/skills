@@ -24,6 +24,8 @@ consumers; see [README.md](README.md) for what this repo is and how it's consume
                        # .claude-plugin manifests (schemas/plugin-manifest.schema.json,
                        # schemas/marketplace-registry.schema.json) are well-formed, and
                        # package.json / package-lock.json / plugin.json versions agree,
+                       # the plugin descriptions in package.json / plugin.json /
+                       # marketplace.json match,
                        # and README's "What's here" lists every skill
   npm run eval        # trigger-routing hasn't regressed -- see evals/README.md
   ```
