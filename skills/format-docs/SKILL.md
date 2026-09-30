@@ -29,230 +29,104 @@ allowed-tools:
 
 # Format Docs
 
-This skill formats and checks the consistency of a repo's Markdown documentation. It has two
-distinct jobs, kept separate because they carry different risk:
+This skill formats and checks the consistency of a repo's Markdown docs. It has two jobs, kept
+separate because they carry different risk:
 
 1. **Mechanical formatting** -- whitespace, list-marker indentation, table column alignment,
    trailing newlines. Safe, reversible, no wording changes. Apply directly, then show the diff.
 2. **Structural consistency** -- heading hierarchy, code-fence language tags, cross-doc
-   conventions like prose-wrap style. Report what's inconsistent; propose a specific fix; do not
-   apply it without the user confirming. This includes anything that would change wording or
-   restructure headings.
+   conventions like prose-wrap style, and anything that changes wording. Report it, propose a
+   specific fix, and don't apply it until the user confirms.
 
-Never blur the two: don't fold a wording change into a "mechanical" commit, and don't ask for
+Never blur the two: don't fold a wording change into a "mechanical" diff, and don't ask for
 confirmation on something that's genuinely just whitespace.
 
 ## Step 0: Find out what's already enforced
 
-Before assuming there's a gap to fill, check whether the repo already formats/lints its Markdown
-automatically -- most of the time there's already a real answer, and re-discovering it is cheap.
-Don't assume the tool is Prettier -- a repo with no `package.json` at all (a Python, Rust, or Go
-project) can still have a real Markdown formatter configured.
-
-Run the bundled scan first instead of grepping for each config file by hand. It ships inside this
-skill's own directory, not the repo being formatted, so call it by that path:
+Most repos already have an answer, and it isn't always Prettier -- a repo with no `package.json`
+(Python, Rust, Go) can still have a Markdown formatter configured. Run the bundled scan instead of
+grepping for each config file by hand. It ships inside this skill's directory, not the target
+repo:
 
 ```bash
 ${CLAUDE_SKILL_DIR}/scripts/detect_formatter.sh <repo-root>
 ```
 
-Claude Code fills in `${CLAUDE_SKILL_DIR}` automatically. If it's still literal text (another
-agent tool), use the absolute path of the `scripts/` directory next to this `SKILL.md` instead --
-never a bare `scripts/detect_formatter.sh`, which resolves against the target repo and won't exist
-there.
+Claude Code fills in `${CLAUDE_SKILL_DIR}`. If it's still literal text (another agent tool), use
+the absolute path of the `scripts/` directory next to this `SKILL.md` -- never a bare
+`scripts/detect_formatter.sh`, which resolves against the target repo.
 
-It checks in one pass for everything below and prints what it found (or says plainly that nothing
-is configured). Treat its output as a lead to verify, not a final answer -- it flags *candidate*
-config, but you still need to read the flagged file when the setup is ambiguous (e.g. it can't tell
-you what a `dprint.json` markdown plugin's `textWrap` is set to, only that the plugin is present):
+The script checks tool configs, `package.json` scripts, pre-commit hooks, and CI workflows in one
+pass. Its output is a lead to verify, not a final answer: when the setup is ambiguous, read the
+flagged file (it can't tell you, for example, what a dprint markdown plugin's `textWrap` is).
 
-- Root (and per-workspace) `package.json` `scripts` for a `format`/`format:check`/`lint:md` entry,
-  and what glob it targets.
-- A pre-commit hook (`.husky/`, `lint-staged.config.*`, `.lintstagedrc*`, or a non-JS equivalent
-  like `.pre-commit-config.yaml`) for a `"**/*.md"` (or `\.md$`) entry.
-- CI workflow files (`.github/workflows/*.yml` or equivalent) for a job that runs the format
-  script unconditionally.
-- Tool-specific config files, since more than one of these can coexist:
-  - `.prettierrc*` / a `prettier` dependency (Prettier) -- not scoped away from `.md` files.
-  - `dprint.json`/`dprint.jsonc` with a markdown plugin entry (dprint).
-  - `.markdownlint.json`/`.yml` or `.markdownlint-cli2.jsonc` (markdownlint-cli2).
-  - `pyproject.toml` `[tool.mdformat]`, or `mdformat` in a `requirements*`/lockfile (mdformat).
-  - `.remarkrc*` that isn't just Prettier's own Markdown support underneath (standalone remark).
-  - `biome.json`/`biome.jsonc` (Biome) -- its Markdown formatter is newer than the rest of its
-    toolchain and sometimes disabled or unconfigured even when the file exists for JS/TS; confirm
-    it actually covers `.md` before treating it as the answer.
+- **More than one tool found:** flag it rather than picking one -- it's usually leftover config
+  from a migration, and running the wrong one produces a confusing diff.
+- **Already enforced automatically:** say so, and treat the mechanical job as running that same
+  check by hand -- before committing, or on a file the automated path didn't reach. Drift in a doc
+  that went through a normal commit means something bypassed the hook (`--no-verify`, a web UI
+  edit); mention it, don't just fix it silently.
+- **Nothing configured:** say so. Prettier is the reasonable default to propose, but running it
+  introduces a check rather than enforcing an existing one -- tell the user, and confirm before
+  any write.
 
-If the script (or a manual check, if it's unavailable for some reason) turns up more than one of
-these, don't just pick one -- flag it to the user; it's usually leftover config from a migration,
-and running the wrong one can produce a confusing diff.
+## Before running a tool, read `references/tools.md`
 
-If Markdown formatting is already enforced automatically, say so, and treat this skill's
-mechanical-formatting job as *running that same check manually* -- useful before committing, or
-against a file the automated path didn't reach (an out-of-scope file the user names explicitly, or
-a doc edited through a path that skipped the hook, e.g. a commit made with `--no-verify`, or a
-web UI edit). A doc that's already been through a normal commit should already be clean; finding drift
-there is a signal something bypassed the hook, worth mentioning to the user, not just silently
-fixing.
+[`references/tools.md`](references/tools.md) has each tool's check/write commands and its
+prose-rewrap default. Read the entry for the discovered tool before running anything: a pass is
+only mechanical if the tool can't reflow prose under this repo's config, and several tools can
+(Prettier with `proseWrap: always`, mdformat with an integer `wrap`, dprint's `textWrap`, remark
+and Biome depending on config). If it's unclear, treat the pass as structural.
 
-If nothing is configured, say that too, and treat the mechanical pass below as introducing a
-check, not enforcing an existing one -- flag that distinction to the user rather than implying a
-convention exists when it doesn't yet.
+Keep `--no-install` on every `npx` call, so npx uses the repo's installed binary instead of
+fetching one from the network.
 
-## Mechanical formatting: reuse whatever tool the repo already uses, don't invent new rules
+## What formatters don't fix
 
-Act on whatever Step 0 actually found configured -- don't default to Prettier just because it's
-the most common case. Match the check/write pair to the tool that's actually there:
-
-| Tool | Found via | Check | Write |
-|---|---|---|---|
-| Prettier | `.prettierrc*`, a `prettier` dependency, a `format`/`format:check` script | `npx --no-install prettier --check "<path>"` | `npx --no-install prettier --write "<path>"` |
-| dprint | `dprint.json`/`.jsonc` with a markdown plugin | `dprint check` (scoped by its config, or `--` a path) | `dprint fmt` |
-| markdownlint-cli2 | `.markdownlint.json`/`.yml`/`.markdownlint-cli2.jsonc` | `npx --no-install markdownlint-cli2 "<path>"` | `npx --no-install markdownlint-cli2 --fix "<path>"` |
-| mdformat | `pyproject.toml` `[tool.mdformat]`, or an `mdformat` dependency | `mdformat --check "<path>"` | `mdformat "<path>"` |
-| remark (standalone) | `.remarkrc*` not just underlying Prettier | `npx --no-install remark "<path>" --frail` | `npx --no-install remark "<path>" -o` |
-| Biome | `biome.json`/`.jsonc` with markdown covered | `npx --no-install biome check "<path>"` | `npx --no-install biome check --write "<path>"` |
-
-If nothing is configured, Prettier remains the reasonable **default to propose** -- most repos
-that touch JS/TS tooling at all have it available and it formats Markdown out of the box with no
-extra setup. But say explicitly that this introduces a check rather than enforcing an existing
-one (per Step 0), and confirm before running any `--write`/`fmt` step against real files.
-
-`--no-install` (Prettier, markdownlint-cli2, remark) guarantees npx resolves the repo's
-already-installed local binary instead of fetching one from the network -- never drop it. For a
-workspace with its own tool version but no config of its own, check whether it resolves the
-nearest parent config, and whether that's actually the intended target before assuming a
-monorepo sub-package needs its own pass.
-
-## Know each tool's prose-rewrap default before running --write
-
-The property that makes a formatting pass "mechanical" (safe to apply without confirmation) is
-that it cannot silently change how a paragraph reads -- it only touches whitespace, list markers,
-table alignment, trailing newlines. That property is **not** universal across tools, so check the
-resolved config for whichever one applies before assuming it holds:
-
-- **Prettier**: `proseWrap` defaults to `preserve` -- safe by default. If a repo's config sets
-  `proseWrap: always` (or similar), a Prettier run *can* reflow prose -- treat that as
-  structural risk (see below), not a mechanical pass.
-- **mdformat**: its own default (`--wrap keep`, confirmed against a real install) preserves
-  existing line breaks -- an *unconfigured* mdformat run is safe. The risk runs the other way: if
-  the repo's config sets `wrap` to a fixed integer (or CLI usage passes `--wrap=<n>`), *that*
-  reflows prose and needs the structural-risk treatment below. Check the resolved `wrap` setting
-  either way rather than assuming which case you're in.
-- **dprint's markdown plugin**: check its resolved `textWrap` setting the same way -- it has no
-  universal safe default to assume.
-- **markdownlint-cli2 `--fix`**: fixes lint violations (list markers, trailing whitespace, heading
-  spacing) and does not reflow prose -- safe by default.
-- **remark**: reflow behavior depends entirely on which plugins/options are configured (e.g.
-  `remark-stringify` width settings) -- read the config rather than assuming either behavior.
-- **Biome**: its Markdown formatter is a newer addition than its JS/CSS/JSON formatters and its
-  defaults have moved between versions -- check the resolved config (and the installed version)
-  rather than assuming either a preserve or reflow default.
-
-When a given tool's config doesn't make the answer clear, treat the pass as structural risk and
-confirm before writing, rather than assuming mechanical safety by default.
-
-## What these formatters do *not* fix: know the boundary before you touch anything
-
-None of the tools above are a complete style checker. Beyond mechanical whitespace/list/table
-fixes (and, for markdownlint, its specific lint rules), none of them:
-
-- Enforce heading hierarchy or level choice.
-- Enforce or add code-fence language tags.
-- Catch broken internal links, stale file-path references, or wording issues.
-
-Those require reading the docs and using judgment (see below).
+Beyond whitespace/list/table mechanics (and markdownlint's own rules), none of these tools enforce
+heading hierarchy, add code-fence language tags, or catch broken links, stale paths, or wording
+issues. Those need reading and judgment.
 
 ## Structural consistency: derive patterns from the repo itself
 
-Don't apply generic Markdown best-practice opinions -- read a representative sample of the repo's
-actual docs (its README, its `AGENTS.md`/`CONTRIBUTING.md`-equivalent, a handful of files under
-`docs/`) and derive what's *already* consistent there before flagging anything as wrong. Typical
-things worth checking once you know the repo's own pattern:
+Don't apply generic Markdown opinions. Read a representative sample -- the README, the
+`AGENTS.md`/`CONTRIBUTING.md`-equivalent, a handful of files under `docs/` -- and flag only what's
+inconsistent with the repo's own pattern:
 
-- **Heading hierarchy**: does every file start at `#` (one per file, the title), then `##` for
-  major sections? Flag a file that skips a level or starts below `#` only if that's not already
-  how other files in the repo do it.
-- **List markers**: is `-` used consistently, or does the repo mix `-` and `*`? Flag inconsistency
-  within a file, not a repo-wide marker choice you'd prefer.
-- **Code-fence language tags**: are fenced blocks containing real shell/code commands tagged
-  consistently (`` ```bash ``, etc.) in the files that already have them? A bare fence around a
-  file-tree diagram or an abstract pattern illustration (not actual source in a language) is
-  usually fine as-is -- don't flag those as missing a tag.
+- **Heading hierarchy**: one `#` title per file, then `##`? Flag a skipped level or a file that
+  starts below `#` only if other files don't already do the same.
+- **List markers**: flag `-`/`*` mixed within a file, not a repo-wide choice you'd prefer.
+- **Code-fence language tags**: real shell/code blocks should be tagged the way the repo already
+  tags them. A bare fence around a file tree or an abstract illustration is fine.
+- **Prose-wrap style**: some files hard-wrap at a fixed column, others use one line per paragraph,
+  and one file can mix both. A formatter set to preserve won't resolve this -- it's an
+  undocumented authoring split, not a formatting bug. **Don't pick a side and rewrap to match.**
+  Surface it as a decision for the user (or a follow-up issue), and rewrap only after it's made.
 
-**Prose-wrap style is a common source of real, unresolved inconsistency** -- some files hard-wrap
-paragraphs at a fixed column, others write each paragraph as one long unwrapped line, and a single
-file sometimes mixes both across sections. Since `proseWrap` is usually unset (`preserve`), a
-formatter will never resolve this on its own -- it isn't a formatting bug, it's an undocumented
-split in authoring convention. **Do not pick one and rewrap the other's files or sections to
-match -- that's a wording-adjacent structural change.** Surface it as a call the user (or a
-follow-up issue) should make explicitly, and only rewrap after that's answered.
+## Scope
 
-## `.mdc`/tool-specific rule files: usually out of scope
-
-If the repo has tool-specific rule files (e.g. Cursor's `.cursor/rules/*.mdc`), treat those as a
-different document type with their own frontmatter contract that a generic Markdown formatter has
-no awareness of -- they are not general-purpose Markdown. Default to targeting only plain `.md`
-files (the README, docs, and other `.md` files the user explicitly names). If asked to format one
-of these tool-specific files, say so explicitly and stop rather than running a Markdown formatter
-against it unreviewed.
-
-## What's in scope by default
-
-In scope:
-
-- The repo's canonical conventions doc (README, `AGENTS.md`/`CONTRIBUTING.md`, etc.) and
-  everything under its main docs directory (commonly `docs/**/*.md`).
-- Any other `.md` file the user explicitly points at.
+In scope by default: the repo's canonical conventions doc (README, `AGENTS.md`/`CONTRIBUTING.md`)
+and its main docs directory (commonly `docs/**/*.md`), plus any `.md` file the user names.
 
 Skip:
 
-- Anything the repo's own conventions mark off-limits (a deprecated/legacy directory, a scaffold
-  slated for removal) -- check for that kind of boundary doc before sweeping broadly.
-- A one-line include file with no prose of its own (e.g. a root file that just references another
-  doc) -- skip it rather than reporting it as untouched; there's nothing for this skill to do
-  there.
+- Anything the repo's conventions mark off-limits (a deprecated or legacy directory, a scaffold
+  slated for removal).
+- A one-line include file with no prose of its own -- there's nothing to do there.
+- Tool-specific rule files such as Cursor's `.cursor/rules/*.mdc`. They have their own frontmatter
+  contract that a Markdown formatter doesn't know about. If asked to format one, say so and stop.
 
 ## Workflow
 
-1. **Determine target files.** Default to the repo's canonical doc + its main docs directory if
-   the user doesn't name specific files. Confirm the target list back to the user if it's broader
-   than a file or two, so nothing unexpected gets swept in.
-
-2. **Before running anything, read the discovered tool's prose-rewrap default** (see "Know each
-   tool's prose-rewrap default" above) -- do this as part of discovery, not as an afterthought
-   right before writing. Knowing upfront whether the tool is safe-by-default (Prettier,
-   markdownlint-cli2, mdformat's own unconfigured default) or needs its resolved config checked for
-   a reflow setting (dprint, remark, Biome, or an mdformat config that sets `wrap` explicitly)
-   shapes how you read its next result: a tool that *can* reflow means even its *check* output
-   needs a second look before you treat anything it flags as simple mechanical drift.
-
-3. **Run the discovered tool's check command**, don't jump straight to writing. E.g. for Prettier:
-
-   ```bash
-   npx --no-install prettier --check "<canonical-doc>" "docs/**/*.md"
-   ```
-
-   (Substitute the matching check command from the table above for whatever Step 0 found instead.)
-   This tells you which files actually have mechanical drift before touching anything.
-
-4. **Apply mechanical fixes directly** to whatever the check step flagged, using that same tool's
-   write command (e.g. `npx --no-install prettier --write "<flagged files>"`, or `dprint fmt`,
-   `mdformat`, etc. per the table above) -- provided its prose-rewrap default checked out safe in
-   step 2.
-
-   Then show the result with `git diff -- <flagged files>` so the user can see exactly what
-   changed -- list-marker indentation, table alignment, trailing newlines. If the diff contains
-   anything beyond whitespace/list/table mechanics, stop and treat it as a structural change
-   instead (see step 6) rather than reporting it as "just formatting."
-
-5. **Check structural consistency** (heading hierarchy, code-fence tags, list markers) against the
-   patterns you derived from the repo's own docs, for every target file, not just ones the
-   formatter flagged -- a Markdown formatter doesn't check any of this.
-
-6. **For anything structural** -- a heading-level fix, adding a missing language tag, or a
-   prose-wrap split -- propose the specific edit (the exact `Edit` you'd make) and get
-   confirmation before applying it. Don't fold these into the mechanical diff from step 4.
-
-7. **Report** what was applied directly (mechanical) vs. what's proposed and awaiting confirmation
-   (structural), file by file. If nothing needed fixing, say so plainly rather than manufacturing
-   findings.
+1. **Target files.** Default to the scope above. If the list is broader than a file or two,
+   confirm it back to the user.
+2. **Discover** the tool (Step 0) and its rewrap behavior (`references/tools.md`).
+3. **Run the check command** first, not the write, to see which files have mechanical drift.
+4. **Apply mechanical fixes** with the same tool's write command, if its rewrap behavior checked
+   out safe. Show `git diff -- <files>`. If the diff has anything beyond whitespace/list/table
+   mechanics, stop and treat it as structural (step 6).
+5. **Check structural consistency** in every target file, not just the ones the formatter flagged.
+6. **Propose each structural edit** -- heading fix, missing language tag, prose-wrap split -- as
+   the exact `Edit` you'd make, and apply it only after confirmation.
+7. **Report** file by file: what was applied (mechanical) vs. what's proposed and awaiting
+   confirmation (structural). If nothing needed fixing, say so plainly.
