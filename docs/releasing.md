@@ -58,10 +58,6 @@ change right now, but doing so anyway is a reasonable way to signal it before th
 
 ## Known gaps
 
-- **The bump PR's branch isn't auto-deleted on merge.** Same as any PR in this repo -- check
-  `gh repo view --json deleteBranchOnMerge`, and if it's `false`, delete
-  `chore/bump-version-<version>` manually (local + remote) after merging, the same as any other
-  branch (see `create-pr`'s post-merge cleanup step).
 - **A PR opened by the bump workflow's own `GITHUB_TOKEN` doesn't trigger other workflows**
   (CI, PR title lint) -- this is GitHub's anti-recursion safeguard, not a bug. Re-run those checks
   manually on the opened PR if you want them to run before merging, or accept that `validate`/`eval`
