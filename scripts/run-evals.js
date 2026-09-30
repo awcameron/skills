@@ -10,11 +10,14 @@
 // Usage:
 //   node scripts/run-evals.js                  # run every case, print full report
 //   node scripts/run-evals.js --min-rank1 80    # exit 1 if positive-case rank-1 rate is below 80%
+//
+// Exit codes: 0 all pass, 1 a case failed, 2 bad arguments.
 
 import { readFileSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { isMain } from "./lib/is-main.js";
 import { loadAllSkills } from "./lib/parse-skill.js";
 import { fitTfIdf, rank, cosineSimilarity } from "./lib/tfidf.js";
 
@@ -23,12 +26,29 @@ const skillsDir = join(repoRoot, "skills");
 const casesDir = join(repoRoot, "evals", "cases");
 const COLLISION_THRESHOLD = 0.5;
 
-function parseArgs(argv) {
+/** Parses CLI flags. Throws on a flag it doesn't know or a missing/out-of-range value. */
+export function parseArgs(argv) {
   const args = { minRank1: null };
   for (let i = 0; i < argv.length; i++) {
-    if (argv[i] === "--min-rank1") args.minRank1 = Number(argv[++i]);
+    if (argv[i] !== "--min-rank1") throw new Error(`unknown argument: ${argv[i]}`);
+    const value = argv[++i];
+    const minRank1 = Number(value);
+    // Number(undefined) is NaN, and `rate < NaN` is always false -- a missing value would
+    // silently pass the threshold, so reject it here.
+    if (value === undefined || !Number.isFinite(minRank1) || minRank1 < 0 || minRank1 > 100) {
+      throw new Error(`--min-rank1 needs a percentage from 0 to 100, got ${JSON.stringify(value)}`);
+    }
+    args.minRank1 = minRank1;
   }
   return args;
+}
+
+/** Returns why a positive case's top_k is unusable, or null if it's a positive integer. */
+export function topKProblem(topK) {
+  if (Number.isInteger(topK) && topK >= 1) return null;
+  return topK === undefined
+    ? "missing top_k"
+    : `top_k must be a positive integer, got ${JSON.stringify(topK)}`;
 }
 
 function loadCases() {
@@ -38,7 +58,13 @@ function loadCases() {
 }
 
 function main() {
-  const { minRank1 } = parseArgs(process.argv.slice(2));
+  let minRank1;
+  try {
+    ({ minRank1 } = parseArgs(process.argv.slice(2)));
+  } catch (error) {
+    console.error(error.message);
+    process.exit(2);
+  }
 
   const skills = loadAllSkills(skillsDir);
   const skillNames = new Set(skills.map((skill) => skill.name));
@@ -58,6 +84,7 @@ function main() {
   let negativeTotal = 0;
   let negativePassed = 0;
   let hadUnknownSkillRef = false;
+  let hadInvalidCase = false;
 
   if (uncoveredSkillNames.length > 0) {
     console.log("=== Missing coverage ===\n");
@@ -81,6 +108,12 @@ function main() {
 
     for (const { prompt, top_k: topK } of trigger.positive ?? []) {
       positiveTotal++;
+      const problem = topKProblem(topK);
+      if (problem) {
+        console.log(`  FAIL positive "${prompt}" -> ${problem} (evals/cases/${skillName}.json)`);
+        hadInvalidCase = true;
+        continue;
+      }
       const ranked = rank(vectorizeQuery(prompt), docVectors);
       const position = ranked.findIndex((entry) => entry.id === skillName) + 1;
       const passed = position >= 1 && position <= topK;
@@ -140,6 +173,7 @@ function main() {
 
   const failed =
     hadUnknownSkillRef ||
+    hadInvalidCase ||
     uncoveredSkillNames.length > 0 ||
     positivePassed < positiveTotal ||
     negativePassed < negativeTotal ||
@@ -154,4 +188,4 @@ function main() {
   process.exit(failed ? 1 : 0);
 }
 
-main();
+if (isMain(import.meta.url)) main();

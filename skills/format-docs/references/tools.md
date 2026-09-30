@@ -6,9 +6,9 @@ Act on whichever tool `detect_formatter.sh` found, not on Prettier by default.
 
 | Tool | Found via | Check | Write |
 |---|---|---|---|
-| Prettier | `.prettierrc*`, a `prettier` dependency, a `format`/`format:check` script | `npx --no-install prettier --check "<path>"` | `npx --no-install prettier --write "<path>"` |
+| Prettier | `.prettierrc*`, `prettier.config.*`, a `prettier` dependency, a `format`/`format:check` script | `npx --no-install prettier --check "<path>"` | `npx --no-install prettier --write "<path>"` |
 | dprint | `dprint.json`/`.jsonc` with a markdown plugin | `dprint check` (scoped by its config, or `--` a path) | `dprint fmt` |
-| markdownlint-cli2 | `.markdownlint.json`/`.yml`/`.markdownlint-cli2.jsonc` | `npx --no-install markdownlint-cli2 "<path>"` | `npx --no-install markdownlint-cli2 --fix "<path>"` |
+| markdownlint-cli2 | `.markdownlint.json`/`.jsonc`/`.yml`/`.yaml`, `.markdownlintrc`, `.markdownlint-cli2.*` | `npx --no-install markdownlint-cli2 "<path>"` | `npx --no-install markdownlint-cli2 --fix "<path>"` |
 | mdformat | `pyproject.toml` `[tool.mdformat]`, or an `mdformat` dependency | `mdformat --check "<path>"` | `mdformat "<path>"` |
 | remark (standalone) | `.remarkrc*` not just underlying Prettier | `npx --no-install remark "<path>" --frail` | `npx --no-install remark "<path>" -o` |
 | Biome | `biome.json`/`.jsonc` with markdown covered | `npx --no-install biome check "<path>"` | `npx --no-install biome check --write "<path>"` |

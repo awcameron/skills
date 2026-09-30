@@ -7,7 +7,12 @@ on:
       - "evals/**"
       - "plugin-evals/**"
       - "scripts/**"
+      - "schemas/**"
+      - ".claude-plugin/**"
+      - ".gemini/commands/**"
       - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/ci.yml"
       - "**/*.md"
   push:
     branches: [main]
@@ -16,7 +21,12 @@ on:
       - "evals/**"
       - "plugin-evals/**"
       - "scripts/**"
+      - "schemas/**"
+      - ".claude-plugin/**"
+      - ".gemini/commands/**"
       - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/ci.yml"
       - "**/*.md"
 
 permissions:

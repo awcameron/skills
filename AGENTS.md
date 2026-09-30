@@ -77,10 +77,12 @@ repo it's dropped into, but it is exactly the process this repo itself follows.
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) (`npm run validate` + `npm test` +
 `npm run eval`) only runs if your PR touches the following allowlisted paths: `skills/**`,
-`evals/**`, `plugin-evals/**`, `scripts/**`, `package.json`, or any `.md` file.
+`evals/**`, `plugin-evals/**`, `scripts/**`, `schemas/**`, `.claude-plugin/**`,
+`.gemini/commands/**`, `package.json`, `package-lock.json`, `ci.yml` itself, or any `.md` file.
 
 A change outside this allowlist gets no automated check at all -- review those by hand before
-merging. The real case: a `.github/workflows/*.yml`-only PR (no accompanying doc/skill change).
+merging. The real case: a PR touching only the other workflows (`bump-version.yml`,
+`release.yml`, `pr-title-lint.yml`), which the checks don't exercise anyway.
 
 ## Post-merge cleanup
 

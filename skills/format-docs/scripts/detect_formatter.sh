@@ -8,8 +8,8 @@
 # Usage: <this skill's dir>/scripts/detect_formatter.sh [repo-root]   (defaults to cwd)
 #   In Claude Code: ${CLAUDE_SKILL_DIR}/scripts/detect_formatter.sh [repo-root]
 #
-# Exit code is always 0 -- this is a report, not a pass/fail check. Read the
-# output; don't script against it.
+# Exit code is 0 whatever it finds -- this is a report, not a pass/fail check (1 only if
+# repo-root doesn't exist). Read the output; don't script against it.
 
 set -u
 root="${1:-.}"
@@ -39,6 +39,10 @@ existing() {
 if ls .prettierrc* >/dev/null 2>&1; then
   note "[prettier] config file: $(ls .prettierrc* 2>/dev/null | tr '\n' ' ')"
 fi
+hits=$(existing prettier.config.js prettier.config.mjs prettier.config.cjs prettier.config.ts)
+if [ -n "$hits" ]; then
+  note "[prettier] config file: $(echo "$hits" | tr '\n' ' ')"
+fi
 if [ -f package.json ] && grep -q '"prettier"' package.json 2>/dev/null; then
   note "[prettier] referenced in package.json -- could be a devDependency, a top-level \"prettier\" config key, or both; check which"
 fi
@@ -54,7 +58,9 @@ if [ -n "$cfg" ]; then
 fi
 
 # --- markdownlint-cli2 ---
-hits=$(existing .markdownlint.json .markdownlint.yml .markdownlint.yaml .markdownlint-cli2.jsonc .markdownlint-cli2.yaml)
+hits=$(existing .markdownlint.json .markdownlint.jsonc .markdownlint.yml .markdownlint.yaml \
+  .markdownlintrc .markdownlint-cli2.jsonc .markdownlint-cli2.yaml .markdownlint-cli2.cjs \
+  .markdownlint-cli2.mjs)
 if [ -n "$hits" ]; then
   note "[markdownlint-cli2] config file: $(echo "$hits" | tr '\n' ' ')"
 fi
