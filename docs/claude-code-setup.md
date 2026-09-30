@@ -35,10 +35,6 @@ Claude Code discovers any `SKILL.md` under `.claude/skills/<name>/` without a pl
 step. This is the lighter option if you just want the skills, not the slash commands or plugin
 metadata.
 
-The `SessionStart` catalog hook isn't auto-discovered this way -- it only wires up automatically
-through the plugin install above. To get it here, wire it into your project's own
-`.claude/settings.json` by hand; see [`hooks/README.md`](../hooks/README.md) for the exact JSON.
-
 ## Global setup
 
 ```bash
@@ -48,10 +44,20 @@ ln -s ~/awcameron-skills/skills/review-code ~/.claude/skills/review-code
 Symlink one skill (or the whole `skills/` directory) into `~/.claude/skills/` to make it
 available in every project without repeating setup per-repo.
 
-Same caveat as Project setup: the `SessionStart` catalog hook needs manual wiring here too --
-see [`hooks/README.md`](../hooks/README.md).
-
 ## Verify
 
 Ask Claude Code something that matches a skill's trigger phrasing (e.g. "review my changes")
 and confirm it names the skill it's using, or run `/review-code` directly.
+
+## If a skill stops triggering
+
+Claude Code lists every installed skill's name and description in each session, and that listing
+has a character budget (1% of the model's context window). With many skills installed from
+several sources, it drops descriptions for the skills you invoke least, so a skill can stay listed
+by name but lose the trigger phrases Claude matches requests against.
+
+The Skills row in `/context` shows the listing's size after the budget is applied. To raise the
+budget, set `skillListingBudgetFraction` in `settings.json` (e.g. `0.02` for 2%) or the
+`SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variable to a fixed character count; to free budget,
+set skills you rarely use to `"name-only"` in `skillOverrides`. See Claude Code's
+[Skill descriptions are cut short](https://code.claude.com/docs/en/skills#skill-descriptions-are-cut-short).

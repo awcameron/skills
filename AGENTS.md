@@ -74,13 +74,10 @@ repo it's dropped into, but it is exactly the process this repo itself follows.
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) (`npm run validate` + `npm test` +
 `npm run eval`) only runs if your PR touches the following allowlisted paths: `skills/**`,
-`evals/**`, `scripts/**`, `hooks/**`, `package.json`, or any `.md` file.
+`evals/**`, `scripts/**`, `package.json`, or any `.md` file.
 
 A change outside this allowlist gets no automated check at all -- review those by hand before
 merging. The real case: a `.github/workflows/*.yml`-only PR (no accompanying doc/skill change).
-
-`hooks/session-start.sh`'s catalog output is covered by `scripts/session-start-hook.test.js`
-(part of `npm test`).
 
 ## Post-merge cleanup
 
@@ -105,8 +102,6 @@ bump/release pipeline: [`docs/releasing.md`](docs/releasing.md).
   - Contains `plugin.json` (versioned metadata: `skills`/`commands` paths, kept in sync with
     `package.json`, see "Versioning and releases" above).
   - Contains `marketplace.json` (what `/plugin marketplace add awcameron/skills` actually reads).
-  - *Note:* `hooks/hooks.json` is auto-loaded from its standard path and deliberately not
-    declared here, see `hooks/README.md`.
 - `.claude/commands/`, `.gemini/commands/` -- thin per-tool slash-command wrappers.
 - `.agents/skills/`, `.claude/skills/` -- symlinks back to `skills/`, for tools that discover
   skills from those paths directly.
@@ -116,5 +111,4 @@ bump/release pipeline: [`docs/releasing.md`](docs/releasing.md).
   - No confirmed tool actually discovers skills from `.codex/skills/` (see
     `docs/codex-setup.md`, which never references it).
 - `evals/` -- the trigger-routing eval system; see [`evals/README.md`](evals/README.md).
-- `hooks/` -- the SessionStart hook; see [`hooks/README.md`](hooks/README.md).
 - `docs/*-setup.md` -- per-tool consumer setup instructions (not relevant to developing this repo).
