@@ -1,16 +1,11 @@
 ---
 name: doc-fact-check
 description: >-
-  Cross-check a doc's factual and architectural claims against current truth and flag anything
-  that's gone stale -- hosting/deploy targets, stack choices, layering rules, documented
-  conventions, referenced file paths, naming conventions, and CLI commands a doc tells the reader
-  to run -- checked against the codebase and git/GitHub history directly, not just the repo's own
-  curated docs (the canonical doc can itself be the stale one). Use when the user asks whether a
-  doc "is still accurate", to "check this doc for staleness", to "review/update a spec, plan,
-  README, or onboarding doc against current facts", or points at any doc to verify it against
-  reality. Also covers agent-skill files -- a skill file is documentation an agent acts on
-  directly, so drift there is executed, not just read. Does NOT do mechanical Markdown formatting
-  (that's `format-docs`) and does NOT review code quality (a separate code-review skill's job).
+  Check a doc's factual claims -- deploy targets, stack choices, architecture rules, conventions,
+  file paths, CLI commands -- against the current codebase and git/GitHub history, and flag anything
+  stale. The repo's canonical docs can be the stale ones, and agent-skill files count as docs. Use
+  when the user asks whether a doc "is still accurate" or "still matches" how things are done, or to
+  "check this doc for staleness". Not for Markdown formatting (`format-docs`) or code review.
 allowed-tools: [Read, Grep, Glob, Bash(git log:*), Bash(git for-each-ref:*), Bash(git ls-files:*), Bash(gh issue list:*), Bash(gh pr list:*)]
 ---
 

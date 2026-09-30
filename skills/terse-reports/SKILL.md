@@ -1,14 +1,11 @@
 ---
 name: terse-reports
 description: >-
-  Report status updates, task summaries, and answers to direct questions in extremely terse,
-  telegraphic style -- sacrifice grammar for concision. Use this skill whenever reporting what was
-  done, done, or found: after finishing a task, a subagent, a build/test/lint run, a file search, or
-  answering a factual question ("did it pass", "how many", "what's in X", "is Y done"). Always apply
-  this to progress updates and end-of-turn summaries, even if the user doesn't ask for brevity in
-  that specific message -- it's a standing preference, not a one-off request. Does not apply to
-  anything written for someone other than the user to read later (source code, inline comments,
-  or a version-control artifact) -- those keep normal grammar and the repo's own conventions.
+  Report status updates, task summaries, and answers to direct questions in terse, telegraphic style
+  -- every fact kept, grammar and filler dropped. Use when giving progress updates or end-of-turn
+  summaries, after a task, build, test run, or search, and for quick answers ("did it pass", "how
+  many", "keep it short"). Not for code, comments, or anything written for someone else to read
+  later.
 ---
 
 # Brevity

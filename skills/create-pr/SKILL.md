@@ -1,17 +1,11 @@
 ---
 name: create-pr
 description: >-
-  Take a set of local changes through a repo's real branch/commit/push/PR workflow, and sync up
-  the local repo once that PR is done. Use this skill when the user asks to "open a PR", "create a
-  PR", "make a pull request", "ship this branch", "submit this for review", "push this up", "put up
-  a PR", "get this reviewed", or wants a branch created, changes committed, or a PR opened. Also
-  covers the tail end of that workflow, when the user reports "it's done"/"that's in now" --
-  confirm the PR's actual state, pull the default branch, and delete the leftover branch locally
-  and on the remote. This skill discovers the repo's own branch-naming, commit-message,
-  and PR-title/body conventions from its documented conventions plus its actual git/GitHub
-  history -- it takes real, visible git/GitHub actions (push, `gh pr create`), so it shows the
-  planned branch name, commit message, PR title, and PR body and gets explicit confirmation
-  before each visible/remote step. It does not review code quality (see `review-code` for that).
+  Take local changes through a repo's real branch, commit, push, and PR workflow, using the naming
+  conventions it finds in the repo's docs and git/GitHub history, and confirm before each visible
+  step. Use when the user asks to "open a PR", "create a PR", "ship this branch", "push this up", or
+  "get this reviewed" -- or reports a PR is merged ("it's merged", "that's in now") and the branches
+  need cleaning up.
 allowed-tools: [Read, Grep, Glob, Bash(git status:*), Bash(git branch:*), Bash(git rev-parse:*), Bash(git diff:*), Bash(git log:*), Bash(git checkout:*), Bash(git add:*), Bash(git commit:*), Bash(git push:*), Bash(git pull:*), Bash(gh issue view:*), Bash(gh pr view:*), Bash(gh pr list:*), Bash(gh pr create:*), Bash(gh pr merge:*), Bash(gh pr checks:*), Bash(gh repo view:*)]
 ---
 

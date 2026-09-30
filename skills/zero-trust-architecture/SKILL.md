@@ -1,17 +1,12 @@
 ---
 name: zero-trust-architecture
 description: >-
-  Enforces Zero Trust security principles -- never trust a caller based on where it came from or
-  what layer already ran, always verify identity and object-level ownership explicitly -- across a
-  request-layer authorization chain, service-to-service calls, background-job/queue consumers, a
-  database-layer tenant-isolation backstop, and client-side session-token handling. Use this skill
-  when creating or modifying an auth guard or middleware, a handler touching a specific user- or
-  org/tenant-owned resource, an internal service call, a background job processing tenant data,
-  tenant-isolation policies, or anything that stores, forwards, or revokes a session token -- even
-  if the request doesn't say "security" explicitly, e.g. "add an endpoint to delete a room" or "why
-  does this user see another org's data" should both trigger it. Also reach for this when auditing
-  existing code for authorization gaps (BOLA/IDOR-style: does this handler trust a client-supplied
-  id instead of the identity a guard already verified?).
+  Enforce Zero Trust authorization: never trust a caller because of where it came from or which
+  layer already ran -- verify identity and resource ownership explicitly. Use when adding or
+  changing an auth guard, a handler touching a user's or org's data, how an internal service
+  authenticates, a background job or queue consumer, row-level security, or session-token storage,
+  or when auditing authorization gaps -- e.g. "add an endpoint to delete a room" or "why does this
+  user see another org's data".
 allowed-tools: [Read, Grep, Glob, Edit, Write]
 ---
 

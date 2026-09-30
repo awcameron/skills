@@ -9,7 +9,12 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { after, beforeEach, describe, it } from "node:test";
 
-import { validateSkill, validateVersionSync } from "./validate-skills.js";
+import {
+  SOFT_DESCRIPTION_LENGTH,
+  skillWarnings,
+  validateSkill,
+  validateVersionSync,
+} from "./validate-skills.js";
 
 const VALID_FRONTMATTER = `---
 name: my-skill
@@ -227,5 +232,31 @@ describe("validateVersionSync", () => {
 
     assert.equal(errors.length, 1);
     assert.match(errors[0], /could not read version files/);
+  });
+});
+
+describe("skillWarnings", () => {
+  const withDescription = (description) =>
+    `---\nname: my-skill\ndescription: ${description}\n---\n\nBody.\n`;
+
+  it("doesn't warn at or under the soft limit", () => {
+    const description = "Use when asked. ".padEnd(SOFT_DESCRIPTION_LENGTH, "x");
+    writeSkill("my-skill", { frontmatter: withDescription(description) });
+
+    assert.deepEqual(skillWarnings("my-skill", skillsDir), []);
+  });
+
+  it("warns, without failing validation, over the soft limit", () => {
+    const description = "Use when asked. ".padEnd(SOFT_DESCRIPTION_LENGTH + 1, "x");
+    writeSkill("my-skill", { frontmatter: withDescription(description) });
+
+    const warnings = skillWarnings("my-skill", skillsDir);
+    assert.equal(warnings.length, 1);
+    assert.match(warnings[0], new RegExp(`${SOFT_DESCRIPTION_LENGTH + 1} chars`));
+    assert.deepEqual(validateSkill("my-skill", skillsDir), []);
+  });
+
+  it("returns no warnings for a missing SKILL.md (validateSkill reports that)", () => {
+    assert.deepEqual(skillWarnings("does-not-exist", skillsDir), []);
   });
 });

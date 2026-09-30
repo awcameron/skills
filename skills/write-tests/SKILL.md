@@ -1,13 +1,11 @@
 ---
 name: write-tests
 description: >-
-  Scaffold or write tests for a given change in a repo, grounded in that repo's own actual test
-  conventions. Use this skill when the user asks to "write tests", "add tests", "test this",
-  "scaffold a test", "add test coverage", "write a spec for this", or points at a diff/file/PR and
-  asks for tests to be added. Also use when the user says "does this have tests" or "what's
-  untested here" as a lead-in to writing them. Covers unit tests, integration/e2e tests against
-  real dependencies, and schema/contract tests, wherever a repo's own layout puts them. Does not
-  review code quality or standards compliance outside of tests (see `review-code` for that).
+  Write or scaffold tests for a change using the repo's own test runner, layout, and mocking
+  conventions, and prove each new test can fail. Use when the user asks to "write tests", "add
+  tests", "test this", "scaffold a spec", or "add test coverage", or asks "does this have tests" /
+  "what's untested here". Covers unit, integration/e2e, and schema/contract tests. Not for general
+  code review (`review-code`).
 allowed-tools: [Read, Grep, Glob, Edit, Write, Bash(git diff:*), Bash(git log:*), Bash(git show:*), Bash(git status:*), Bash(git fetch:*), Bash(git merge-base:*), Bash(git symbolic-ref:*), Bash(gh repo view:*), Bash(gh pr diff:*), Bash(gh issue view:*), Bash(git stash:*), Bash(git restore:*), Bash(npm run test:*), Bash(npm test:*), Bash(pnpm test:*), Bash(pnpm run test:*), Bash(yarn test:*), Bash(yarn run test:*), Bash(npx vitest:*), Bash(npx jest:*), Bash(npx playwright test:*), Bash(pytest:*), Bash(python -m pytest:*), Bash(go test:*), Bash(cargo test:*)]
 ---
 

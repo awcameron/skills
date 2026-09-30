@@ -1,17 +1,12 @@
 ---
 name: diagnose-bug
 description: >-
-  Diagnosis loop for a failing, erroring, crashing, hanging, or unexpectedly slow piece of code --
-  forms one falsifiable hypothesis about the root cause at a time and finds the cheapest way to
-  test it (the actual error/stack trace, a minimal repro, a single targeted log or breakpoint)
-  before touching any fix, narrowing by bisection instead of guessing across files. Use this skill
-  when the user reports something broken, throwing, failing, crashing, hanging, or behaving
-  unexpectedly ("this is broken", "why is X happening", "I get an error when I do Y", "this test
-  is flaky", "this got slow"), asks to "debug this" or "find out why", or points at a stack
-  trace/error message and asks what's wrong. Produces a confirmed root cause with the evidence
-  that proves it, not a fix -- see fix-bug to implement the fix, write-tests to prove it,
-  review-code to check it. Not for a bug whose cause is already known and only the fix itself is
-  needed.
+  Find the confirmed root cause of failing, throwing, crashing, hanging, flaky, or slow code -- one
+  falsifiable hypothesis at a time, tested the cheapest way (the real error or stack trace, a
+  minimal repro, one targeted log) before any fix. Use when the user says "this is broken",
+  "diagnose this", "why is X happening", "I get an error when I do Y", "this test fails
+  intermittently", "this got slow", or "debug this". Produces a root cause with evidence, not a fix
+  (see `fix-bug`).
 allowed-tools: [Read, Grep, Glob, Edit, Write, Bash(git log:*), Bash(git blame:*), Bash(git show:*), Bash(git diff:*), Bash(git bisect:*), Bash(git stash:*), Bash(npm install:*), Bash(npm ci:*), Bash(npm run build:*), Bash(npm test:*), Bash(npm run test:*), Bash(npx playwright test:*), Bash(pytest:*), Bash(python -m pytest:*), Bash(go test:*), Bash(cargo test:*)]
 ---
 

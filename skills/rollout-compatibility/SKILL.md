@@ -1,16 +1,12 @@
 ---
 name: rollout-compatibility
 description: >-
-  Use when adding, renaming, or dropping a database column/table; changing the shape of an
-  existing API request/response; versioning or deprecating a field callers depend on; or evolving
-  an event/message schema (Kafka, SQS, webhooks) -- any change to a contract with a consumer.
-  Triggers on everyday phrasing like "add a column", "add a migration", "rename this field", "is
-  it safe to drop this column", "should I version this or change it in place", not just requests
-  that mention deploys explicitly. Also triggers whenever a rolling, blue-green, or canary deploy
-  is mentioned, or when the repo's pieces -- services, a backend and frontend, a database and its
-  readers -- deploy on separate schedules, since old and new versions then coexist momentarily.
-  Covers a single service mid-rollout too. Not for a brand-new column, event, or route with no
-  existing consumer, or a repo that ships everything in one atomic release with no rolling window.
+  Keep a contract change safe while old and new versions coexist during a deploy -- adding,
+  renaming, or dropping a database column/table, changing an API response shape, deprecating a
+  field, or evolving an event schema (Kafka, SQS, webhooks). Use when the user says "add a column",
+  "add a migration", "rename this field", "is it safe to drop this", or "version this or change it
+  in place", or mentions a rolling, blue-green, or canary deploy. Not for a brand-new contract with
+  no consumer, or an atomic deploy.
 allowed-tools: [Read, Grep, Glob, Edit, Write]
 ---
 
