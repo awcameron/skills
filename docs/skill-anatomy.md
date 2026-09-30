@@ -21,7 +21,8 @@ skills/
 - `references/` -- only when a skill genuinely needs supporting material split out (see
   `ts-best-practices/references/` for an example: eleven short files, one per judgment-call
   category, so an agent opens only the one that applies instead of loading all eleven; also used
-  by `zero-trust-architecture` and `create-tdd`).
+  by `zero-trust-architecture`, `rollout-compatibility`, `create-tdd`, `create-pr`, and
+  `format-docs`).
 - `evals/evals.json` -- skill-creator-format eval cases, run through the skill-creator plugin;
   `claude plugin eval` doesn't read them. Present on `create-tdd`, `doc-fact-check`, `format-docs`,
   `fullstack-feature-slice`, `review-code`, `ts-best-practices`, and `write-tests`. The other eight
@@ -42,7 +43,7 @@ skills/
 ### Frontmatter (required)
 
 This repo targets the [agentskills.io specification](https://agentskills.io/specification) for
-`SKILL.md` frontmatter. It defines five recognized fields; this repo's skills use `name`,
+`SKILL.md` frontmatter. It defines six recognized fields; this repo's skills use `name`,
 `description`, and `allowed-tools` today, and don't yet use `license`, `compatibility`, or
 `metadata` (see below for when each is actually worth adding).
 
@@ -79,12 +80,12 @@ metadata:                           # optional -- see "metadata" below
 - `allowed-tools`: optional, Claude Code-only. Other tools ignore it; don't rely on it to
   actually restrict behavior outside Claude Code. The spec documents this field as a
   **space-separated string** (e.g. `allowed-tools: Read Bash(git:*)`); every skill in this repo
-  instead uses a YAML **list** (e.g. `allowed-tools: [Read, Grep, Glob]`), which is Claude Code's
-  own convention, not the spec's documented syntax. That's a deliberate divergence, not an
-  oversight: the spec itself marks `allowed-tools` "Experimental, support varies between agent
-  implementations," and Claude Code is the only consumer of it today (other supported tools ignore
-  the field entirely) -- so there's no cross-tool compatibility to lose by keeping the list form
-  Claude Code actually expects. Revisit if a second consumer starts reading this field.
+  that sets it instead uses a YAML **list** (e.g. `allowed-tools: [Read, Grep, Glob]`), which is
+  Claude Code's own convention, not the spec's documented syntax. That's a deliberate divergence,
+  not an oversight: the spec itself marks `allowed-tools` "Experimental, support varies between
+  agent implementations," and Claude Code is the only consumer of it today (other supported tools
+  ignore the field entirely) -- so there's no cross-tool compatibility to lose by keeping the list
+  form Claude Code actually expects. Revisit if a second consumer starts reading this field.
   `scripts/validate-skills.js` warns (without failing) when the body tells the agent to run a
   command no `Bash(...)` entry covers -- a line in a `bash`/`sh` fence, or an inline code span
   starting with a known CLI and a subcommand (`git status`, `npm test`). Each one is a permission
@@ -137,7 +138,7 @@ reference files opened on demand (`ts-best-practices`). What every skill here do
 
 ## Contributing a skill
 
-Requires Node >=20 + npm (for the commands in steps 3-4 below) -- run `npm ci` once first, since
+Requires Node >=20 + npm (for the commands in steps 3-5 below) -- run `npm ci` once first, since
 `scripts/validate-skills.js` depends on packages in `node_modules` (`ajv`, `js-yaml`).
 
 1. Write it for a repo you actually have in front of you -- against a real convention, a real
@@ -151,10 +152,14 @@ Requires Node >=20 + npm (for the commands in steps 3-4 below) -- run `npm ci` o
    format) with a few positive/negative trigger-routing prompts, then run `npm run eval` and fix
    anything it flags -- this is what actually catches a skill whose description doesn't carry the
    vocabulary a user would say, or that collides with an existing skill's.
-5. Add a matching slash command: `.claude/commands/<name>.md` and `.gemini/commands/<name>.toml`
+5. Add a behavioral case under `plugin-evals/<skill-name>/<case>/` (see
+   [`plugin-evals/README.md`](../plugin-evals/README.md)), or a skill-creator
+   `skills/<skill-name>/evals/evals.json`, then run `npm test`, which fails a skill with neither.
+   Writing the case is free; running it with `claude plugin eval` is billed and opt-in.
+6. Add a matching slash command: `.claude/commands/<name>.md` and `.gemini/commands/<name>.toml`
    (see any existing pair for the shape). Every skill ships one, including skills meant to
    auto-trigger, so it can always be invoked directly.
-6. Add a row for the skill to [README.md](../README.md)'s "What's here" table:
+7. Add a row for the skill to [README.md](../README.md)'s "What's here" table:
    `| [\`<name>\`](skills/<name>/SKILL.md) | <use it when> | <stage> |`, with a stage from
    [`docs/skill-categories.md`](skill-categories.md) (add one there if none fits).
    `npm run validate` fails if a skill has no row, or a row names a skill that doesn't exist.

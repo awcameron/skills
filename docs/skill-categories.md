@@ -25,11 +25,11 @@ by name for the security-boundary piece rather than re-deriving that layer itsel
 `create-tdd`
 
 Its own category, upstream of `fullstack-feature-slice` -- writes the design document a feature
-gets built from, rather than the feature code itself. Carries a fixed, portable document
-structure (the bundled `references/technical-design-doc.md` template) the way `ts-best-practices`
-carries a fixed body of judgment calls, but discovers per repo which sections apply, whether it's
-running greenfield or retroactively against an existing codebase, and where a repo already keeps
-its design docs before defaulting to its own `docs/tdd/` path. It leans on `zero-trust-architecture`
+gets built from, rather than the feature code itself. Follows the user's or the repo's own
+design-doc template, falling back to the bundled `references/technical-design-doc.md` only when
+there's neither, and discovers per repo which sections apply, whether it's running greenfield or
+retroactively against an existing codebase, and where a repo already keeps its design docs before
+defaulting to its own `docs/tdd/` path. It leans on `zero-trust-architecture`
 by name for the Security section and, when a design changes a contract an existing consumer
 depends on, `rollout-compatibility` for the Data Models/Deployment Plan sections -- the same
 by-name pattern `fullstack-feature-slice` uses, rather than re-deriving either body of judgment
@@ -56,8 +56,8 @@ difference shows up in how each one is laid out on disk:
 All four apply equally while *writing* new code and while *reviewing* existing code -- none of
 them is review-only. `rollout-compatibility` is the newest of the four and the one most likely to
 be a no-op for a given repo -- its own discovery step says so plainly when a repo ships everything
-in one atomic release with no rolling window, the same way `zero-trust-architecture`'s
-tenant-isolation layer says so plainly for a single-tenant app.
+in one atomic release with no rolling window, the same way `zero-trust-architecture` notes when a
+repo has no database-layer tenant isolation yet.
 
 ## The bug lifecycle
 
@@ -89,7 +89,9 @@ confirm a hypothesis) and by standalone "write tests for this" requests.
 
 Its own category too. Reads the actual changelog/migration guide across the version range being
 crossed and greps the repo for real usage of anything flagged as breaking, rather than trusting a
-changelog entry's relevance without checking it against this codebase specifically.
+changelog entry's relevance without checking it against this codebase specifically. It records a
+test baseline before the bump, so it can report what the bump broke separately from failures that
+were already there.
 
 ## Shipping workflow
 
