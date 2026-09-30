@@ -69,10 +69,18 @@ no surface change.
 A breaking change the repo's code never touches is noise here, not a risk. Only what Step 3 flags
 *and* Step 4 confirms is actually used gets carried into Step 7.
 
-## Step 5: Apply the bump through the package manager's own mechanism
+## Step 5: Record a test baseline, then apply the bump
 
-`npm install pkg@version`, `poetry add pkg@version`, `cargo update -p pkg --precise version`, etc.
--- never by hand-editing a version string and leaving the lockfile stale.
+**Baseline first.** Decide what "the test suite" means here -- not just the default `test` script:
+check whether the repo's docs call out checks a green default pipeline doesn't cover (a smoke test
+proving the app boots, an e2e suite against a real dependency) and include those if the repo's
+history explains why they exist separately. Run that suite once now, before touching any version,
+and record which tests fail. That list is what Step 6 compares against, so a pre-existing or flaky
+failure never needs the bump reverted to prove it isn't this bump's fault.
+
+**Then bump** through the package manager's own mechanism -- `npm install pkg@version`,
+`poetry add pkg@version`, `cargo update -p pkg --precise version`, etc. -- never by hand-editing a
+version string and leaving the lockfile stale.
 
 **Maven and Gradle don't have a single "install this version" command** the way npm/poetry/cargo
 do -- the version lives directly in the manifest. Use `mvn versions:set-property`/`mvn
@@ -88,15 +96,11 @@ duplication was the whole reason for the upgrade), run the package manager's own
 dedupe`, `yarn dedupe`, etc.) and verify with something like `npm ls <pkg>` that there's actually
 one copy left, not just that the package.json version strings changed.
 
-## Step 6: Run the repo's own test suite and separate real breakage from noise
+## Step 6: Re-run the same suite and compare against the baseline
 
-Not just whatever the default `test` script runs -- check whether the repo's own docs call out
-additional checks that a green default pipeline doesn't cover (a smoke test proving the app
-actually boots, an e2e suite against a real dependency) and treat those as part of "the test
-suite" if the repo's own history explains why they exist separately.
-
-A flaky test or an already-broken suite isn't this bump's fault -- confirm by checking whether the
-same failure exists before the bump too, if there's any doubt.
+Run exactly what Step 5's baseline ran. A failure that's also in the baseline isn't this bump's
+fault -- report it as pre-existing. A new failure is the bump's until shown otherwise; if it looks
+flaky, re-run that test alone rather than reverting the bump.
 
 ## Step 7: Apply the specific migration fix for anything confirmed as actually hit
 
@@ -110,4 +114,5 @@ one") needs the diff shown and confirmation waited on -- a real stop, not a note
 ## Step 8: Report
 
 What was bumped (from -> to), which breaking changes applied to this repo and how they were
-handled, which didn't apply and why, and the real test results.
+handled, which didn't apply and why, and the real test results -- new failures separated from the
+ones already in the baseline.
