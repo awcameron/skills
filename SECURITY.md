@@ -11,8 +11,9 @@ If you find a vulnerability in this repo's own code (the `scripts/` validators, 
 build tooling) or in one of its dependencies, please report it privately rather than opening a
 public issue:
 
-- Preferred: use GitHub's [private vulnerability reporting](../../security/advisories/new) for
-  this repo.
+- Preferred: use GitHub's
+  [private vulnerability reporting](https://github.com/awcameron/skills/security/advisories/new)
+  for this repo.
 - If that's unavailable to you, open an issue with minimal detail (no exploit specifics) asking
   for a private channel, and the maintainer will follow up.
 
