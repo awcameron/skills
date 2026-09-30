@@ -84,6 +84,13 @@ A change outside this allowlist gets no automated check at all -- review those b
 merging. The real case: a PR touching only the other workflows (`bump-version.yml`,
 `release.yml`, `pr-title-lint.yml`), which the checks don't exercise anyway.
 
+## Pinned actions
+
+Every `uses:` in `.github/workflows/` names a full commit SHA with its version in a trailing
+comment (`actions/checkout@<sha> # v5.1.0`), so a moved or hijacked tag can't change what the
+workflows run. Pin any new action the same way. Dependabot
+([`.github/dependabot.yml`](.github/dependabot.yml)) opens a monthly `ci:` PR to move the pins.
+
 ## Post-merge cleanup
 
 After a PR merges (whether merged here or reported by the user as done elsewhere), verify it

@@ -1,0 +1,13 @@
+# Keeps the commit-SHA pins in .github/workflows/ current. Actions are pinned to a full SHA (with
+# the version in a trailing comment) so a moved tag can't change what our workflows run.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        patterns: ["*"]
