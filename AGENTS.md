@@ -82,11 +82,11 @@ merging. The real case: a `.github/workflows/*.yml`-only PR (no accompanying doc
 ## Post-merge cleanup
 
 After a PR merges (whether merged here or reported by the user as done elsewhere), verify it
-actually merged before touching branches, then clean up -- see the `create-pr` skill's own "Merge
-and clean up" step ([`skills/create-pr/SKILL.md`](skills/create-pr/SKILL.md)) for the full
+actually merged before touching branches, then clean up -- see the `create-pr` skill's
+[`references/merge-and-cleanup.md`](skills/create-pr/references/merge-and-cleanup.md) for the full
 mechanism. One fact the skill can't hardcode since it's written generically: this repo has
 "Automatically delete head branches" on (`deleteBranchOnMerge` is `true`), so GitHub deletes the
-remote branch on merge and only the local `git branch -d` is needed. The skill's own runtime check
+remote branch on merge and only the local branch needs deleting. The skill's own runtime check
 confirms this before it touches the remote.
 
 ## Versioning and releases
