@@ -145,7 +145,11 @@ Governs how the agent itself operates, not the target codebase.
   subagent type/model to spawn a task on, based on whether the task writes anything, not what
   it's about.
 - **[`terse-reports`](skills/terse-reports/SKILL.md)** -- reports status/summaries in terse,
-  fact-dense language, without touching code, commit, or PR-body grammar.
+  fact-dense language, without touching code, commit, or PR-body grammar. Opt-in per conversation
+  (ask for it, or run `/terse-reports`). For terse reporting in every session, a skill is the
+  wrong mechanism, since it only applies when it triggers -- use Claude Code's built-in Concise
+  output style (`/output-style concise`), a custom output style in `~/.claude/output-styles/`, or
+  a one-line instruction in your `CLAUDE.md`.
 
 ### Slash commands
 

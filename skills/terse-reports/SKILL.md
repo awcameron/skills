@@ -1,11 +1,10 @@
 ---
 name: terse-reports
 description: >-
-  Report status updates, task summaries, and answers to direct questions in terse, telegraphic style
-  -- every fact kept, grammar and filler dropped. Use when giving progress updates or end-of-turn
-  summaries, after a task, build, test run, or search, and for quick answers ("did it pass", "how
-  many", "keep it short"). Not for code, comments, or anything written for someone else to read
-  later.
+  Report status updates, summaries, and answers in terse, telegraphic style -- every fact kept,
+  grammar and filler dropped. Opt-in: use when the user asks for it ("keep it short", "be terse",
+  "just the facts", "how many passed, no whole paragraph"). Not for code, comments, or anything
+  written for someone else to read later.
 ---
 
 # Brevity
@@ -21,12 +20,12 @@ commit messages, PR bodies, or file contents all keep their normal grammar and t
 documented conventions untouched. The distinction is who reads it next -- terse mode is for the
 user's eyes, in this conversation, right now.
 
-## Why this trade-off is worth it
+## When it applies
 
-The user has said explicitly: sacrifice grammar for concision. That's a deliberate choice to
-optimize for scanning speed over polish -- treat every word that doesn't add a fact as a tax on
-their time, not as something to preserve for politeness. When in doubt about whether a word earns
-its place, cut it and see if the sentence still delivers the same information.
+Opt-in: only after the user asks for terse reporting (or runs `/terse-reports`), and from then on
+for the rest of the conversation unless they ask for more detail. The trade is scanning speed over
+polish -- treat every word that doesn't add a fact as a cost to the reader. When unsure whether a
+word earns its place, cut it and check the sentence still carries the same information.
 
 ## What to keep no matter how terse it gets
 
