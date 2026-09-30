@@ -29,7 +29,7 @@ allowed-tools:
     Bash(biome:*),
     Bash(git diff:*),
     Bash(git status:*),
-    Bash(scripts/detect_formatter.sh:*),
+    "Bash(${CLAUDE_SKILL_DIR}/scripts/detect_formatter.sh:*)",
   ]
 ---
 
@@ -55,11 +55,17 @@ automatically -- most of the time there's already a real answer, and re-discover
 Don't assume the tool is Prettier -- a repo with no `package.json` at all (a Python, Rust, or Go
 project) can still have a real Markdown formatter configured.
 
-Run the bundled scan first instead of grepping for each config file by hand:
+Run the bundled scan first instead of grepping for each config file by hand. It ships inside this
+skill's own directory, not the repo being formatted, so call it by that path:
 
 ```bash
-scripts/detect_formatter.sh <repo-root>
+${CLAUDE_SKILL_DIR}/scripts/detect_formatter.sh <repo-root>
 ```
+
+Claude Code fills in `${CLAUDE_SKILL_DIR}` automatically. If it's still literal text (another
+agent tool), use the absolute path of the `scripts/` directory next to this `SKILL.md` instead --
+never a bare `scripts/detect_formatter.sh`, which resolves against the target repo and won't exist
+there.
 
 It checks in one pass for everything below and prints what it found (or says plainly that nothing
 is configured). Treat its output as a lead to verify, not a final answer -- it flags *candidate*
@@ -198,9 +204,14 @@ against it unreviewed.
 
 ## What's in scope by default
 
+In scope:
+
 - The repo's canonical conventions doc (README, `AGENTS.md`/`CONTRIBUTING.md`, etc.) and
   everything under its main docs directory (commonly `docs/**/*.md`).
 - Any other `.md` file the user explicitly points at.
+
+Skip:
+
 - Anything the repo's own conventions mark off-limits (a deprecated/legacy directory, a scaffold
   slated for removal) -- check for that kind of boundary doc before sweeping broadly.
 - A one-line include file with no prose of its own (e.g. a root file that just references another
