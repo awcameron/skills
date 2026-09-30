@@ -63,12 +63,10 @@ metadata:                           # optional -- see "metadata" below
   phrases, and a "not for X" clause if another skill owns a nearby request. Every skill's
   description loads into every session whether it's used or not, so mechanism detail belongs in
   the body; `scripts/validate-skills.js` warns (without failing) above 600 characters and fails
-  above the spec's 1024. The first sentence also doubles as the skill's one-line entry in the
-  `SessionStart` hook's catalog. A `>-` folded block (as above) is the common shape for a longer description, but
+  above the spec's 1024. A `>-` folded block (as above) is the common shape for a longer description, but
   a plain single-line scalar (`description: What the skill does...`) works too -- see
   `ts-best-practices/SKILL.md` for a real example. These are the only two shapes
-  `scripts/lib/parse-skill.js`'s `parseSkillFile()` reads (used by `scripts/run-evals.js` and the
-  `SessionStart` hook -- see [`hooks/README.md`](../hooks/README.md)); anything else won't parse
+  `scripts/lib/parse-skill.js`'s `parseSkillFile()` reads (used by `scripts/run-evals.js`); anything else won't parse
   there. Full-frontmatter schema validation (below) parses real YAML instead, so it isn't limited
   to those two shapes.
 - `allowed-tools`: optional, Claude Code-only. Other tools ignore it; don't rely on it to
@@ -93,7 +91,7 @@ metadata:                           # optional -- see "metadata" below
 - `metadata`: optional, a freeform string-to-string map for client-specific extensions. Only add a
   key when there's an actual known consumer that reads it -- an untargeted `metadata` block is
   just noise, since nothing in this repo's own tooling (`scripts/lib/parse-skill.js`,
-  `scripts/validate-skills.js`, the `SessionStart` hook) reads it today.
+  `scripts/validate-skills.js`) reads it today.
 
 This repo's own validation (`scripts/validate-skills.js`) checks `name` and `description` by hand
 against the rules above, and separately validates the full frontmatter block's *shape* against

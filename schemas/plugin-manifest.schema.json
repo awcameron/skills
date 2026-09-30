@@ -43,7 +43,7 @@
     },
     "hooks": {
       "type": "string",
-      "description": "Path to a hooks manifest (e.g. hooks/hooks.json). This repo's own plugin.json doesn't set this key -- hooks/hooks.json is auto-loaded from its standard path instead (see AGENTS.md, 'Where things live') -- but it's included here as a documented, conceptually valid key other plugin.json consumers may use."
+      "description": "Path to a hooks manifest (e.g. hooks/hooks.json). This repo ships no hooks, so its own plugin.json doesn't set this key, but it's included here as a documented, conceptually valid key other plugin.json consumers may use."
     }
   }
 }

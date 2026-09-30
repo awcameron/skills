@@ -35,10 +35,6 @@ Claude Code discovers any `SKILL.md` under `.claude/skills/<name>/` without a pl
 step. This is the lighter option if you just want the skills, not the slash commands or plugin
 metadata.
 
-The `SessionStart` catalog hook isn't auto-discovered this way -- it only wires up automatically
-through the plugin install above. To get it here, wire it into your project's own
-`.claude/settings.json` by hand; see [`hooks/README.md`](../hooks/README.md) for the exact JSON.
-
 ## Global setup
 
 ```bash
@@ -47,9 +43,6 @@ ln -s ~/awcameron-skills/skills/review-code ~/.claude/skills/review-code
 
 Symlink one skill (or the whole `skills/` directory) into `~/.claude/skills/` to make it
 available in every project without repeating setup per-repo.
-
-Same caveat as Project setup: the `SessionStart` catalog hook needs manual wiring here too --
-see [`hooks/README.md`](../hooks/README.md).
 
 ## Verify
 
