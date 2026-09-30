@@ -1,6 +1,7 @@
 name: Release
 
-# Fires when a version-bump PR (opened by bump-version.yml) lands on main. Tags the merge commit
+# Fires when a version-bump PR (opened by bump-version.yml) lands on main. Tags the commit that
+# triggered the run (github.sha, not main's tip, which may have moved on), i.e. the merge commit,
 # and cuts a GitHub Release, generated from merged PRs since the last release. Guarded to skip if
 # the tag already exists, since any push to main touching package.json re-triggers this -- not
 # just an actual version change.
@@ -43,4 +44,4 @@ jobs:
           gh release create "v${{ steps.version.outputs.version }}" \
             --title "v${{ steps.version.outputs.version }}" \
             --generate-notes \
-            --target main
+            --target "${{ github.sha }}"
