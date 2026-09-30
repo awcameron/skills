@@ -149,9 +149,10 @@ Requires Node >=20 + npm (for the commands in steps 3-4 below) -- run `npm ci` o
    format) with a few positive/negative trigger-routing prompts, then run `npm run eval` and fix
    anything it flags -- this is what actually catches a skill whose description doesn't carry the
    vocabulary a user would say, or that collides with an existing skill's.
-5. If the skill deserves a slash-command shortcut, add a matching `.claude/commands/<name>.md`
-   and `.gemini/commands/<name>.toml` (see any existing pair for the shape) -- optional, only
-   worth it for a skill you'd want to invoke explicitly rather than wait on auto-discovery for.
+5. Add a matching slash command: `.claude/commands/<name>.md` and `.gemini/commands/<name>.toml`
+   (see any existing pair for the shape). Every skill ships one, including skills meant to
+   auto-trigger, so it can always be invoked directly.
 6. Add a row for the skill in [README.md](../README.md)'s "What's here" list, under whichever
    category it fits (see [`docs/skill-categories.md`](skill-categories.md) if none of the existing
-   categories fit). Skipping this step ships a working skill that never shows up in the catalog.
+   categories fit), as `- **[\`<name>\`](skills/<name>/SKILL.md)** -- ...`. `npm run validate`
+   fails if a skill has no entry there, or an entry names a skill that doesn't exist.
