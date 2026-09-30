@@ -60,12 +60,15 @@ Before calling `Agent`, ask: **does this task write anything?** (Edit/Write a fi
   - If the task is unusually hard -- not just "another routine change" but something needing real
     judgment calls (an ambiguous architecture/design decision, a bug with no obvious cause after
     an initial look, a change that's risky or expensive to get wrong and undo) -> keep the same
-    agent type but override to a stronger model. Routine write work stays on the default model;
-    reserve the stronger one for where the extra reasoning depth is actually load-bearing, not as
-    a default upgrade for anything that sounds important.
+    agent type but override to a stronger model (e.g. Opus). Routine write work stays on the
+    default model; reserve the stronger one for where the extra reasoning depth is actually
+    load-bearing, not as a default upgrade for anything that sounds important.
   - Don't reach for a niche/creative-writing model as a default part of this heuristic without a
     concrete use case that actually needs it (e.g. narrative/creative-writing subagent work) --
     adding one speculatively just adds an unused branch to the checklist.
+  - Running several write agents in parallel? Two agents editing the same files will collide.
+    Give each its own worktree (or partition the files between them) before spawning; if the
+    work can't be partitioned, run the agents sequentially.
 
 ## Why this matters
 
@@ -84,6 +87,13 @@ one writes anything:
 - "Test the review skill against PR #12" -- runs the skill, reports what it found. Still
   **read-only**, even though it sounds like active PR work.
 - "Implement the fix requested in PR #12's review comments" -- edits files, commits. **Write.**
+
+The same trap shows up with no PR involved:
+
+- "Run the test suite and report which tests fail" -- executes a command, but changes nothing
+  you'd keep. **Read-only.**
+- "Find where `parseConfig` is defined and who calls it" -- pure search. **Read-only.**
+- "Fix the failing tests" -- edits source files. **Write.**
 
 When in doubt, ask "will this call `Edit`, `Write`, or a state-changing `Bash` command (`git
 commit`, `git push`, `gh pr create`, etc.) at any point?" If the honest answer is no, it's
