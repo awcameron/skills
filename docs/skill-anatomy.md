@@ -81,11 +81,11 @@ metadata:                           # optional -- see "metadata" below
   actually restrict behavior outside Claude Code. The spec documents this field as a
   **space-separated string** (e.g. `allowed-tools: Read Bash(git:*)`); every skill in this repo
   that sets it instead uses a YAML **list** (e.g. `allowed-tools: [Read, Grep, Glob]`), which is
-  Claude Code's own convention, not the spec's documented syntax. That's a deliberate divergence, not an
-  oversight: the spec itself marks `allowed-tools` "Experimental, support varies between agent
-  implementations," and Claude Code is the only consumer of it today (other supported tools ignore
-  the field entirely) -- so there's no cross-tool compatibility to lose by keeping the list form
-  Claude Code actually expects. Revisit if a second consumer starts reading this field.
+  Claude Code's own convention, not the spec's documented syntax. That's a deliberate divergence,
+  not an oversight: the spec itself marks `allowed-tools` "Experimental, support varies between
+  agent implementations," and Claude Code is the only consumer of it today (other supported tools
+  ignore the field entirely) -- so there's no cross-tool compatibility to lose by keeping the list
+  form Claude Code actually expects. Revisit if a second consumer starts reading this field.
   `scripts/validate-skills.js` warns (without failing) when the body tells the agent to run a
   command no `Bash(...)` entry covers -- a line in a `bash`/`sh` fence, or an inline code span
   starting with a known CLI and a subcommand (`git status`, `npm test`). Each one is a permission
