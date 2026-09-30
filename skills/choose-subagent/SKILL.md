@@ -3,7 +3,7 @@ name: choose-subagent
 description: >-
   Decision checklist for which subagent type/model to use before spawning an Agent call, in any
   repo -- the right choice depends on whether the task writes anything, not on its topic. Use
-  this before calling the Agent tool, or when the user directly asks "which agent should I use for
+  this before spawning a subagent, or when the user directly asks "which agent should I use for
   X". Read-only tasks (review, audit, investigate -- e.g. a PR review, running a read-only skill
   against a PR) belong on a read-only/exploration agent, or a cheaper-model general-purpose agent
   if broader tool access is needed. Write tasks (implement, migrate code, fix drift, anything that
@@ -22,8 +22,9 @@ they belong on different agents.
 
 ## The checklist
 
-Before calling `Agent`, ask: **does this task write anything?** (Edit/Write a file, run
-`git commit`, `git push`, `gh pr create`, or otherwise change state.)
+Before spawning a subagent (Claude Code's `Agent` tool, or your harness's equivalent), ask:
+**does this task write anything?** (Edit/Write a file, run `git commit`, `git push`,
+`gh pr create`, or otherwise change state.)
 
 ```
                     Does the task write anything?
@@ -60,9 +61,10 @@ Before calling `Agent`, ask: **does this task write anything?** (Edit/Write a fi
   - If the task is unusually hard -- not just "another routine change" but something needing real
     judgment calls (an ambiguous architecture/design decision, a bug with no obvious cause after
     an initial look, a change that's risky or expensive to get wrong and undo) -> keep the same
-    agent type but override to a stronger model (e.g. Opus). Routine write work stays on the
-    default model; reserve the stronger one for where the extra reasoning depth is actually
-    load-bearing, not as a default upgrade for anything that sounds important.
+    agent type but override to a stronger model tier (your provider's top reasoning tier, e.g.
+    Opus, GPT-5-class, or Gemini Pro). Routine write work stays on the default model; reserve the
+    stronger one for where the extra reasoning depth is actually load-bearing, not as a default
+    upgrade for anything that sounds important.
   - Don't reach for a niche/creative-writing model as a default part of this heuristic without a
     concrete use case that actually needs it (e.g. narrative/creative-writing subagent work) --
     adding one speculatively just adds an unused branch to the checklist.
@@ -95,6 +97,6 @@ The same trap shows up with no PR involved:
 - "Find where `parseConfig` is defined and who calls it" -- pure search. **Read-only.**
 - "Fix the failing tests" -- edits source files. **Write.**
 
-When in doubt, ask "will this call `Edit`, `Write`, or a state-changing `Bash` command (`git
-commit`, `git push`, `gh pr create`, etc.) at any point?" If the honest answer is no, it's
-read-only regardless of how "live" the subject matter sounds.
+When in doubt, ask "will this call a file-editing tool (`Edit`/`Write` in Claude Code) or a
+state-changing shell command (`git commit`, `git push`, `gh pr create`, etc.) at any point?" If
+the honest answer is no, it's read-only regardless of how "live" the subject matter sounds.
