@@ -63,11 +63,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
-          git add package.json .claude-plugin/plugin.json
+          git add package.json package-lock.json .claude-plugin/plugin.json
           git commit -m "chore: bump version to ${VERSION}"
           git push origin "$BRANCH"
           gh pr create \
             --title "chore: bump version to ${VERSION}" \
-            --body "Automated ${{ github.event.inputs.bump }} version bump via workflow_dispatch, keeping package.json and .claude-plugin/plugin.json in sync." \
+            --body "Automated ${{ github.event.inputs.bump }} version bump via workflow_dispatch, keeping package.json, package-lock.json, and .claude-plugin/plugin.json in sync." \
             --base main \
             --head "$BRANCH"
