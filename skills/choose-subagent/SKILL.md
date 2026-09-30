@@ -6,7 +6,7 @@ description: >-
   agent or write agent", or "what model should this subagent run on".
 ---
 
-# Subagent Selection
+# Choose Subagent
 
 Before spawning a subagent (Claude Code's `Agent` tool, or your harness's equivalent), ask:
 **does this task write anything?** -- Edit/Write a file, `git commit`, `git push`, `gh pr create`,

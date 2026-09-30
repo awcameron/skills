@@ -3,7 +3,7 @@ name: ts-best-practices
 description: Staff-level judgment calls for writing and reviewing TypeScript/JavaScript that a linter can't enforce -- comments, type casts, function and class design, error handling, async, naming, immutability, imports, narrowing, and enum/interface-vs-type choices. Use when writing new TS/JS, refactoring, or when the user asks "clean this up", "is this idiomatic", "review this for best practices", "does this look right", or calls code messy or hard to follow.
 ---
 
-# Idiomatic TypeScript/JavaScript
+# TS Best Practices
 
 A linter and a formatter already handle whitespace, semicolons, quote style, and import order.
 What they can't tell you is whether a function is doing too much, whether a cast is hiding a real

@@ -97,6 +97,6 @@ See the reference doc for each layer -- read the one(s) relevant to what you're 
   one this repo already has -- two helpers doing the same job under different names is its own source
   of drift.
 
-Each reference file below has its own "Common mistakes" section scoped to that layer (background
-jobs, service-to-service calls, token revocation, etc.) -- read the relevant one rather than expecting
-every mistake to be repeated here.
+Each reference file listed under "Core principles" has its own "Common mistakes" section scoped to
+that layer (background jobs, service-to-service calls, token revocation, etc.) -- read the relevant
+one rather than expecting every mistake to be repeated here.
