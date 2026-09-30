@@ -11,11 +11,7 @@ import { fileURLToPath } from "node:url";
 
 import { uncoveredCommands } from "./lib/allowed-tools.js";
 import { isMain } from "./lib/is-main.js";
-import {
-  parseFrontmatterFields,
-  parseFrontmatterYaml,
-  readFrontmatterBlock,
-} from "./lib/parse-skill.js";
+import { parseFrontmatterYaml, readFrontmatterBlock } from "./lib/parse-skill.js";
 import { compileSchema, formatAjvErrors } from "./lib/schema-validate.js";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -86,20 +82,25 @@ export function skillWarnings(dirName, skillsDirPath = skillsDir) {
 }
 
 export function validateSkill(dirName, skillsDirPath = skillsDir) {
-  // Read + extract the frontmatter block once, then derive both the hand-parsed fields and the
-  // full YAML object from that one string -- instead of each parser re-reading SKILL.md itself.
-  let frontmatterBlock;
+  let frontmatter;
   try {
-    frontmatterBlock = readFrontmatterBlock(join(skillsDirPath, dirName, "SKILL.md"));
+    frontmatter = parseFrontmatterYaml(
+      readFrontmatterBlock(join(skillsDirPath, dirName, "SKILL.md")),
+    );
   } catch (error) {
-    return [error.message];
+    const isYamlError = error.name === "YAMLException";
+    return [isYamlError ? `could not parse frontmatter as YAML: ${error.message}` : error.message];
   }
 
-  const { name, description } = parseFrontmatterFields(frontmatterBlock);
+  // A present but non-string name or description is left to the schema check below, which
+  // reports its type.
+  const { name, description } = frontmatter ?? {};
   const errors = [];
 
   if (!name) {
     errors.push("frontmatter missing `name`");
+  } else if (typeof name !== "string") {
+    // reported by the schema check
   } else if (name !== dirName) {
     errors.push(`frontmatter name "${name}" does not match directory name "${dirName}"`);
   } else if (!NAME_PATTERN.test(name)) {
@@ -108,6 +109,8 @@ export function validateSkill(dirName, skillsDirPath = skillsDir) {
 
   if (!description) {
     errors.push("frontmatter missing `description`");
+  } else if (typeof description !== "string") {
+    // reported by the schema check
   } else if (description.length > MAX_DESCRIPTION_LENGTH) {
     errors.push(
       `description is ${description.length} chars, over the ${MAX_DESCRIPTION_LENGTH}-char guideline`,
@@ -127,14 +130,9 @@ export function validateSkill(dirName, skillsDirPath = skillsDir) {
     }
   }
 
-  try {
-    const frontmatter = parseFrontmatterYaml(frontmatterBlock);
-    validateFrontmatterSchema(frontmatter);
-    for (const message of formatAjvErrors(validateFrontmatterSchema.errors)) {
-      errors.push(`frontmatter ${message}`);
-    }
-  } catch (error) {
-    errors.push(`could not parse frontmatter as YAML: ${error.message}`);
+  validateFrontmatterSchema(frontmatter);
+  for (const message of formatAjvErrors(validateFrontmatterSchema.errors)) {
+    errors.push(`frontmatter ${message}`);
   }
 
   return errors;

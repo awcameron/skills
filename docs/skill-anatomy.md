@@ -73,10 +73,9 @@ metadata:                           # optional -- see "metadata" below
   the body; `scripts/validate-skills.js` warns (without failing) above 600 characters and fails
   above the spec's 1024. A `>-` folded block (as above) is the common shape for a longer description, but
   a plain single-line scalar (`description: What the skill does...`) works too -- see
-  `ts-best-practices/SKILL.md` for a real example. These are the only two shapes
-  `scripts/lib/parse-skill.js`'s `parseSkillFile()` reads (used by `scripts/run-evals.js`); anything else won't parse
-  there. Full-frontmatter schema validation (below) parses real YAML instead, so it isn't limited
-  to those two shapes.
+  `ts-best-practices/SKILL.md` for a real example. The repo's scripts parse frontmatter as real
+  YAML (`scripts/lib/parse-skill.js`), so any valid YAML string works, but stick to these two
+  shapes for consistency.
 - `allowed-tools`: optional, Claude Code-only. Other tools ignore it; don't rely on it to
   actually restrict behavior outside Claude Code. The spec documents this field as a
   **space-separated string** (e.g. `allowed-tools: Read Bash(git:*)`); every skill in this repo
