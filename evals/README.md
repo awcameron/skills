@@ -12,14 +12,18 @@ How this repo checks whether its skills actually work: that they're well-formed,
 
 Both are deterministic and dependency-free -- no LLM call, safe to run in CI on every change.
 
-There's a Tier 3 too -- behavioral, actually running a skill through a real agent and grading the
-transcript against an expected outcome -- but it isn't run or orchestrated by anything in this
-`evals/` directory. It lives as `skills/<name>/evals/evals.json` (a real prompt plus an
-`expected_output` description of what a correct run should catch, without fabricating unrelated
-findings), one per skill, run via `claude plugin eval` -- see
-[`docs/skill-anatomy.md`](../docs/skill-anatomy.md) for the file's location and format. Only
-`doc-fact-check`, `format-docs`, `review-code`, `ts-best-practices`, and `write-tests` have one so
-far -- it's not required the way Tier 1/2 are.
+There's a Tier 3 too -- behavioral, running a skill through a real agent and grading what it did
+-- but it isn't run by anything in this `evals/` directory, and not in CI (it needs a credential
+and costs money per run). It comes in two formats, and neither tool reads the other's files:
+
+- **`claude plugin eval` cases** in [`plugin-evals/`](../plugin-evals/README.md) -- one directory
+  per case, each with a prompt, a fixture-building script, and graders. This is the suite to run.
+- **skill-creator cases** in `skills/<name>/evals/evals.json` (a prompt plus an `expected_output`
+  description), run through the skill-creator plugin. The older format; these cases were written
+  against another repo's files, so they don't run as-is here.
+
+Which skills have which is listed in [`docs/skill-anatomy.md`](../docs/skill-anatomy.md) rather
+than here, so there's one list to keep current. `npm test` fails if a skill has neither.
 
 ## What Tier 2 actually is
 

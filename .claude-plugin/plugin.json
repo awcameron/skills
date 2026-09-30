@@ -12,6 +12,9 @@
   "commands": [
     "./.claude/commands"
   ],
+  "experimental": {
+    "evals": "plugin-evals"
+  },
   "keywords": [
     "skills",
     "code-review",

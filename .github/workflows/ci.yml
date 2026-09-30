@@ -5,6 +5,7 @@ on:
     paths:
       - "skills/**"
       - "evals/**"
+      - "plugin-evals/**"
       - "scripts/**"
       - "package.json"
       - "**/*.md"
@@ -13,6 +14,7 @@ on:
     paths:
       - "skills/**"
       - "evals/**"
+      - "plugin-evals/**"
       - "scripts/**"
       - "package.json"
       - "**/*.md"

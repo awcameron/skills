@@ -74,7 +74,7 @@ repo it's dropped into, but it is exactly the process this repo itself follows.
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) (`npm run validate` + `npm test` +
 `npm run eval`) only runs if your PR touches the following allowlisted paths: `skills/**`,
-`evals/**`, `scripts/**`, `package.json`, or any `.md` file.
+`evals/**`, `plugin-evals/**`, `scripts/**`, `package.json`, or any `.md` file.
 
 A change outside this allowlist gets no automated check at all -- review those by hand before
 merging. The real case: a `.github/workflows/*.yml`-only PR (no accompanying doc/skill change).
@@ -111,4 +111,7 @@ bump/release pipeline: [`docs/releasing.md`](docs/releasing.md).
   - No confirmed tool actually discovers skills from `.codex/skills/` (see
     `docs/codex-setup.md`, which never references it).
 - `evals/` -- the trigger-routing eval system; see [`evals/README.md`](evals/README.md).
+- `plugin-evals/` -- behavioral `claude plugin eval` cases. Opt-in: each run costs money, so no
+  routine check runs them -- don't run them unless asked. See
+  [`plugin-evals/README.md`](plugin-evals/README.md).
 - `docs/*-setup.md` -- per-tool consumer setup instructions (not relevant to developing this repo).

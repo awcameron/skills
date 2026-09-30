@@ -12,7 +12,7 @@ skills/
   skill-name/
     SKILL.md          # Required: the skill definition
     references/       # Optional: skill-specific reference docs, loaded on demand
-    evals/evals.json  # Optional: claude plugin eval cases for this skill (see `claude plugin eval`)
+    evals/evals.json  # Optional: skill-creator eval cases (not read by `claude plugin eval`)
     scripts/           # Optional: helper scripts the skill's body shells out to
 ```
 
@@ -22,11 +22,14 @@ skills/
   `ts-best-practices/references/` for an example: eleven short files, one per judgment-call
   category, so an agent opens only the one that applies instead of loading all eleven; also used
   by `zero-trust-architecture` and `create-tdd`).
-- `evals/evals.json` -- a per-skill eval-case file for `claude plugin eval`, distinct from this
-  repo's own top-level `evals/cases/<skill>.json` trigger-routing evals (see
-  [`evals/README.md`](../evals/README.md)); present on `create-tdd`, `doc-fact-check`,
-  `format-docs`, `fullstack-feature-slice`, `review-code`, `ts-best-practices`, and `write-tests`
-  so far.
+- `evals/evals.json` -- skill-creator-format eval cases, run through the skill-creator plugin;
+  `claude plugin eval` doesn't read them. Present on `create-tdd`, `doc-fact-check`, `format-docs`,
+  `fullstack-feature-slice`, `review-code`, `ts-best-practices`, and `write-tests`. The other eight
+  skills (`choose-subagent`, `create-pr`, `diagnose-bug`, `fix-bug`, `rollout-compatibility`,
+  `terse-reports`, `upgrade-dependency`, `zero-trust-architecture`) have `claude plugin eval`
+  cases under [`plugin-evals/<name>/`](../plugin-evals/README.md) instead. A new skill needs one or
+  the other -- `npm test` checks. Both are separate from the Tier-2 routing cases in
+  `evals/cases/<skill>.json` (see [`evals/README.md`](../evals/README.md)).
 - `scripts/` -- only when a skill's body benefits from mechanizing a repeatable step instead of
   re-deriving it one Read/Grep at a time (see `format-docs/scripts/detect_formatter.sh`).
 
