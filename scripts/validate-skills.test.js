@@ -12,6 +12,7 @@ import { after, beforeEach, describe, it } from "node:test";
 import {
   SOFT_DESCRIPTION_LENGTH,
   skillWarnings,
+  validateDescriptionSync,
   validateReadmeCatalog,
   validateSharedScripts,
   validateSkill,
@@ -355,5 +356,42 @@ describe("validateReadmeCatalog", () => {
     assert.deepEqual(validateReadmeCatalog(["a-skill"], path), [
       `README.md has no "## What's here" section`,
     ]);
+  });
+});
+
+describe("validateDescriptionSync", () => {
+  const SAME = "Agent Skills that learn your repo's own conventions.";
+  function writeDescriptionFiles({ pkg = SAME, plugin = SAME, market = SAME, entry = SAME } = {}) {
+    mkdirSync(join(skillsDir, ".claude-plugin"), { recursive: true });
+    writeFileSync(join(skillsDir, "package.json"), JSON.stringify({ description: pkg }));
+    writeFileSync(
+      join(skillsDir, ".claude-plugin", "plugin.json"),
+      JSON.stringify({ description: plugin }),
+    );
+    writeFileSync(
+      join(skillsDir, ".claude-plugin", "marketplace.json"),
+      JSON.stringify({ description: market, plugins: [{ description: entry }] }),
+    );
+  }
+
+  it("passes when all four descriptions match", () => {
+    writeDescriptionFiles();
+
+    assert.deepEqual(validateDescriptionSync(skillsDir), []);
+  });
+
+  it("fails, naming the file, when one copy differs", () => {
+    writeDescriptionFiles({ entry: "A portable library of agent skills." });
+
+    assert.deepEqual(validateDescriptionSync(skillsDir), [
+      ".claude-plugin/marketplace.json plugins[0] description differs from package.json's -- keep all four identical",
+    ]);
+  });
+
+  it("reports a single readable error when a description file is missing", () => {
+    const errors = validateDescriptionSync(skillsDir);
+
+    assert.equal(errors.length, 1);
+    assert.match(errors[0], /could not read description files/);
   });
 });
