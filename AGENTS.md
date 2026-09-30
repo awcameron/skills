@@ -72,18 +72,15 @@ repo it's dropped into, but it is exactly the process this repo itself follows.
 
 ## CI coverage gap
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) (`npm run validate` + `npm run eval`)
-only runs if your PR touches the following allowlisted paths: `skills/**`, `evals/**`,
-`scripts/**`, `package.json`, or any `.md` file.
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) (`npm run validate` + `npm test` +
+`npm run eval`) only runs if your PR touches the following allowlisted paths: `skills/**`,
+`evals/**`, `scripts/**`, `hooks/**`, `package.json`, or any `.md` file.
 
 A change outside this allowlist gets no automated check at all -- review those by hand before
-merging. Two real cases:
+merging. The real case: a `.github/workflows/*.yml`-only PR (no accompanying doc/skill change).
 
-- A `.github/workflows/*.yml`-only PR (no accompanying doc/skill change).
-- A `hooks/*.sh` or `hooks/hooks.json` change -- `hooks/` isn't in the CI path allowlist either, so
-  `session-start.sh`'s actual logic is only ever checked by the manual
-  `bash hooks/session-start.sh | python3 -m json.tool` in [`hooks/README.md`](hooks/README.md),
-  not CI.
+`hooks/session-start.sh`'s catalog output is covered by `scripts/session-start-hook.test.js`
+(part of `npm test`).
 
 ## Post-merge cleanup
 
