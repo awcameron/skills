@@ -48,3 +48,16 @@ available in every project without repeating setup per-repo.
 
 Ask Claude Code something that matches a skill's trigger phrasing (e.g. "review my changes")
 and confirm it names the skill it's using, or run `/review-code` directly.
+
+## If a skill stops triggering
+
+Claude Code lists every installed skill's name and description in each session, and that listing
+has a character budget (1% of the model's context window). With many skills installed from
+several sources, it drops descriptions for the skills you invoke least, so a skill can stay listed
+by name but lose the trigger phrases Claude matches requests against.
+
+The Skills row in `/context` shows the listing's size after the budget is applied. To raise the
+budget, set `skillListingBudgetFraction` in `settings.json` (e.g. `0.02` for 2%) or the
+`SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variable to a fixed character count; to free budget,
+set skills you rarely use to `"name-only"` in `skillOverrides`. See Claude Code's
+[Skill descriptions are cut short](https://code.claude.com/docs/en/skills#skill-descriptions-are-cut-short).
