@@ -1,5 +1,6 @@
-# Keeps the commit-SHA pins in .github/workflows/ current. Actions are pinned to a full SHA (with
-# the version in a trailing comment) so a moved tag can't change what our workflows run.
+# Keeps the commit-SHA pins in .github/workflows/ current, and the npm dependencies the scripts use
+# (ajv, js-yaml). Actions are pinned to a full SHA (with the version in a trailing comment) so a
+# moved tag can't change what our workflows run.
 version: 2
 updates:
   - package-ecosystem: github-actions
@@ -10,4 +11,14 @@ updates:
       prefix: ci
     groups:
       actions:
+        patterns: ["*"]
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      npm:
         patterns: ["*"]
