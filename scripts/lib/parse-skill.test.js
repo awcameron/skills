@@ -85,6 +85,15 @@ describe("parseFrontmatterYaml", () => {
   it("returns an empty object for an empty block", () => {
     assert.deepEqual(parseFrontmatterYaml(""), {});
   });
+
+  it("returns an empty object for a whitespace-only or comment-only block", () => {
+    assert.deepEqual(parseFrontmatterYaml("  \n"), {});
+    assert.deepEqual(parseFrontmatterYaml("# no fields yet"), {});
+  });
+
+  it("still throws on a block with more than one YAML document", () => {
+    assert.throws(() => parseFrontmatterYaml("name: a\n---\nname: b"), /single document/);
+  });
 });
 
 describe("loadAllSkills", () => {

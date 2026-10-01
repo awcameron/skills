@@ -5,7 +5,7 @@
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
-import { load as loadYaml } from "js-yaml";
+import { load as loadYaml, loadAll as loadAllYaml } from "js-yaml";
 
 /** Pulls out the YAML frontmatter block between the first pair of `---` lines. */
 function extractFrontmatter(content) {
@@ -33,6 +33,10 @@ export function readFrontmatterBlock(skillMdPath) {
  * from this. Throws if the block isn't valid YAML.
  */
 export function parseFrontmatterYaml(frontmatter) {
+  // js-yaml 5's load() throws on a block with no document at all (empty, whitespace, or only
+  // comments), where v4 returned undefined. loadAll() returns [] for those, so check that first;
+  // load() still does the parsing, so a multi-document block keeps its error.
+  if (loadAllYaml(frontmatter).length === 0) return {};
   return loadYaml(frontmatter) ?? {};
 }
 
