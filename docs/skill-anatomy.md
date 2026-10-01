@@ -139,7 +139,7 @@ reference files opened on demand (`ts-best-practices`). What every skill here do
 
 ## Contributing a skill
 
-Requires Node >=20 + npm (for the commands in steps 3-5 below) -- run `npm ci` once first, since
+Requires Node >=22 + npm (for the commands in steps 3-5 below) -- run `npm ci` once first, since
 `scripts/validate-skills.js` depends on packages in `node_modules` (`ajv`, `js-yaml`).
 
 1. Write it for a repo you actually have in front of you -- against a real convention, a real

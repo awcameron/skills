@@ -6,7 +6,7 @@
   "description": "Agent Skills that follow your repo's own conventions instead of imposing new ones: code review, debugging, tests, PRs, design docs, safe migrations, dependency upgrades, security, and doc checks. For Claude Code, Cursor, Codex CLI, Antigravity CLI, and OpenCode.",
   "license": "MIT",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "dependencies": {
     "ajv": "^8.17.1",
