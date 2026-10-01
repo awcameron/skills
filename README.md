@@ -20,9 +20,9 @@ reach for it, and a body that tells it what to actually do.
 ## Get started
 
 **Prerequisites:** `git`, plus the [GitHub CLI](https://cli.github.com/) (`gh`), logged in with
-`gh auth login`. Some skills (`create-pr`, `review-code`, `write-tests`, and a few others) read
-PRs, issues, or repo settings through `gh`. Without it they fall back to plain `git` where they
-can, and stop where they can't.
+`gh auth login`, and Node ≥22.20 for the `npx skills` install. Some skills (`create-pr`,
+`review-code`, `write-tests`, and a few others) read PRs, issues, or repo settings through `gh`.
+Without it they fall back to plain `git` where they can, and stop where they can't.
 
 To use it in your own project:
 
@@ -33,8 +33,23 @@ claude plugin marketplace add awcameron/skills
 claude plugin install awcameron-skills@awcameron-skills
 ```
 
-**Cursor, Codex CLI, Antigravity CLI, OpenCode:** clone anywhere, then symlink `skills/` into your
-project (`~/awcameron-skills` is just an example path):
+**Cursor, Codex CLI, Antigravity CLI, OpenCode:** install with the third-party
+[`skills` CLI](https://github.com/vercel-labs/skills), run in your project:
+
+```bash
+npx skills add awcameron/skills                   # all skills
+npx skills add awcameron/skills --list            # browse before installing
+npx skills add awcameron/skills --skill <name>    # one skill (repeat --skill for more)
+```
+
+It installs each skill's whole folder, `references/` included, and records it in
+`skills-lock.json`. Pick tools with `--agent <name>`, or add `-g` to install for your user instead
+of the project. It works for Claude Code too, but without the plugin's slash commands; run a
+skill directly as `/<name>` instead. Each skill's `evals/` folder comes along; agents don't load
+it.
+
+Or clone anywhere, then symlink `skills/` into your project (`~/awcameron-skills` is just an
+example path):
 
 ```bash
 git clone https://github.com/awcameron/skills.git ~/awcameron-skills
@@ -42,9 +57,9 @@ cd your-project
 mkdir -p .agents && ln -s ~/awcameron-skills/skills .agents/skills
 ```
 
-Then open your tool in the project and ask for something a skill matches ("review my changes");
-the agent should name the skill. For global installs, tool-specific paths, and how to check it's
-working, see the per-tool guides: [Claude Code](docs/claude-code-setup.md),
+After either install, open your tool in the project and ask for something a skill matches
+("review my changes"); the agent should name the skill. For global installs, tool-specific paths,
+and how to check it's working, see the per-tool guides: [Claude Code](docs/claude-code-setup.md),
 [Cursor](docs/cursor-setup.md), [Codex CLI](docs/codex-setup.md),
 [Antigravity CLI](docs/antigravity-cli-setup.md), [OpenCode](docs/opencode-setup.md).
 
@@ -69,6 +84,8 @@ Claude Code plugin -- refresh the marketplace, update the plugin, then restart C
 claude plugin marketplace update awcameron-skills   # the marketplace
 claude plugin update awcameron-skills               # the plugin (same name)
 ```
+
+`skills` CLI installs: run `npx skills update` in the project (add `-g` for user-level installs).
 
 Any clone (symlinked or tried in place): run `git pull` in the clone.
 
