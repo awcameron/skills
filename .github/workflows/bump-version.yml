@@ -5,10 +5,10 @@ name: Bump version
 # to main, consistent with how every other change in this repo lands (see AGENTS.md /
 # create-pr skill).
 #
-# Note: a PR opened with the default GITHUB_TOKEN does not itself trigger other workflows
-# (CI, PR title lint) -- that's a deliberate GitHub anti-recursion safeguard, not a bug here.
-# Re-run those checks manually on the opened PR, or merge a follow-up empty commit to trigger
-# them, until/unless a PAT is wired in to change that.
+# Note: the PR is opened with the default GITHUB_TOKEN, so GitHub's anti-recursion safeguard
+# applies: CI's run on it is created but held as "action_required" until a maintainer approves
+# it, and PR title lint (pull_request_target) doesn't run at all. See docs/releasing.md for how
+# to approve the run. A GitHub App token or PAT here would remove the hold.
 
 on:
   workflow_dispatch:
