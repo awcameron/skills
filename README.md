@@ -33,8 +33,23 @@ claude plugin marketplace add awcameron/skills
 claude plugin install awcameron-skills@awcameron-skills
 ```
 
-**Cursor, Codex CLI, Antigravity CLI, OpenCode:** clone anywhere, then symlink `skills/` into your
-project (`~/awcameron-skills` is just an example path):
+**Cursor, Codex CLI, Antigravity CLI, OpenCode:** install with the third-party
+[`skills` CLI](https://github.com/vercel-labs/skills), run in your project:
+
+```bash
+npx skills add awcameron/skills                   # all skills
+npx skills add awcameron/skills --list            # browse before installing
+npx skills add awcameron/skills --skill <name>    # one skill (repeat --skill for more)
+```
+
+It installs each skill's whole folder, `references/` included, and records it in
+`skills-lock.json`. Pick tools with `--agent <name>`, or add `-g` to install for your user instead
+of the project. It works for Claude Code too, but without the plugin's slash commands; run a
+skill directly as `/<name>` instead. Each skill's `evals/` folder comes along; agents don't load
+it.
+
+Or clone anywhere, then symlink `skills/` into your project (`~/awcameron-skills` is just an
+example path):
 
 ```bash
 git clone https://github.com/awcameron/skills.git ~/awcameron-skills
@@ -69,6 +84,8 @@ Claude Code plugin -- refresh the marketplace, update the plugin, then restart C
 claude plugin marketplace update awcameron-skills   # the marketplace
 claude plugin update awcameron-skills               # the plugin (same name)
 ```
+
+`skills` CLI installs: run `npx skills update` in the project (add `-g` for user-level installs).
 
 Any clone (symlinked or tried in place): run `git pull` in the clone.
 
