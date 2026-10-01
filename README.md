@@ -126,7 +126,7 @@ story behind a few of these skills, including a real skill-drift bug this repo's
 
 ## Contributing
 
-Needs Node ≥20:
+Needs Node ≥22:
 
 ```bash
 npm ci
