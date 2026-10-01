@@ -3,7 +3,7 @@
 // Usage: node --test scripts/
 
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, it } from "node:test";
@@ -394,6 +394,13 @@ describe("validateReadmeCatalog", () => {
     assert.match(errors[0], /`a-skill` links to skills\/b-skill\/SKILL\.md/);
     assert.match(errors[1], /skills\/b-skill\/ has no entry/);
     assert.match(errors[2], /lists `a-skill` 2 times/);
+  });
+
+  it("reads a README with CRLF line endings", () => {
+    const readme = writeReadme([entry("a-skill"), entry("b-skill")]);
+    writeFileSync(readme, readFileSync(readme, "utf8").replace(/\n/g, "\r\n"));
+
+    assert.deepEqual(validateReadmeCatalog(["a-skill", "b-skill"], readme), []);
   });
 
   it("fails when the section is missing", () => {

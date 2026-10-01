@@ -1,0 +1,3 @@
+# Check out text files with LF line endings everywhere, Windows included. Shell scripts break on
+# CRLF (`$'\r': command not found`), and validate compares shared script copies byte for byte.
+* text=auto eol=lf

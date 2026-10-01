@@ -21,7 +21,12 @@ top=$(git rev-parse --show-toplevel 2>/dev/null) || {
 }
 cd "$top" || exit 1
 
-# Default branch: GitHub's answer first, then origin/HEAD (unset in some clones), then asking
+# The remote the branch will merge into: in a fork that's `upstream` (origin is the fork, whose
+# default branch can be stale), otherwise `origin`.
+remote=origin
+git remote get-url upstream >/dev/null 2>&1 && remote=upstream
+
+# Default branch: GitHub's answer first, then <remote>/HEAD (unset in some clones), then asking
 # the remote directly.
 default="" source=""
 if command -v gh >/dev/null 2>&1; then
@@ -29,26 +34,26 @@ if command -v gh >/dev/null 2>&1; then
     [ -n "$default" ] && source="gh repo view"
 fi
 if [ -z "$source" ]; then
-  default=$(git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null) &&
-    default=${default#origin/} && source="origin/HEAD"
+  default=$(git symbolic-ref --short "refs/remotes/$remote/HEAD" 2>/dev/null) &&
+    default=${default#"$remote"/} && source="$remote/HEAD"
 fi
 if [ -z "$source" ]; then
-  default=$(git remote show origin 2>/dev/null | sed -n 's/^ *HEAD branch: //p')
-  [ -n "$default" ] && [ "$default" != "(unknown)" ] && source="git remote show origin"
+  default=$(git remote show "$remote" 2>/dev/null | sed -n 's/^ *HEAD branch: //p')
+  [ -n "$default" ] && [ "$default" != "(unknown)" ] && source="git remote show $remote"
 fi
 if [ -z "$source" ]; then
-  echo "couldn't find the default branch (no gh, no origin/HEAD, no reachable origin)" >&2
+  echo "couldn't find the default branch (no gh, no $remote/HEAD, no reachable $remote)" >&2
   exit 1
 fi
 
 # Compare against the remote's copy, freshly fetched; fall back to the last-fetched copy
 # offline, then to a local branch of the same name.
 fetch_note=""
-git fetch --quiet origin "$default" 2>/dev/null || fetch_note=" (fetch failed; using last-fetched)"
-if git rev-parse --verify --quiet "origin/$default" >/dev/null; then
-  ref="origin/$default"
+git fetch --quiet "$remote" "$default" 2>/dev/null || fetch_note=" (fetch failed; using last-fetched)"
+if git rev-parse --verify --quiet "$remote/$default" >/dev/null; then
+  ref="$remote/$default"
 elif git rev-parse --verify --quiet "$default" >/dev/null; then
-  ref="$default" fetch_note=" (no origin/$default; using the local branch)"
+  ref="$default" fetch_note=" (no $remote/$default; using the local branch)"
 else
   echo "default branch \"$default\" has no local or remote ref" >&2
   exit 1
