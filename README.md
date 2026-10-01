@@ -1,5 +1,10 @@
 # Agent Skills
 
+[![CI](https://github.com/awcameron/skills/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/awcameron/skills/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/awcameron/skills)](https://github.com/awcameron/skills/releases/latest)
+[![License: MIT](https://img.shields.io/github/license/awcameron/skills)](LICENSE)
+[![Works with](https://img.shields.io/badge/works_with-Claude_Code_%C2%B7_Cursor_%C2%B7_Codex_CLI_%C2%B7_Antigravity_CLI_%C2%B7_OpenCode-blue)](#get-started)
+
 > [Agent Skills](https://agentskills.io/home) are a lightweight, open format for extending AI
 > agent capabilities with specialized knowledge and workflows.
 
