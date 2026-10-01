@@ -6,7 +6,7 @@ description: >-
   tests", "test this", "scaffold a spec", or "add test coverage", or asks "does this have tests" /
   "what's untested here". Covers unit, integration/e2e, and schema/contract tests. Not for general
   code review (`review-code`).
-allowed-tools: [Read, Grep, Glob, Edit, Write, Bash(git diff:*), Bash(git log:*), Bash(git show:*), Bash(git status:*), Bash(git fetch:*), Bash(git merge-base:*), Bash(git symbolic-ref:*), Bash(gh repo view:*), "Bash(${CLAUDE_SKILL_DIR}/scripts/change_scope.sh:*)", Bash(gh pr diff:*), Bash(gh issue view:*), Bash(git stash:*), Bash(git restore:*), Bash(npm run test:*), Bash(npm test:*), Bash(pnpm test:*), Bash(pnpm run test:*), Bash(yarn test:*), Bash(yarn run test:*), Bash(npx vitest:*), Bash(npx jest:*), Bash(npx playwright test:*), Bash(pytest:*), Bash(python -m pytest:*), Bash(go test:*), Bash(cargo test:*)]
+allowed-tools: [Read, Grep, Glob, Edit, Write, Bash(git diff:*), Bash(git log:*), Bash(git show:*), Bash(git status:*), Bash(git fetch:*), Bash(git merge-base:*), Bash(git symbolic-ref:*), Bash(git remote:*), Bash(gh repo view:*), "Bash(${CLAUDE_SKILL_DIR}/scripts/change_scope.sh:*)", Bash(gh pr diff:*), Bash(gh issue view:*), Bash(git stash:*), Bash(git restore:*), Bash(npm run test:*), Bash(npm test:*), Bash(pnpm test:*), Bash(pnpm run test:*), Bash(yarn test:*), Bash(yarn run test:*), Bash(npx vitest:*), Bash(npx jest:*), Bash(npx playwright test:*), Bash(pytest:*), Bash(python -m pytest:*), Bash(go test:*), Bash(cargo test:*)]
 ---
 
 # Write Tests
@@ -54,7 +54,10 @@ git diff <base>
   the default branch from `gh repo view --json defaultBranchRef -q .defaultBranchRef.name` (off
   GitHub, `git symbolic-ref --short refs/remotes/origin/HEAD`, unset in some clones), then
   `git fetch origin <default-branch>`, `git merge-base origin/<default-branch> HEAD` for `<base>`,
-  `git diff --name-only <base>`, and `git status --short` for untracked (`??`) paths.
+  `git diff --name-only <base>`, and `git status --short` for untracked (`??`) paths. If
+  `git remote` also lists `upstream`, get its merge-base the same way and use it as `<base>` only
+  if it's newer -- `git merge-base --is-ancestor <origin-base> <upstream-base>` succeeds (a fork
+  whose origin is stale). Otherwise upstream is a project origin builds on; keep origin's.
 
   Don't use `origin/<default-branch>...HEAD` -- it only covers commits, so uncommitted work comes
   back empty. `git diff <base>` also skips untracked files: read every untracked path in full as

@@ -250,7 +250,8 @@ export function validateSharedScripts(skillsDirPath = skillsDir) {
 export function validateReadmeCatalog(skillNames, readmePath = join(repoRoot, "README.md")) {
   let readme;
   try {
-    readme = readFileSync(readmePath, "utf8");
+    // A README checked out with CRLF line endings must parse the same.
+    readme = readFileSync(readmePath, "utf8").replace(/\r\n/g, "\n");
   } catch (error) {
     return [`could not read ${readmePath}: ${error.message}`];
   }

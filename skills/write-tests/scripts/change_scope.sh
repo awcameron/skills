@@ -2,6 +2,9 @@
 # Print the scope of "my changes": everything this branch has changed -- committed, staged,
 # uncommitted, and untracked -- since it left the repo's default branch.
 #
+# In a fork -- an `upstream` remote whose default branch this branch left more recently than
+# origin's -- it compares against upstream instead.
+#
 # This mechanizes the "find my changes" step shared by the review-code and write-tests skills.
 # Each skill ships an identical copy (skills are installed individually, so one can't call
 # another's script); `npm run validate` fails if the copies drift.
@@ -58,6 +61,23 @@ base=$(git merge-base "$ref" HEAD) || {
   echo "no common ancestor between $ref and HEAD" >&2
   exit 1
 }
+
+# A fork's origin can be stale: the branch left upstream's default branch, so diffing against
+# origin's would also list upstream's newer commits. But `upstream` alone doesn't mean a fork -- an
+# internal repo (origin, where PRs go) can track an open-source project as upstream. Use
+# upstream's merge-base only when it's newer than origin's, i.e. origin's is its ancestor.
+if git remote get-url upstream >/dev/null 2>&1; then
+  upstream_note=""
+  git fetch --quiet upstream "$default" 2>/dev/null ||
+    upstream_note=" (fetch failed; using last-fetched)"
+  if git rev-parse --verify --quiet "upstream/$default" >/dev/null &&
+    upstream_base=$(git merge-base "upstream/$default" HEAD) &&
+    [ "$upstream_base" != "$base" ] &&
+    git merge-base --is-ancestor "$base" "$upstream_base"; then
+    fetch_note="$upstream_note (newer than the merge-base with $ref)"
+    ref="upstream/$default" base=$upstream_base
+  fi
+fi
 
 echo "default-branch: $default (via $source)"
 echo "base: $base (merge-base of $ref and HEAD)$fetch_note"

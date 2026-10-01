@@ -27,6 +27,12 @@ describe("bodyCommands", () => {
     assert.deepEqual(commandsOf("Check `yarn.lock`, `go.sum`, and review via `gh`."), []);
   });
 
+  it("reads a file with CRLF line endings the same way", () => {
+    const content = skill("\n```bash\ngit status --short\n```\nThen `gh pr view`.\n");
+
+    assert.deepEqual(bodyCommands(content.replace(/\n/g, "\r\n")), bodyCommands(content));
+  });
+
   it("ignores non-shell fences and the frontmatter", () => {
     assert.deepEqual(commandsOf("\n```json\n{ \"x\": \"git push\" }\n```\n"), []);
   });
