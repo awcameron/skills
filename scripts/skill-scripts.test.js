@@ -49,7 +49,14 @@ describe("change_scope.sh", () => {
   const script = join(skillsDir, "review-code", "scripts", "change_scope.sh");
   let dir;
   // Keep the user's git config (default branch name, signing, hooks) out of the fixture repos.
-  const env = { ...process.env, GIT_CONFIG_GLOBAL: "/dev/null", GIT_CONFIG_NOSYSTEM: "1" };
+  // GH_REPO would point `gh repo view` at a real GitHub repo instead of failing on these local
+  // remotes and leaving the default branch to git.
+  const env = {
+    ...process.env,
+    GIT_CONFIG_GLOBAL: "/dev/null",
+    GIT_CONFIG_NOSYSTEM: "1",
+    GH_REPO: "",
+  };
   const git = (cwd, ...args) =>
     execFileSync("git", ["-c", "user.name=t", "-c", "user.email=t@t", ...args], { cwd, env })
       .toString()
@@ -100,6 +107,24 @@ describe("change_scope.sh", () => {
     assert.match(
       scope(clone),
       new RegExp(`^base: ${upstreamHead} \\(merge-base of upstream/main and HEAD\\)`, "m"),
+    );
+  });
+
+  it("keeps origin when upstream is a project origin builds on, not a fork's parent", () => {
+    // origin is an internal repo built on top of upstream, and is ahead of it.
+    const { upstream, clone } = forkClone();
+    git(clone, "remote", "add", "upstream", upstream);
+    git(clone, "fetch", "-q", "upstream");
+    git(clone, "merge", "-q", "upstream/main");
+    commit(clone, "internal");
+    git(clone, "push", "-q", "origin", "main");
+    const originHead = git(clone, "rev-parse", "HEAD");
+    git(clone, "switch", "-qc", "feature");
+    commit(clone, "mine");
+
+    assert.match(
+      scope(clone),
+      new RegExp(`^base: ${originHead} \\(merge-base of origin/main and HEAD\\)$`, "m"),
     );
   });
 });

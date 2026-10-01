@@ -84,8 +84,10 @@ git diff <base>
   the default branch from `gh repo view --json defaultBranchRef -q .defaultBranchRef.name` (off
   GitHub, `git symbolic-ref --short refs/remotes/origin/HEAD`, unset in some clones), then
   `git fetch origin <default-branch>`, `git merge-base origin/<default-branch> HEAD` for `<base>`,
-  `git diff --name-only <base>`, and `git status --short` for untracked (`??`) paths. In a fork
-  (`git remote` lists `upstream`), use `upstream` wherever these say `origin`.
+  `git diff --name-only <base>`, and `git status --short` for untracked (`??`) paths. If
+  `git remote` also lists `upstream`, get its merge-base the same way and use it as `<base>` only
+  if it's newer -- `git merge-base --is-ancestor <origin-base> <upstream-base>` succeeds (a fork
+  whose origin is stale). Otherwise upstream is a project origin builds on; keep origin's.
 
   Don't use `origin/<default-branch>...HEAD` -- it only covers commits, so uncommitted work (the
   usual case for "review my changes") comes back empty. `git diff <base>` also skips untracked
