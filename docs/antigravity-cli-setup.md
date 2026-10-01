@@ -63,8 +63,9 @@ Rules:
 
 ## Usage tips
 
-- Each `SKILL.md`'s `description` frontmatter is what Antigravity CLI uses for auto-discovery --
-  it's written to state both *what* the skill does and *when* to use it, for exactly this reason.
+- Each `SKILL.md`'s `description` frontmatter is what Antigravity CLI matches your request against
+  to decide which skill to use -- it's written to state both *what* the skill does and *when* to
+  use it, for exactly this reason.
 
 ## Legacy Gemini CLI (Enterprise)
 

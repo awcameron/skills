@@ -24,7 +24,7 @@ installs.
 Skills load as `awcameron-skills:<skill-name>` (e.g. `awcameron-skills:review-code`) and activate
 automatically when your request matches a skill's description. The slash commands under
 `.claude/commands/` (`/review-code`, `/write-tests`, `/create-pr`, etc.) are thin wrappers that
-invoke a specific skill explicitly, for when you don't want to wait for auto-discovery.
+invoke a specific skill explicitly, for when you don't want to wait for it to activate on its own.
 
 ## Project setup
 
