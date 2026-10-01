@@ -33,8 +33,8 @@ claude plugin marketplace add awcameron/skills
 claude plugin install awcameron-skills@awcameron-skills
 ```
 
-**Cursor, Codex CLI, Antigravity CLI, OpenCode:** install with the third-party
-[`skills` CLI](https://github.com/vercel-labs/skills), run in your project:
+**Any tool:** install with the third-party [`skills` CLI](https://github.com/vercel-labs/skills),
+run in your project:
 
 ```bash
 npx skills add awcameron/skills                   # all skills
@@ -44,12 +44,11 @@ npx skills add awcameron/skills --skill <name>    # one skill (repeat --skill fo
 
 It installs each skill's whole folder, `references/` included, and records it in
 `skills-lock.json`. Pick tools with `--agent <name>`, or add `-g` to install for your user instead
-of the project. It works for Claude Code too, but without the plugin's slash commands; run a
-skill directly as `/<name>` instead. Each skill's `evals/` folder comes along; agents don't load
-it.
+of the project. In Claude Code it skips the plugin's slash commands; run a skill directly as
+`/<name>` instead. Each skill's `evals/` folder comes along; agents don't load it.
 
-Or clone anywhere, then symlink `skills/` into your project (`~/awcameron-skills` is just an
-example path):
+**Cursor, Codex CLI, Antigravity CLI, OpenCode:** or clone anywhere, then symlink `skills/` into
+your project (`~/awcameron-skills` is just an example path):
 
 ```bash
 git clone https://github.com/awcameron/skills.git ~/awcameron-skills
@@ -57,8 +56,8 @@ cd your-project
 mkdir -p .agents && ln -s ~/awcameron-skills/skills .agents/skills
 ```
 
-After either install, open your tool in the project and ask for something a skill matches
-("review my changes"); the agent should name the skill. For global installs, tool-specific paths,
+After installing, open your tool in the project and ask for something a skill matches ("review
+my changes"); the agent should name the skill. For global installs, tool-specific paths,
 and how to check it's working, see the per-tool guides: [Claude Code](docs/claude-code-setup.md),
 [Cursor](docs/cursor-setup.md), [Codex CLI](docs/codex-setup.md),
 [Antigravity CLI](docs/antigravity-cli-setup.md), [OpenCode](docs/opencode-setup.md).
