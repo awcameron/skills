@@ -1,0 +1,32 @@
+name: Skill request or improvement
+description: Suggest a new skill, or a change to an existing one.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Skills here *discover* a repo's own conventions instead of imposing new ones (see the
+        README's [Philosophy](https://github.com/awcameron/skills#philosophy)). The most useful
+        requests come from a real task where an agent got something wrong.
+  - type: input
+    id: skill
+    attributes:
+      label: Existing skill
+      description: The skill to change, or leave blank for a new skill.
+  - type: textarea
+    id: problem
+    attributes:
+      label: The task and what went wrong
+      description: What you asked an agent to do, and what it did instead of what you wanted.
+    validations:
+      required: true
+  - type: textarea
+    id: conventions
+    attributes:
+      label: What the skill should discover
+      description: Which of the repo's own conventions, docs, config, or history should it read, rather than assume?
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: When it should activate (trigger phrases a user would actually say) and what it should do.

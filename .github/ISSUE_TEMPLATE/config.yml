@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a security issue or harmful skill
+    url: https://github.com/awcameron/skills/security/advisories/new
+    about: Report privately, not in a public issue. See SECURITY.md.
+  - name: Install and setup help
+    url: https://github.com/awcameron/skills#get-started
+    about: The README's Get started section links a setup guide for each tool.
