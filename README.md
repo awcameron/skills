@@ -20,9 +20,9 @@ reach for it, and a body that tells it what to actually do.
 ## Get started
 
 **Prerequisites:** `git`, plus the [GitHub CLI](https://cli.github.com/) (`gh`), logged in with
-`gh auth login`. Some skills (`create-pr`, `review-code`, `write-tests`, and a few others) read
-PRs, issues, or repo settings through `gh`. Without it they fall back to plain `git` where they
-can, and stop where they can't.
+`gh auth login`, and Node ≥22.20 for the `npx skills` install. Some skills (`create-pr`,
+`review-code`, `write-tests`, and a few others) read PRs, issues, or repo settings through `gh`.
+Without it they fall back to plain `git` where they can, and stop where they can't.
 
 To use it in your own project:
 
@@ -57,9 +57,9 @@ cd your-project
 mkdir -p .agents && ln -s ~/awcameron-skills/skills .agents/skills
 ```
 
-Then open your tool in the project and ask for something a skill matches ("review my changes");
-the agent should name the skill. For global installs, tool-specific paths, and how to check it's
-working, see the per-tool guides: [Claude Code](docs/claude-code-setup.md),
+After either install, open your tool in the project and ask for something a skill matches
+("review my changes"); the agent should name the skill. For global installs, tool-specific paths,
+and how to check it's working, see the per-tool guides: [Claude Code](docs/claude-code-setup.md),
 [Cursor](docs/cursor-setup.md), [Codex CLI](docs/codex-setup.md),
 [Antigravity CLI](docs/antigravity-cli-setup.md), [OpenCode](docs/opencode-setup.md).
 
