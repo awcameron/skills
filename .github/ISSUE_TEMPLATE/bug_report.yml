@@ -1,0 +1,78 @@
+name: Bug report
+description: A skill misbehaves (didn't activate, wrong skill, wrong guidance), or a script, CI, or install step breaks.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Security issue, or a skill whose instructions look harmful?** Don't file it here. Use
+        [private vulnerability reporting](https://github.com/awcameron/skills/security/advisories/new)
+        instead; see [SECURITY.md](https://github.com/awcameron/skills/blob/main/SECURITY.md).
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What went wrong?
+      options:
+        - A skill didn't activate when it should have
+        - The wrong skill activated
+        - A skill gave wrong or unhelpful guidance
+        - Install or setup didn't work
+        - A repo script or CI check failed (contributing)
+        - Something else
+    validations:
+      required: true
+  - type: input
+    id: skill
+    attributes:
+      label: Skill
+      description: Which skill, if any (e.g. `review-code`).
+  - type: dropdown
+    id: tool
+    attributes:
+      label: Tool
+      options:
+        - Claude Code
+        - Cursor
+        - Codex CLI
+        - Antigravity CLI
+        - OpenCode
+        - Other / not tool-specific
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: How you installed the skills
+      options:
+        - Claude Code plugin
+        - npx skills
+        - Clone and symlink
+        - Working in a clone of this repo
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The release (e.g. `v0.14.8`, shown by `claude plugin list`) or commit (`git log -1 --oneline` in your clone).
+  - type: textarea
+    id: steps
+    attributes:
+      label: What you did
+      description: The request you gave the agent, or the command you ran.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened
+      description: Paste the agent's response or the error output. Remove anything private (paths, code, tokens).
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
