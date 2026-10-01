@@ -26,6 +26,22 @@ automatically when your request matches a skill's description. The slash command
 `.claude/commands/` (`/review-code`, `/write-tests`, `/create-pr`, etc.) are thin wrappers that
 invoke a specific skill explicitly, for when you don't want to wait for it to activate on its own.
 
+## Install with `npx skills`
+
+Run the third-party [`skills` CLI](https://github.com/vercel-labs/skills) (needs Node ≥22.20) in
+your project:
+
+```bash
+cd your-project
+npx skills add awcameron/skills --agent claude-code                      # all skills
+npx skills add awcameron/skills --agent claude-code --skill review-code  # one skill
+```
+
+It installs each skill's folder, `references/` included, into `.claude/skills/<name>/`, without the
+plugin's slash commands; run a skill directly as `/<name>` instead. It records what it installed in
+`skills-lock.json`; `npx skills update` updates it. Add `-g` to install for your user instead of the
+project.
+
 ## Project setup
 
 ```bash

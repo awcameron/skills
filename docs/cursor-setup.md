@@ -5,6 +5,21 @@ Cursor's Agent Skills system discovers `SKILL.md` files from `.cursor/skills/` a
 compatibility it also loads `.claude/skills/`, `.codex/skills/`, `~/.claude/skills/`, and
 `~/.codex/skills/`.
 
+## Install with `npx skills`
+
+Run the third-party [`skills` CLI](https://github.com/vercel-labs/skills) (needs Node ≥22.20) in
+your project:
+
+```bash
+cd your-project
+npx skills add awcameron/skills --agent cursor                      # all skills
+npx skills add awcameron/skills --agent cursor --skill review-code  # one skill
+```
+
+It installs each skill's folder, `references/` included, into `.agents/skills/<name>/`. It records
+what it installed in `skills-lock.json`; `npx skills update` updates it. Add `-g` to install for
+your user instead of the project.
+
 ## Project setup
 
 Clone this repo once, then symlink its canonical `skills/` directory into whichever compatible

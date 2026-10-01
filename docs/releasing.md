@@ -46,7 +46,6 @@ the release page appear on their own.
 - **Patch** -- fixes, wording/doc corrections, metadata tweaks (e.g. `plugin.json` keywords). No
   behavior or interface change.
 - **Minor** -- anything additive: a new skill, a new command, expanded scope on an existing skill.
-  This is what most bumps so far have been.
 - **Major** -- a change that breaks something a consumer already relies on: renaming or removing a
   skill/command someone has wired up (`skills/<name>/`, `.claude/commands/<name>.md`, a compat
   symlink like `.agents/skills`), restructuring `.claude-plugin/plugin.json`'s `skills`/
@@ -74,7 +73,7 @@ change right now, but doing so anyway is a reasonable way to signal it before th
   title itself (`chore: bump version to <version>`), so there's nothing for it to catch. Opening
   the PR with a GitHub App token or a personal access token instead of `GITHUB_TOKEN` would remove
   both gaps.
-- **Requires "Allow GitHub Actions to create pull requests" enabled** for this repo (Settings →
-  Actions → General → Workflow permissions). Without it, the bump step still runs and pushes the
-  branch, but the final `gh pr create` call fails -- open the PR manually for that branch if this
-  happens.
+- **Requires "Allow GitHub Actions to create and approve pull requests" enabled** for this repo
+  (Settings → Actions → General → Workflow permissions). Without it, the bump step still runs and
+  pushes the branch, but the final `gh pr create` call fails -- open the PR manually for that
+  branch if this happens.
