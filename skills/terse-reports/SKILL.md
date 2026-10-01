@@ -27,6 +27,24 @@ for the rest of the conversation unless they ask for more detail. The trade is s
 polish -- treat every word that doesn't add a fact as a cost to the reader. When unsure whether a
 word earns its place, cut it and check the sentence still carries the same information.
 
+## If they want it in every session
+
+This skill lasts one conversation. If the user asks to make it permanent ("always do this", "every
+session"), say so. In Claude Code, point them to the built-in
+[Concise output style](https://code.claude.com/docs/en/output-styles#concise):
+`/output-style concise`, or `/config` → **Output style**. Either saves the choice to their
+settings. Picking a style is their call, so don't edit their settings yourself. Tell them how it
+differs from this skill:
+
+- **Less terse.** Concise cuts preamble, narration, and recaps, but keeps full sentences. This
+  skill also drops grammar.
+- **Wider.** Concise shapes every response in every session until they switch back. This skill
+  covers reports in this conversation only.
+- **Its own exceptions.** Concise writes in full when asked for detail, and for errors, failing
+  tests, security warnings, and confirmations before destructive actions.
+- **Claude Code only** (v2.1.237 or later). In other tools, they can ask again at the start of
+  each conversation.
+
 ## What to keep no matter how terse it gets
 
 Never let brevity swallow a fact the user needs to act on:
