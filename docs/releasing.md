@@ -30,7 +30,8 @@ gh workflow run bump-version.yml --repo <your-github-username>/skills -f bump=pa
    `.claude-plugin/plugin.json`) -- it does not push to `main` directly, same as every other
    change in this repo.
 
-Merge that PR like any other. Merging it is what actually ships the new version.
+Before merging, approve its CI run (see [Known gaps](#known-gaps)) and wait for it to pass. Then
+merge that PR like any other. Merging it is what actually ships the new version.
 
 ## What happens on merge
 
@@ -59,10 +60,20 @@ change right now, but doing so anyway is a reasonable way to signal it before th
 
 ## Known gaps
 
-- **A PR opened by the bump workflow's own `GITHUB_TOKEN` doesn't trigger other workflows**
-  (CI, PR title lint) -- this is GitHub's anti-recursion safeguard, not a bug. Re-run those checks
-  manually on the opened PR if you want them to run before merging, or accept that `validate`/`eval`
-  already ran as part of the bump step itself.
+- **CI on the bump PR waits for approval.** The workflow opens the PR with its own
+  `GITHUB_TOKEN`, and GitHub's anti-recursion safeguard holds runs that token triggers: CI's run is
+  created with status `action_required` and doesn't start until a maintainer approves it. Approve
+  it from the PR page (**Approve workflows to run**), or with `gh`:
+
+  ```bash
+  gh run list --branch chore/bump-version-<version> --workflow ci.yml   # the held run's ID
+  gh api -X POST repos/<your-github-username>/skills/actions/runs/<run-id>/approve
+  ```
+
+  PR title lint (`pull_request_target`) doesn't run on the bump PR at all. The workflow writes the
+  title itself (`chore: bump version to <version>`), so there's nothing for it to catch. Opening
+  the PR with a GitHub App token or a personal access token instead of `GITHUB_TOKEN` would remove
+  both gaps.
 - **Requires "Allow GitHub Actions to create pull requests" enabled** for this repo (Settings →
   Actions → General → Workflow permissions). Without it, the bump step still runs and pushes the
   branch, but the final `gh pr create` call fails -- open the PR manually for that branch if this
