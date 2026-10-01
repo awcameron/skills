@@ -1,6 +1,6 @@
 {
   "name": "awcameron-skills",
-  "version": "0.14.2",
+  "version": "0.14.3",
   "description": "Agent Skills that learn your repo's own conventions instead of imposing new ones: code review, debugging, tests, PRs, security, dependency upgrades, and doc checks. For Claude Code, Cursor, Codex CLI, Antigravity CLI, and OpenCode.",
   "author": {
     "name": "Antonio Cameron"
