@@ -121,9 +121,9 @@ git restore -- <source files>
 For a one-line fix, commenting the line out or restoring the old value by hand works too.
 Either way, confirm with `git status` afterwards that the source is back to the fixed version.
 
-If the change is a bug fix, prefer writing the test *first* and watching it fail, per the `tdd`
-skill's "red before green" (or the equivalent test-first workflow if this repo has one). A test
-written after the fix has only ever been observed agreeing with the code.
+If the change is a bug fix, prefer writing the test *first* and watching it fail ("red before
+green"), or follow the repo's own test-first workflow if it has one. A test written after the fix
+has only ever been observed agreeing with the code.
 
 ### Failure shapes worth watching for
 
