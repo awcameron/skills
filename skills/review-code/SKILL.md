@@ -100,7 +100,8 @@ gh pr diff <n>
 Read the changed files in full -- don't review just the diff hunks. Understanding the surrounding
 context is essential for catching issues like missing error handling or a broken pattern. For a
 PR review, this means reading each changed file at its state on the PR's head branch, not the
-base branch's version.
+base branch's version -- the local checkout may be on another branch entirely. Without checking
+the PR out, `git fetch origin pull/<n>/head` once, then `git show FETCH_HEAD:<path>` per file.
 
 ## Step 2: Check against the repo's discovered standards
 

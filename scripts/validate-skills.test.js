@@ -302,6 +302,21 @@ describe("skillWarnings", () => {
     assert.deepEqual(validateSkill("my-skill", skillsDir), []);
   });
 
+  it("also warns on a command in a references/*.md file, naming the file", () => {
+    writeSkill("my-skill", {
+      frontmatter: `---\nname: my-skill\ndescription: Does a thing. Use when asked.\nallowed-tools: [Read, Bash(git status:*)]\n---\n\nBody.\n`,
+    });
+    mkdirSync(join(skillsDir, "my-skill", "references"));
+    writeFileSync(
+      join(skillsDir, "my-skill", "references", "steps.md"),
+      "# Steps\n\n```bash\ngit status\ngit branch -d old\n```\n",
+    );
+
+    const warnings = skillWarnings("my-skill", skillsDir);
+    assert.equal(warnings.length, 1);
+    assert.match(warnings[0], /^references\/steps\.md line 5: `git branch -d old` isn't covered/);
+  });
+
   it("returns no warnings for a missing SKILL.md (validateSkill reports that)", () => {
     assert.deepEqual(skillWarnings("does-not-exist", skillsDir), []);
   });

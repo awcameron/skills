@@ -6,7 +6,7 @@ description: >-
   changes the code actually touches, and running the tests. Use when the user asks to "upgrade X",
   "bump this dependency", "update to the latest version", "is it safe to upgrade", or to update an
   outdated or vulnerable package. Not for adding a new dependency.
-allowed-tools: [Read, Grep, Glob, Edit, WebFetch, Bash(git diff:*), Bash(git log:*), Bash(git show:*), Bash(gh release list:*), Bash(gh release view:*), Bash(npm outdated:*), Bash(npm view:*), Bash(npm install:*), Bash(npm dedupe:*), Bash(npm ls:*), Bash(yarn upgrade:*), Bash(yarn add:*), Bash(yarn info:*), Bash(yarn dedupe:*), Bash(pnpm update:*), Bash(pnpm add:*), Bash(pnpm outdated:*), Bash(pip list:*), Bash(pip install:*), Bash(poetry show:*), Bash(poetry add:*), Bash(cargo update:*), Bash(cargo outdated:*), Bash(go get:*), Bash(go list:*), Bash(mvn versions:display-dependency-updates:*), Bash(mvn versions:use-latest-releases:*), Bash(mvn versions:set-property:*), Bash(mvn dependency:tree:*), Bash(./gradlew dependencies:*), Bash(./gradlew dependencyUpdates:*), Bash(npm test:*), Bash(npm run test:*), Bash(pnpm test:*), Bash(pnpm run test:*), Bash(yarn test:*), Bash(yarn run test:*), Bash(npx vitest:*), Bash(npx jest:*), Bash(pytest:*), Bash(python -m pytest:*), Bash(cargo test:*), Bash(go test:*), Bash(mvn test:*), Bash(./gradlew test:*)]
+allowed-tools: [Read, Grep, Glob, Edit, WebFetch, Bash(git diff:*), Bash(git log:*), Bash(git show:*), Bash(gh release list:*), Bash(gh release view:*), Bash(npm outdated:*), Bash(npm view:*), Bash(npm install:*), Bash(npm dedupe:*), Bash(npm ls:*), Bash(yarn upgrade:*), Bash(yarn up:*), Bash(yarn add:*), Bash(yarn info:*), Bash(yarn dedupe:*), Bash(yarn why:*), Bash(pnpm update:*), Bash(pnpm add:*), Bash(pnpm outdated:*), Bash(pnpm dedupe:*), Bash(pnpm ls:*), Bash(pip list:*), Bash(pip install:*), Bash(poetry show:*), Bash(poetry add:*), Bash(cargo update:*), Bash(cargo outdated:*), Bash(go get:*), Bash(go list:*), Bash(go mod tidy:*), Bash(mvn versions:display-dependency-updates:*), Bash(mvn versions:use-latest-releases:*), Bash(mvn versions:set-property:*), Bash(mvn dependency:tree:*), Bash(./gradlew dependencies:*), Bash(./gradlew dependencyUpdates:*), Bash(npm test:*), Bash(npm run test:*), Bash(pnpm test:*), Bash(pnpm run test:*), Bash(yarn test:*), Bash(yarn run test:*), Bash(npx vitest:*), Bash(npx jest:*), Bash(pytest:*), Bash(python -m pytest:*), Bash(cargo test:*), Bash(go test:*), Bash(mvn test:*), Bash(./gradlew test:*)]
 ---
 
 # Upgrade Dependency
@@ -79,22 +79,25 @@ and record which tests fail. That list is what Step 6 compares against, so a pre
 failure never needs the bump reverted to prove it isn't this bump's fault.
 
 **Then bump** through the package manager's own mechanism -- `npm install pkg@version`,
-`poetry add pkg@version`, `cargo update -p pkg --precise version`, etc. -- never by hand-editing a
-version string and leaving the lockfile stale.
+`yarn up pkg@version` (Yarn 2+; `yarn upgrade` is Yarn 1 only), `poetry add pkg@version`,
+`cargo update -p pkg --precise version`, `go get pkg@version` then `go mod tidy`, etc. -- never by
+hand-editing a version string and leaving the lockfile stale.
 
 **Maven and Gradle don't have a single "install this version" command** the way npm/poetry/cargo
-do -- the version lives directly in the manifest. Use `mvn versions:set-property`/`mvn
-versions:use-latest-releases -Dincludes=<pkg>` where the plugin's already in the build, or edit the
-`<version>`/property in `pom.xml` directly; for Gradle, edit the version in `build.gradle[.kts]` or
-its version catalog (`gradle/libs.versions.toml`) if the repo uses one. Either way this is still
-"the manager's own mechanism" in spirit: the source of truth for the version, not a copy of it.
+do -- the version lives directly in the manifest. Use `mvn versions:set-property` or
+`mvn versions:use-latest-releases -Dincludes=<pkg>` where the plugin's already in the build, or
+edit the `<version>`/property in `pom.xml` directly; for Gradle, edit the version in
+`build.gradle[.kts]` or its version catalog (`gradle/libs.versions.toml`) if the repo uses one.
+Either way this is still "the manager's own mechanism" in spirit: the source of truth for the
+version, not a copy of it.
 
 **Installing the version and actually deduplicating a workspace tree are different outcomes.** In
 a monorepo, a plain install can leave several copies of the same package nested under different
 consumers even after the direct dependents are bumped -- if the goal is one shared copy (or if
-duplication was the whole reason for the upgrade), run the package manager's own dedupe (`npm
-dedupe`, `yarn dedupe`, etc.) and verify with something like `npm ls <pkg>` that there's actually
-one copy left, not just that the package.json version strings changed.
+duplication was the whole reason for the upgrade), run the package manager's own dedupe
+(`npm dedupe`, `yarn dedupe`, `pnpm dedupe`) and verify with `npm ls <pkg>`, `pnpm ls <pkg>`, or
+`yarn why <pkg>` that there's actually one copy left, not just that the package.json version
+strings changed.
 
 ## Step 6: Re-run the same suite and compare against the baseline
 

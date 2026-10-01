@@ -73,10 +73,23 @@ export function skillWarnings(dirName, skillsDirPath = skillsDir) {
       `description is ${description.length} chars, over the ${SOFT_DESCRIPTION_LENGTH}-char soft limit -- it loads into every session, so move mechanism detail into the body`,
     );
   }
-  for (const { line, command } of uncoveredCommands(frontmatter["allowed-tools"], content)) {
-    warnings.push(
-      `line ${line}: \`${command}\` isn't covered by allowed-tools -- add a Bash(...) entry, or reword it if it's not meant to be run`,
-    );
+  // A skill's references/*.md files are instructions too, read on demand, so their commands need
+  // the same coverage.
+  const referencesDir = join(skillsDirPath, dirName, "references");
+  const documents = [{ label: "", content }];
+  if (existsSync(referencesDir)) {
+    for (const file of readdirSync(referencesDir).filter((name) => name.endsWith(".md")).sort()) {
+      const referenceContent = readFileSync(join(referencesDir, file), "utf8");
+      documents.push({ label: `references/${file} `, content: referenceContent });
+    }
+  }
+  const allowedTools = frontmatter["allowed-tools"];
+  for (const document of documents) {
+    for (const { line, command } of uncoveredCommands(allowedTools, document.content)) {
+      warnings.push(
+        `${document.label}line ${line}: \`${command}\` isn't covered by allowed-tools -- add a Bash(...) entry, or reword it if it's not meant to be run`,
+      );
+    }
   }
   return warnings;
 }
