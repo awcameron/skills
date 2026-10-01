@@ -17,12 +17,16 @@ const isMainUrl = pathToFileURL(join(dirname(fileURLToPath(import.meta.url)), "i
 
 after(() => rmSync(dir, { recursive: true, force: true }));
 
-/** Writes a script that prints whether it was run directly, and runs it via `scriptPath`. */
+/**
+ * Writes a script that prints whether it was run directly, and runs it via `scriptPath`. It prints
+ * a string, not the boolean: in a terminal the test runner sets FORCE_COLOR, the child inherits
+ * it, and `console.log(true)` would print an ANSI-colored `true`.
+ */
 function runScript(scriptDir, scriptPath = join(scriptDir, "script.mjs")) {
   mkdirSync(scriptDir, { recursive: true });
   writeFileSync(
     join(scriptDir, "script.mjs"),
-    `import { isMain } from ${JSON.stringify(isMainUrl)};\nconsole.log(isMain(import.meta.url));\n`,
+    `import { isMain } from ${JSON.stringify(isMainUrl)};\nconsole.log(String(isMain(import.meta.url)));\n`,
   );
   return execFileSync(process.execPath, [scriptPath], { encoding: "utf8" }).trim();
 }
