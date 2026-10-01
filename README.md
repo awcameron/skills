@@ -58,9 +58,16 @@ cd skills
 Antigravity CLI, `$review-code` in Codex CLI, or `/` then the skill name in Cursor's Agent chat.
 In OpenCode the agent loads skills itself, so there's no way to run one directly.
 
-**Update** -- plugin: `claude plugin marketplace update awcameron-skills`, then
-`claude plugin update awcameron-skills`, then restart Claude Code. Symlinked clone: `git pull` in
-the clone.
+**Update**
+
+Claude Code plugin -- refresh the marketplace, update the plugin, then restart Claude Code:
+
+```bash
+claude plugin marketplace update awcameron-skills   # the marketplace
+claude plugin update awcameron-skills               # the plugin (same name)
+```
+
+Any clone (symlinked or tried in place): run `git pull` in the clone.
 
 ## What's here
 
