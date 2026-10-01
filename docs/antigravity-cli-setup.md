@@ -8,6 +8,21 @@ format changes. If your organization uses a Gemini Code Assist Standard/Enterpri
 Gemini Code Assist for GitHub through Google Cloud, your access to the legacy Gemini CLI is
 unaffected; see [Legacy Gemini CLI (Enterprise)](#legacy-gemini-cli-enterprise) below.
 
+## Install with `npx skills`
+
+Run the third-party [`skills` CLI](https://github.com/vercel-labs/skills) (needs Node ≥22.20) in
+your project:
+
+```bash
+cd your-project
+npx skills add awcameron/skills --agent antigravity-cli                      # all skills
+npx skills add awcameron/skills --agent antigravity-cli --skill review-code  # one skill
+```
+
+It installs each skill's folder, `references/` included, into `.agents/skills/<name>/`. It records
+what it installed in `skills-lock.json`; `npx skills update` updates it. Add `-g` to install for
+your user instead of the project.
+
 ## Project setup
 
 Antigravity CLI auto-discovers `SKILL.md` files in a project's `.agents/skills/` directory. Clone
