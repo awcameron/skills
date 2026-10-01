@@ -3,7 +3,7 @@
 > [Agent Skills](https://agentskills.io/home) are a lightweight, open format for extending AI
 > agent capabilities with specialized knowledge and workflows.
 
-This is a portable library of them for Claude Code, Cursor, Antigravity CLI, Codex CLI, and
+This is a portable library of them for Claude Code, Cursor, Codex CLI, Antigravity CLI, and
 OpenCode users who want their agent to discover a repo's own conventions rather than have a skill
 dictate new ones. Each one started as something built and iterated on while working on a real
 application, then got rewritten into a plain `SKILL.md`: a description that tells an agent when to
@@ -20,17 +20,20 @@ reach for it, and a body that tells it what to actually do.
 ## Get started
 
 **Prerequisites:** `git`, plus the [GitHub CLI](https://cli.github.com/) (`gh`), logged in with
-`gh auth login`. Most skills read PRs, issues, or repo settings through `gh`. Without it they fall
-back to plain `git` where they can, and stop where they can't.
+`gh auth login`. Some skills (`create-pr`, `review-code`, `write-tests`, and a few others) read
+PRs, issues, or repo settings through `gh`. Without it they fall back to plain `git` where they
+can, and stop where they can't.
 
-**Use it in your own project** -- Claude Code: install the plugin.
+To use it in your own project:
+
+**Claude Code:** install the plugin.
 
 ```bash
 claude plugin marketplace add awcameron/skills
 claude plugin install awcameron-skills@awcameron-skills
 ```
 
-Cursor, Codex CLI, Antigravity CLI, OpenCode: clone anywhere, then symlink `skills/` into your
+**Cursor, Codex CLI, Antigravity CLI, OpenCode:** clone anywhere, then symlink `skills/` into your
 project (`~/awcameron-skills` is just an example path):
 
 ```bash
@@ -40,10 +43,10 @@ mkdir -p .agents && ln -s ~/awcameron-skills/skills .agents/skills
 ```
 
 Then open your tool in the project and ask for something a skill matches ("review my changes");
-the agent should name the skill. For global installs, tool-specific paths, and a Verify section,
-see the per-tool guides: [Claude Code](docs/claude-code-setup.md), [Cursor](docs/cursor-setup.md),
-[Codex CLI](docs/codex-setup.md), [Antigravity CLI](docs/antigravity-cli-setup.md),
-[OpenCode](docs/opencode-setup.md).
+the agent should name the skill. For global installs, tool-specific paths, and how to check it's
+working, see the per-tool guides: [Claude Code](docs/claude-code-setup.md),
+[Cursor](docs/cursor-setup.md), [Codex CLI](docs/codex-setup.md),
+[Antigravity CLI](docs/antigravity-cli-setup.md), [OpenCode](docs/opencode-setup.md).
 
 **Or try it in a clone** -- no install. The repo ships the symlinks each tool reads, so open your
 tool in the clone and the skills are already there:
@@ -51,10 +54,10 @@ tool in the clone and the skills are already there:
 ```bash
 git clone https://github.com/awcameron/skills.git
 cd skills
-# open Claude Code / Codex CLI / Antigravity CLI / OpenCode / Cursor here
+# open Claude Code / Cursor / Codex CLI / Antigravity CLI / OpenCode here
 ```
 
-**Run a skill directly** instead of waiting for auto-discovery: `/review-code` in Claude Code and
+**Run a skill directly** instead of waiting for it to trigger: `/review-code` in Claude Code and
 Antigravity CLI, `$review-code` in Codex CLI, or `/` then the skill name in Cursor's Agent chat.
 In OpenCode the agent loads skills itself, so there's no way to run one directly.
 
@@ -91,7 +94,7 @@ and how skills hand off to each other.
 | [`doc-fact-check`](skills/doc-fact-check/SKILL.md) | Checking a doc's claims (including skill files) against the code and git history. | Documentation integrity |
 | [`format-docs`](skills/format-docs/SKILL.md) | Formatting Markdown with the repo's own formatter, and flagging structural changes instead of making them. | Documentation integrity |
 | [`choose-subagent`](skills/choose-subagent/SKILL.md) | Deciding which subagent type and model to spawn, based on whether the task writes anything. | Agent meta-behavior |
-| [`terse-reports`](skills/terse-reports/SKILL.md) | You ask for terse, fact-dense status reports in this conversation. For every session, use the Concise output style (`/output-style concise`) instead. | Agent meta-behavior |
+| [`terse-reports`](skills/terse-reports/SKILL.md) | You ask for terse, fact-dense status reports in this conversation. In Claude Code, the built-in [Concise output style](https://code.claude.com/docs/en/output-styles#concise) (`/output-style concise`) shortens every session's responses, less tersely than this skill. | Agent meta-behavior |
 
 ## Philosophy
 
