@@ -85,10 +85,12 @@ metadata:                           # optional -- see "metadata" below
   agent implementations," and Claude Code is the only consumer of it today (other supported tools
   ignore the field entirely) -- so there's no cross-tool compatibility to lose by keeping the list
   form Claude Code actually expects. Revisit if a second consumer starts reading this field.
-  `scripts/validate-skills.js` warns (without failing) when the body tells the agent to run a
-  command no `Bash(...)` entry covers -- a line in a `bash`/`sh` fence, or an inline code span
-  starting with a known CLI and a subcommand (`git status`, `npm test`). Each one is a permission
-  prompt at run time, so add the entry, or reword a command that's only mentioned, not run.
+  `scripts/validate-skills.js` warns (without failing) when the body or a `references/*.md` file
+  tells the agent to run a command no `Bash(...)` entry covers -- a line in a `bash`/`sh` fence,
+  or an inline code span starting with a known CLI and a subcommand (`git status`, `npm test`).
+  Each one is a permission prompt at run time, so add the entry, or reword a command that's only
+  mentioned, not run. Keep each code span on one line: the check reads line by line, so a span
+  that wraps hides it and the rest of that line's spans.
 - `license`: optional. Only add it if a skill's license genuinely differs from the repo's own --
   every skill here currently shares the root [`LICENSE`](../LICENSE) (MIT), so this repo doesn't
   set the field per-skill; if you do need it, `license: MIT` (a license name) or a path to a
