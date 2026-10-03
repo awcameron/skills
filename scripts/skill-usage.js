@@ -17,7 +17,11 @@
 // Then: `node scripts/skill-usage.js report` (add `--all` to include skills from other plugins).
 //
 // The log is local JSONL at ~/.claude/skill-usage.jsonl (override with SKILL_USAGE_LOG). It keeps
-// a skill name, session id, project directory name, and timestamp -- never prompt text.
+// a skill name, session id, project directory name, and timestamp -- never prompt text. The
+// UserPromptSubmit hook starts node on every prompt in every repo, roughly 50ms each.
+//
+// Exit codes: 0 always for `log` (a hook must never fail the session), 0 for `report`, 1 for a
+// missing or unknown mode.
 
 import {
   appendFileSync,
@@ -72,7 +76,9 @@ export function toEntry(event, now = new Date()) {
  * one use (this repo's command wrappers tell the model to invoke the skill); a Skill call with no
  * matching slash in its turn is `auto`. Skills in `known` appear even at zero -- a skill nobody
  * uses is the finding. A slash for a name outside `known` counts only once a Skill call confirms
- * it's a skill (another plugin's), so non-skill commands (`/help`) are dropped.
+ * it's a skill (another plugin's), so non-skill commands (`/help`) are dropped. A slash only
+ * claims the first matching Skill call in its turn: `/fix-bug` that runs fix-bug twice counts as
+ * one slash plus one auto -- rare, and close enough for deciding which skills earn their names.
  */
 export function summarize(entries, known = []) {
   const rows = new Map(known.map((name) => [name, { skill: name, auto: 0, slash: 0, last: null }]));
@@ -108,6 +114,11 @@ export function summarize(entries, known = []) {
   return [...rows.values()]
     .map((r) => ({ ...r, total: r.auto + r.slash }))
     .sort((a, b) => b.total - a.total || a.skill.localeCompare(b.skill));
+}
+
+/** An ISO timestamp as a YYYY-MM-DD date in the local time zone, which is when you used it. */
+export function localDate(ts) {
+  return new Date(ts).toLocaleDateString("en-CA");
 }
 
 /** Parses JSONL, skipping lines that aren't valid entries rather than failing the report. */
@@ -148,12 +159,12 @@ function report(all) {
   );
   const rows = summarize(entries, known).filter((r) => all || known.includes(r.skill));
 
-  console.log(`${entries.length} events in ${path}, since ${entries[0]?.ts.slice(0, 10) ?? "-"}\n`);
+  console.log(`${entries.length} events in ${path}, since ${entries[0] ? localDate(entries[0].ts) : "-"}\n`);
   const width = Math.max(5, ...rows.map((r) => r.skill.length));
   console.log(`${"skill".padEnd(width)}  total   auto  slash  last used`);
   for (const r of rows) {
     const counts = [r.total, r.auto, r.slash].map((n) => String(n).padStart(5)).join("  ");
-    console.log(`${r.skill.padEnd(width)}  ${counts}  ${r.last?.slice(0, 10) ?? "-"}`);
+    console.log(`${r.skill.padEnd(width)}  ${counts}  ${r.last ? localDate(r.last) : "-"}`);
   }
 }
 

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -74,6 +74,12 @@ describe("summarize", () => {
     assert.deepEqual(rows.map((r) => [r.skill, r.total]), [["choose-subagent", 0]]);
   });
 
+  it("lets a slash claim only the first matching Skill call in its turn", () => {
+    const rows = summarize([e("slash", "fix-bug"), e("skill", "fix-bug"), e("skill", "fix-bug")],
+      ["fix-bug"]);
+    assert.deepEqual([get(rows, "fix-bug").slash, get(rows, "fix-bug").auto], [1, 1]);
+  });
+
   it("counts a slash use of another plugin's skill once its Skill call confirms it", () => {
     const rows = summarize([e("slash", "docs"), e("skill", "docs")], ["fix-bug"]);
     assert.deepEqual([get(rows, "docs").slash, get(rows, "docs").auto], [1, 0]);
@@ -110,5 +116,23 @@ describe("log mode", () => {
 
   it("exits 0 silently on garbage input", () => {
     assert.equal(run("not json", join(dir, "usage.jsonl")), "");
+  });
+});
+
+describe("report mode", () => {
+  let dir;
+  beforeEach(() => { dir = mkdtempSync(join(tmpdir(), "skill-usage-")); });
+  afterEach(() => rmSync(dir, { recursive: true, force: true }));
+
+  it("shows dates in the local time zone, not UTC", () => {
+    // 01:00 UTC on Oct 3 is still the evening of Oct 2 in Chicago.
+    const logFile = join(dir, "usage.jsonl");
+    writeFileSync(logFile, `${JSON.stringify({ ts: "2026-10-03T01:00:00Z", session: "s1",
+      kind: "skill", skill: "review-code" })}\n`);
+    const out = execFileSync(process.execPath, [script, "report"], {
+      encoding: "utf8", env: { ...process.env, SKILL_USAGE_LOG: logFile, TZ: "America/Chicago" },
+    });
+    assert.match(out, /since 2026-10-02/);
+    assert.match(out, /review-code\s+1\s+1\s+0\s+2026-10-02/);
   });
 });
