@@ -19,7 +19,14 @@
 // The log is local JSONL at ~/.claude/skill-usage.jsonl (override with SKILL_USAGE_LOG). It keeps
 // a skill name, session id, project directory name, and timestamp -- never prompt text.
 
-import { appendFileSync, existsSync, mkdirSync, readFileSync, readdirSync } from "node:fs";
+import {
+  appendFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  statSync,
+} from "node:fs";
 import { homedir } from "node:os";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -64,11 +71,12 @@ export function toEntry(event, now = new Date()) {
  * Counts uses per skill. A `slash` followed in the same turn by a Skill call for the same name is
  * one use (this repo's command wrappers tell the model to invoke the skill); a Skill call with no
  * matching slash in its turn is `auto`. Skills in `known` appear even at zero -- a skill nobody
- * uses is the finding. Slash commands that aren't skills (`/help`) are dropped.
+ * uses is the finding. A slash for a name outside `known` counts only once a Skill call confirms
+ * it's a skill (another plugin's), so non-skill commands (`/help`) are dropped.
  */
 export function summarize(entries, known = []) {
   const rows = new Map(known.map((name) => [name, { skill: name, auto: 0, slash: 0, last: null }]));
-  const pendingSlash = new Map();
+  const pendingSlash = new Map(); // session -> { skill, counted }
   const row = (name) => {
     if (!rows.has(name)) rows.set(name, { skill: name, auto: 0, slash: 0, last: null });
     return rows.get(name);
@@ -78,15 +86,18 @@ export function summarize(entries, known = []) {
     if (entry.kind === "prompt") {
       pendingSlash.delete(entry.session);
     } else if (entry.kind === "slash") {
-      pendingSlash.set(entry.session, entry.skill);
-      if (rows.has(entry.skill)) {
+      const counted = rows.has(entry.skill);
+      pendingSlash.set(entry.session, { skill: entry.skill, counted });
+      if (counted) {
         rows.get(entry.skill).slash++;
         rows.get(entry.skill).last = entry.ts;
       }
     } else if (entry.kind === "skill") {
       const r = row(entry.skill);
-      if (pendingSlash.get(entry.session) === entry.skill) {
+      const pending = pendingSlash.get(entry.session);
+      if (pending?.skill === entry.skill) {
         pendingSlash.delete(entry.session);
+        if (!pending.counted) r.slash++;
       } else {
         r.auto++;
       }
@@ -104,7 +115,7 @@ export function parseLog(text) {
   return text.split("\n").flatMap((line) => {
     try {
       const entry = JSON.parse(line);
-      return entry && typeof entry.kind === "string" ? [entry] : [];
+      return typeof entry?.kind === "string" && typeof entry.ts === "string" ? [entry] : [];
     } catch {
       return [];
     }
@@ -132,7 +143,9 @@ function report(all) {
     return;
   }
   const entries = parseLog(readFileSync(path, "utf8"));
-  const known = readdirSync(skillsDir);
+  const known = readdirSync(skillsDir).filter((entry) =>
+    statSync(join(skillsDir, entry)).isDirectory(),
+  );
   const rows = summarize(entries, known).filter((r) => all || known.includes(r.skill));
 
   console.log(`${entries.length} events in ${path}, since ${entries[0]?.ts.slice(0, 10) ?? "-"}\n`);

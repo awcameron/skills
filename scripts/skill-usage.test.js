@@ -73,11 +73,21 @@ describe("summarize", () => {
     const rows = summarize([e("slash", "help")], ["choose-subagent"]);
     assert.deepEqual(rows.map((r) => [r.skill, r.total]), [["choose-subagent", 0]]);
   });
+
+  it("counts a slash use of another plugin's skill once its Skill call confirms it", () => {
+    const rows = summarize([e("slash", "docs"), e("skill", "docs")], ["fix-bug"]);
+    assert.deepEqual([get(rows, "docs").slash, get(rows, "docs").auto], [1, 0]);
+  });
 });
 
 describe("parseLog", () => {
   it("skips blank and corrupt lines", () => {
-    assert.equal(parseLog('{"kind":"prompt"}\n\nnot json\n{"x":1}\n').length, 1);
+    const ok = '{"kind":"prompt","ts":"2026-10-02T12:00:00Z"}';
+    assert.equal(parseLog(`${ok}\n\nnot json\n{"x":1}\nnull\n`).length, 1);
+  });
+
+  it("skips an entry with no timestamp, which the report would otherwise crash on", () => {
+    assert.deepEqual(parseLog('{"kind":"prompt"}\n'), []);
   });
 });
 
@@ -86,7 +96,7 @@ describe("log mode", () => {
   beforeEach(() => { dir = mkdtempSync(join(tmpdir(), "skill-usage-")); });
   afterEach(() => rmSync(dir, { recursive: true, force: true }));
 
-  const run = (input, logFile) => execFileSync("node", [script, "log"], {
+  const run = (input, logFile) => execFileSync(process.execPath, [script, "log"], {
     input, encoding: "utf8", env: { ...process.env, SKILL_USAGE_LOG: logFile },
   });
 
