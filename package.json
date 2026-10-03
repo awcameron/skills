@@ -1,6 +1,6 @@
 {
   "name": "awcameron-skills",
-  "version": "0.14.8",
+  "version": "0.14.9",
   "private": true,
   "type": "module",
   "description": "Agent Skills that follow your repo's own conventions instead of imposing new ones: code review, debugging, tests, PRs, design docs, safe migrations, dependency upgrades, security, and doc checks. For Claude Code, Cursor, Codex CLI, Antigravity CLI, and OpenCode.",
