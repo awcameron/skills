@@ -127,3 +127,5 @@ bump/release pipeline: [`docs/releasing.md`](docs/releasing.md).
   routine check runs them -- don't run them unless asked. See
   [`plugin-evals/README.md`](plugin-evals/README.md).
 - `docs/*-setup.md` -- per-tool consumer setup instructions (not relevant to developing this repo).
+- `scripts/skill-usage.js` -- maintainer-only usage-logging hook and report (which skills run, and
+  whether by auto-trigger or slash command). Not shipped in the plugin; setup is in its header.
