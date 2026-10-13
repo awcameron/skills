@@ -8,13 +8,15 @@ consumers; see [README.md](README.md) for what this repo is and how it's consume
 - [Before you start](#before-you-start)
 - [Branching, commits, and PRs](#branching-commits-and-prs)
 - [CI coverage gap](#ci-coverage-gap)
+- [Pinned actions](#pinned-actions)
 - [Post-merge cleanup](#post-merge-cleanup)
 - [Versioning and releases](#versioning-and-releases)
 - [Where things live](#where-things-live)
 
 ## Before you start
 
-- Skill structure and frontmatter rules: [`docs/skill-anatomy.md`](docs/skill-anatomy.md).
+- Skill structure, frontmatter rules, and the add-a-new-skill checklist (skill dir, eval case,
+  `.claude`/`.gemini` command wrappers, README row): [`docs/skill-anatomy.md`](docs/skill-anatomy.md).
 - This repo's design principle ("discover, don't dictate") is stated in [README.md](README.md) --
   hold new and existing skills to it.
 - Before opening a PR, run:
@@ -27,6 +29,7 @@ consumers; see [README.md](README.md) for what this repo is and how it's consume
                        # the plugin descriptions in package.json / plugin.json /
                        # marketplace.json match,
                        # and README's "What's here" lists every skill
+  npm test            # unit tests for scripts/ (CI runs this too)
   npm run eval        # trigger-routing hasn't regressed -- see evals/README.md
   ```
 
