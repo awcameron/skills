@@ -51,9 +51,10 @@ silently deviating or silently complying.
 | [`async.md`](references/async.md) | A `Promise`-returning call isn't awaited, an `async` function never awaits anything, or awaits run one after another with no data dependency between them. |
 | [`naming.md`](references/naming.md) | A name needs its type or implementation read to understand what it holds or does. |
 | [`immutability.md`](references/immutability.md) | Something reassigns with `let` where `const` would do, mutates a function's argument, or mutates an array/object another part of the program still holds a reference to. |
-| [`imports-modules.md`](references/imports-modules.md) | A barrel/index file uses `export *`, import order looks arbitrary, or a module reaches for a default export. |
+| [`imports-modules.md`](references/imports-modules.md) | A barrel/index file uses `export *`, import order looks arbitrary, a module reaches for a default export, or one module of plain functions holds several unrelated jobs. |
 | [`narrowing.md`](references/narrowing.md) | A shape has optional fields that are never all present together, or the same runtime type check is repeated inline instead of named. |
-| [`type-design.md`](references/type-design.md) | A numeric/string `enum` is being declared, or the same object shape is duplicated across `interface` and `type` with no extension or union involved. |
+| [`type-design.md`](references/type-design.md) | A numeric/string `enum` is being declared, the same object shape is duplicated across `interface` and `type` with no extension or union involved, or one set of names (metrics, features, statuses) is listed separately in several files. |
+| [`validation.md`](references/validation.md) | A schema parse or hand-written check runs on data the program already parsed or produced itself, or untrusted input is checked piecemeal in several places instead of once where it enters. |
 
 Each file is short and self-contained -- read the one that matches what you're looking at, not
 all of them up front.
