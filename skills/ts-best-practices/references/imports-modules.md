@@ -3,7 +3,8 @@
 A module's imports and exports are its public contract with the rest of the codebase. Most import
 *ordering* is handled by a tool once one's configured (`eslint-plugin-simple-import-sort`,
 `perfectionist`, or similar) -- the judgment calls worth making by hand are about what a barrel
-file exposes and how modules depend on each other, not what order the lines appear in.
+file exposes, how modules depend on each other, and what belongs together in one module, not what
+order the lines appear in.
 
 ## `export *` silently expands what's public
 
@@ -147,3 +148,44 @@ Now every importer uses the same name, a rename tool can update every call site 
 typo'd import name is a compile error instead of a silently different local binding. Reach for a
 default export only where the ecosystem specifically expects one (a framework's page/route file
 convention, e.g. Next.js's `pages/`), not as the default choice for an ordinary module.
+
+## Split a module by what changes together
+
+`classes.md` covers the god class. Most TypeScript has no class to grow that big: the same problem
+shows up as a module of plain functions that collects one job after another, because each new
+function was easiest to put next to the types it uses. Line count is a symptom, not the test. The
+test is whether unrelated changes keep landing in the same file, and whether changing one job
+means loading all the others to see what it touches.
+
+**Before:**
+
+```ts
+// report.ts: about 600 lines
+export const ReportFile = z.strictObject({ /* the saved file's schema */ });
+export function scoreRow(row: Row): Score { /* scoring rules */ }
+export function totals(rows: Row[]): Totals { /* aggregation */ }
+export function migrate(old: ReportFile): ReportFile { /* upgrading old saved files */ }
+export function toMarkdown(file: ReportFile): string { /* table rendering */ }
+```
+
+Changing a column header means opening the scoring rules. Almost every other module imports
+`report.ts`, so it also tends to be the file that closes an import cycle (see above).
+
+**After:**
+
+```ts
+// report/schema.ts    ReportFile and its types: what's saved
+// report/scoring.ts   scoreRow, totals: the rules
+// report/migrate.ts   migrate: reading old files
+// report/markdown.ts  toMarkdown: presentation
+```
+
+Each file changes for one reason. Callers import from the file they need (`./report/markdown`),
+not through a new `report/index.ts` barrel, so the split doesn't recreate one big public surface
+(see `export *` above).
+
+Before splitting, inline any helper used only once, so the real seams show. Split along the
+responsibilities that appear, not into generic `utils.ts` and `helpers.ts` files. And don't split
+a file just for being long: a module that's mostly data, such as a list of fixtures, can stay long,
+and one coherent job in 400 lines beats the same job spread over five files (see `functions.md`,
+"Small functions, but not fragmented past the point of context").

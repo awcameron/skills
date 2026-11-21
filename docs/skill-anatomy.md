@@ -19,8 +19,8 @@ skills/
 `SKILL.md` is the only required file.
 
 - `references/` -- only when a skill genuinely needs supporting material split out (see
-  `ts-best-practices/references/` for an example: eleven short files, one per judgment-call
-  category, so an agent opens only the one that applies instead of loading all eleven; also used
+  `ts-best-practices/references/` for an example: twelve short files, one per judgment-call
+  category, so an agent opens only the one that applies instead of loading all twelve; also used
   by `zero-trust-architecture`, `rollout-compatibility`, `create-tdd`, `create-pr`, and
   `format-docs`).
 - `evals/evals.json` -- skill-creator-format eval cases, run through the skill-creator plugin;

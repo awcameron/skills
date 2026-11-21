@@ -79,6 +79,62 @@ The type is derived from the value (or vice versa, depending which one is more n
 first) instead of duplicated by hand -- adding a member in one place is a compile error everywhere
 that assumed the old set was exhaustive, rather than a silent drift.
 
+## One fact in several files: keep one table and derive the rest
+
+The same drift happens at a larger scale when one fact, such as "these are the report's metrics",
+gets a separate list in each module that needs part of it. No single file looks wrong, so it's
+easy to miss in review: each list is short, typed and sensible on its own.
+
+**Before:**
+
+```ts
+// metrics.ts
+export const METRICS = ['revenue', 'churn', 'activeUsers'] as const;
+export type Metric = (typeof METRICS)[number];
+
+// alerts.ts
+const ALERTED = ['revenue', 'churn']; // a string[], not checked against Metric
+
+// table.ts
+export const LABELS: Record<Metric, string> = { revenue: 'Revenue', churn: 'Churn', activeUsers: 'Active users' };
+
+// schemaVersions.ts
+export const VERSIONS = { revenue: 1, churn: 1, activeUsers: 1 } as const; // nothing ties these keys to Metric
+```
+
+Adding or renaming a metric means four edits in four files, and only one of them (`LABELS`) fails
+to compile when it's missed. `ALERTED` and `VERSIONS` keep the old name without complaint, and the
+bug shows up at runtime. A reader, or an agent,
+searching for `churn` finds four definitions and has to work out which is the real one.
+
+**After:**
+
+```ts
+// metrics.ts
+export const METRICS = [
+  { name: 'revenue', label: 'Revenue', alerted: true, version: 1 },
+  { name: 'churn', label: 'Churn', alerted: true, version: 1 },
+  { name: 'activeUsers', label: 'Active users', alerted: false, version: 1 },
+] as const satisfies readonly { name: string; label: string; alerted: boolean; version: number }[];
+
+export type Metric = (typeof METRICS)[number]['name'];
+export const ALERTED = METRICS.filter((m) => m.alerted).map((m) => m.name); // Metric[], no cast
+```
+
+One row per metric, holding everything about it. Adding a metric is one edit, and the other files
+read from the table instead of keeping a copy.
+
+Where a separate list has to stay, tie it to the type with `satisfies Record<Metric, ...>` or
+`satisfies readonly Metric[]`, so a missing or misspelled key is a compile error.
+
+Two lists that look like duplication but shouldn't be merged:
+- **A record of the past.** For example, "the metrics that existed when versioning began", kept so
+  old saved files still load. It's meant to stay frozen while the table grows, so deriving it from
+  the table would quietly change history. Say that in a comment beside it.
+- **Two copies that are meant to differ.** If two prompts, configs or templates share most of their
+  text but are deliberately allowed to drift apart, say so, and pin the allowed difference with a
+  test. Otherwise, build both from one shared constant.
+
 ## `interface` for object shapes callers extend or implement; `type` for everything else
 
 Both declare object shapes, and for a plain, never-extended object shape it genuinely doesn't
